@@ -1,9 +1,3 @@
----
-output:
-  html_document: default
-  word_document: default
-  pdf_document: default
----
 # Competition Dominance Analysis
 
 This repository contains the data and code for our project: **Increased competition flattens the dominance hierarchy: evidence from a herd living ungulate**.
