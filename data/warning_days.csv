@@ -1,76 +1,102 @@
-"date","Red_warning","orange_warning"
-2020-07-03,"Trial not started",""
-2020-07-04,"Trial not started",""
-2020-07-05,"Trial not started",""
-2020-07-06,"Trial not started",""
-2020-07-07,"Trial not started",""
-2020-07-08,"Trial not started",""
-2020-07-09,"Trial not started",""
-2020-07-10,"Trial not started",""
-2020-07-11,"Trial not started",""
-2020-07-12,"Trial not started",""
-2020-07-13,"Trial not started",""
-2020-07-14,"Trial not started",""
-2020-07-27,"Insentec break down",""
-2020-07-28,"Insentec break down",""
-2020-07-29,"Insentec break down",""
-2020-07-30,"Insentec break down",""
-2020-07-31,"Insentec break down",""
-2020-08-11,"","cow 4038 moved to box stall"
-2020-08-17,"","cow 4038 returned to pen 26"
-2020-08-28,"Water bins shutdown for maintenance from 11:55 to 16:30",""
-2020-09-02,"","cow 7146 lost ear tag"
-2020-09-03,"","cow 7146 lost ear tag"
-2020-09-04,"","cow 7146 lost ear tag"
-2020-09-05,"","cow 5041 moved to pen 10"
-2020-09-05,"","cow 7146 lost ear tag"
-2020-09-06,"","cow 7146 lost ear tag"
-2020-09-07,"","cow 7146 lost ear tag"
-2020-09-08,"","cow 7146 lost ear tag"
-2020-09-09,"","cow 7146 lost ear tag"
-2020-09-10,"","cow 5041 return to pen 26"
-2020-09-10,"","cow 7146 lost ear tag"
-2020-09-26,"Insentec break down",""
-2020-09-27,"Insentec break down",""
-2020-11-02,"","cow 6130 lost ear tag"
-2020-11-03,"","cow 6130 lost ear tag"
-2020-11-09,"","cow 6028 removed from the pen"
-2020-12-18,"","cow 3150 moved to box stall"
-2021-02-03,"Human present disturbance",""
-2021-02-04,"Human present disturbance",""
-2021-02-05,"Insentec break down",""
-2021-02-06,"Insentec break down",""
-2021-02-07,"Insentec break down",""
-2021-02-08,"bin 5 & 6 down",""
-2021-02-09,"bin 5 & 6 down",""
-2021-02-10,"bin 3, 4, 5 & 6 down",""
-2021-02-11,"","Power Outage from 17:30 - 18:20; extreme cold weather"
-2021-02-12,"","extreme cold weather, bins not closing properly"
-2021-02-16,"","Cow 5120 lost both tages, registered as 1111"
-2021-02-17,"","Cow 5120 lost both tages, registered as 1111"
-2021-02-18,"","Morning only:Cow 5120 lost both tages, registered as 1111"
-2021-03-06,"Insentec compressor was not working, and Cow 6062 lost transponder before 8AM",""
-2021-03-11,"Insentec disturbed in the morning",""
-2021-03-13,"Insentec aren't opening for cows, manually turned to all open in the morning",""
-2021-03-16,"","No access to feed for several hours in the afternoon due to hoof trimming"
-2021-03-17,"Water bin broken down",""
-2021-03-22,"Insentec compressor down",""
-2021-03-23,"","Compressor down again"
-2021-04-08,"","cow 7064 was switched to 0"
-2021-04-09,"","cow 7064 was switched to 0"
-2021-04-10,"","cow 5096 was removed for half a day due to difficulty turning around in the parlor"
-2021-04-11,"","cow 5096 was removed for half a day due to difficulty turning around in the parlor"
-2021-04-15,"","Brush crew people were in the pen for significnat amount of time"
-2021-04-27,"Feed composition change, no feed access during night",""
-2021-04-28,"Feed composition change, no feed access during night",""
-2021-05-02,"Missing data for half a day",""
-2021-05-03,"Missing data for half a day",""
-2021-05-06,"","water bin 104 was temperorily closed"
-2021-05-07,"","water bin 104 was temperorily closed"
-2021-05-08,"","water bin 104 was temperorily closed"
-2021-05-09,"","water bin 104 was temperorily closed"
-2021-05-10,"","water bin 104 was temperorily closed"
-2021-05-11,"","water bin 104 was temperorily closed"
-2021-05-12,"","water bin 104 was temperorily closed"
-2021-05-13,"","water bin 104 was temperorily closed"
-2021-05-17,"","Cows escaped to the pasture from around 9pm to 10:30 pm; bin 9 left closed for some part of the day"
+date,Red_warning,orange_warning
+7/3/20,Trial not started,
+7/4/20,Trial not started,
+7/5/20,Trial not started,
+7/6/20,Trial not started,
+7/7/20,Trial not started,
+7/8/20,Trial not started,
+7/9/20,Trial not started,
+7/10/20,Trial not started,
+7/11/20,Trial not started,
+7/12/20,Trial not started,
+7/13/20,Trial not started,
+7/14/20,Trial not started,
+7/27/20,Insentec break down,
+7/28/20,Insentec break down,
+7/29/20,Insentec break down,
+7/30/20,Insentec break down,
+7/31/20,Insentec break down,
+8/1/20,,Water bin 5 broke down
+8/2/20,,Water bin 5 broke down
+8/3/20,,Water bin 5 broke down
+8/4/20,,Water bin 5 broke down
+8/5/20,,Water bin 5 broke down
+8/6/20,,Water bin 5 broke down
+8/7/20,,Water bin 5 broke down
+8/8/20,,Water bin 5 broke down
+8/9/20,,Water bin 5 broke down
+8/10/20,,Water bin 5 broke down
+8/11/20,,Water bin 5 broke down; cow 4038 moved to box stall
+8/12/20,,Water bin 5 broke down
+8/13/20,,Water bin 5 broke down
+8/14/20,,Water bin 5 broke down
+8/15/20,,Water bin 5 broke down
+8/16/20,,Water bin 5 broke down
+8/17/20,,Water bin 5 broke down; cow 4038 returned to pen 26
+8/18/20,,Water bin 5 broke down
+8/19/20,,Water bin 5 broke down
+8/20/20,,Water bin 5 broke down
+8/21/20,,Water bin 5 broke down
+8/22/20,,Water bin 5 broke down
+8/23/20,,Water bin 5 broke down
+8/24/20,,Water bin 5 broke down
+8/25/20,,Water bin 5 broke down
+8/26/20,,Water bin 5 broke down
+8/27/20,,Water bin 5 broke down
+8/28/20,Water bins shutdown for maintenance from 11:55 to 16:30,
+8/29/20,,Water bin 5 broke down
+9/2/20,,cow 7146 lost ear tag
+9/3/20,,cow 7146 lost ear tag
+9/4/20,,cow 7146 lost ear tag
+9/5/20,,cow 5041 moved to pen 10
+9/5/20,,cow 7146 lost ear tag
+9/6/20,,cow 7146 lost ear tag
+9/7/20,,cow 7146 lost ear tag
+9/8/20,,cow 7146 lost ear tag
+9/9/20,,cow 7146 lost ear tag
+9/10/20,,cow 5041 return to pen 26
+9/10/20,,cow 7146 lost ear tag
+9/26/20,Insentec break down,
+9/27/20,Insentec break down,
+11/2/20,,cow 6130 lost ear tag
+11/3/20,,cow 6130 lost ear tag
+11/9/20,,cow 6028 removed from the pen
+12/18/20,,cow 3150 moved to box stall
+2/3/21,Human present disturbance,
+2/4/21,Human present disturbance,
+2/5/21,Insentec break down,
+2/6/21,Insentec break down,
+2/7/21,Insentec break down,
+2/8/21,bin 5 & 6 down,
+2/9/21,bin 5 & 6 down,
+2/10/21,"bin 3, 4, 5 & 6 down",
+2/11/21,,Power Outage from 17:30 - 18:20; extreme cold weather
+2/12/21,,"extreme cold weather, bins not closing properly"
+2/16/21,,"Cow 5120 lost both tages, registered as 1111"
+2/17/21,,"Cow 5120 lost both tages, registered as 1111"
+2/18/21,,"Morning only:Cow 5120 lost both tages, registered as 1111"
+3/6/21,"Insentec compressor was not working, and Cow 6062 lost transponder before 8AM",
+3/11/21,Insentec disturbed in the morning,
+3/13/21,"Insentec aren't opening for cows, manually turned to all open in the morning",
+3/16/21,,No access to feed for several hours in the afternoon due to hoof trimming
+3/17/21,Water bin broken down,
+3/22/21,Insentec compressor down,
+3/23/21,,Compressor down again
+4/8/21,,cow 7064 was switched to 0
+4/9/21,,cow 7064 was switched to 0
+4/10/21,,cow 5096 was removed for half a day due to difficulty turning around in the parlor
+4/11/21,,cow 5096 was removed for half a day due to difficulty turning around in the parlor
+4/15/21,,Brush crew people were in the pen for significnat amount of time
+4/27/21,"Feed composition change, no feed access during night",
+4/28/21,"Feed composition change, no feed access during night",
+5/2/21,Missing data for half a day,
+5/3/21,Missing data for half a day,
+5/6/21,,water bin 104 was temperorily closed
+5/7/21,,water bin 104 was temperorily closed
+5/8/21,,water bin 104 was temperorily closed
+5/9/21,,water bin 104 was temperorily closed
+5/10/21,,water bin 104 was temperorily closed
+5/11/21,,water bin 104 was temperorily closed
+5/12/21,,water bin 104 was temperorily closed
+5/13/21,,water bin 104 was temperorily closed
+5/17/21,,Cows escaped to the pasture from around 9pm to 10:30 pm; bin 9 left closed for some part of the day
