@@ -71,7 +71,8 @@ compare_sheet <- compare_sheet[order(compare_sheet$date),]
 compare_sheet2 <- na.omit(compare_sheet)
 fileNames.f <- compare_sheet2$Feed_dir
 fileNames.w <- compare_sheet2$Drink_dir
-# we only retain the dates when both drinking and feeding data are available at the same time
+# we only retain the dates when both drinking and feeding data are available at
+# the same time
 
 
 
