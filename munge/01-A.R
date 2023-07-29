@@ -1,16 +1,14 @@
 ###################################################################################################
 ######################################### TO BE DELETED ###########################################
 ###################################################################################################
+library('ProjectTemplate')
+load.project()
 
 # Load all packages from library
 library(lubridate)
 library(plyr)
 library(here)
 #library(ggplot2)
-
-daylight_saving_table <- read.csv(here("data/daylight_saving_csv.csv"), header = TRUE)
-warning_days <- read.csv(here("data/warning_days.csv"), header = TRUE)
-
 
 ################################################################################
 ###################### data loading & processing ###############################
