@@ -1,39 +1,61 @@
-# competition_dominance_analysis
+---
+output:
+  html_document: default
+  word_document: default
+  pdf_document: default
+---
+# Competition Dominance Analysis
 
-Welcome to ProjectTemplate!
+This repository contains the data and code for our project: **Increased competition flattens the dominance hierarchy: evidence from a herd living ungulate**.
 
-This file introduces you to ProjectTemplate, but you should eventually replace
-the contents of this file with an introduction to your project. People who
-work with your data in the future will thank you for it, including your future
-self.
+## Getting Started
 
-ProjectTemplate is an R package that helps you organize your statistical
-analysis projects. Since you're reading this file, we'll assume that you've
-already called `create.project()` to set up this project and all of its
-contents.
+To load this project, please follow the instructions below:
 
-To load your new project, you'll first need to `setwd()` into the directory
-where this README file is located. Then you need to run the following two
-lines of R code:
+1. Set your working directory to the folder where this `README.md` file is located using `setwd()`.
 
-	library('ProjectTemplate')
-	load.project()
+2. Run the following R code:
 
-After you enter the second line of code, you'll see a series of automated
-messages as ProjectTemplate goes about doing its work. This work involves:
-* Reading in the global configuration file contained in `config`.
-* Loading any R packages you listed in the configuration file.
-* Reading in any datasets stored in `data` or `cache`.
-* Preprocessing your data using the files in the `munge` directory.
+```r
+library('ProjectTemplate')
+load.project()
+```
 
-Once that's done, you can execute any code you'd like. For every analysis
-you create, we'd recommend putting a separate file in the `src` directory.
-If the files start with the two lines mentioned above:
+## Dataset Information
 
-	library('ProjectTemplate')
-	load.project()
+- **Title of Dataset:** Replication Data for: Increased competition flattens the dominance hierarchy: evidence from a herd living ungulate  
+- **Dataset Created:** 2023-07-29  
+- **Created by:** Kehan (Sky) Sheng
 
-You'll have access to all of your data, already fully preprocessed, and
-all of the libraries you want to use.
+## Contributors
 
-For more details about ProjectTemplate, see http://projecttemplate.net
+- **Principal Investigator:** Marina von Keyserlingk  
+  - ORCID: 0000-0002-1427-3152  
+  - Affiliation: University of British Columbia  
+  - Email: <nina@mail.ubc.ca>
+
+- **Co-Investigator:** Daniel Weary  
+  - ORCID: 0000-0002-0917-3982  
+  - Affiliation: University of British Columbia  
+  - Email: <dan.weary@ubc.ca>
+
+- **Contributor:** Kehan Sheng  
+  - ORCID: 0000-0001-6442-5284  
+  - Affiliation: University of British Columbia  
+  - Email: <skysheng7@gmail.com>
+
+- **Contributor:** Borbala Foris  
+  - ORCID: 0000-0002-0901-3057  
+  - Affiliation: University of British Columbia  
+  - Email: <forisbori@gmail.com>
+
+- **Contributor:** Joseph Krahn  
+  - ORCID: 0000-0002-1559-1216  
+  - Affiliation: University of British Columbia  
+  - Email: <joey10krahn@gmail.com>
+
+## Project Information
+
+- **Date of Data Collection:** July 15, 2020 - May 19, 2021  
+- **Location of Data Collection:** UBC Dairy Education and Research Centre, 6947 No. 7 Highway, Agassiz, BC V0M 1A0, Canada  
+- **Funding:** This project was supported by the NSERC Industrial Research Chair.
