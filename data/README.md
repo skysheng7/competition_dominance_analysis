@@ -25,21 +25,21 @@ If the data files are encoded in a supported file format (e.g., csv, dat), they'
 **Number of Variables:** 15
 **Number of Cases/Rows:** varies based on the day  
 **Variable List:** *The .DAT file has no header. This is the sequence of columns that is intended after adding header*
-1. **Transponder:** 
-2. **Cow:** 
-3. **Bin:** 
-4. **Start:** 
-5. **End:** 
-6. **Duration:** 
-7. **Startweight:** 
-8. **Endweight:** 
-9. **Comment:** 
-10. **Intake:** 
-11. **Intake2:** 
-12. **X1:** 
-13. **X2:** 
-14. **X3:** 
-15. **X4:** 
+1. **Transponder:** The transponder ID of the bin
+2. **Cow:** cow ID
+3. **Bin:** bin number
+4. **Start:** start date and time
+5. **End:** end date and time
+6. **Duration:** total duration of this visit in seconds
+7. **Startweight:** start weight (when the cow enters the bin) of the bin in kg
+8. **Endweight:** end weight (when the cow leaves the bin) of the bin in kg
+9. **Comment:** comments and notes
+10. **Intake:** total feed intake Sstartweight - Endweight) of the visit in kg
+11. **Intake2:** duplicated column of Intake. total feed intake Sstartweight - Endweight) of the visit in kg
+12. **X1:** additional meaningless column
+13. **X2:** additional meaningless column
+14. **X3:** additional meaningless column
+15. **X4:** additional meaningless column
 
 ## Dataset Specific Information for: `water/VW******.DAT` 309 files in total from 2020-07-15 to 2021-05-19
 **Description:** raw data from electronic drinker using Insentec. File name has to be in the format of VW******.DAT, in y-m-d format. e.g., VW200715.DAT
@@ -47,13 +47,13 @@ If the data files are encoded in a supported file format (e.g., csv, dat), they'
 **Number of Cases/Rows:** varies based on the day  
 **Variable List:** *The .DAT file has no header. This is the sequence of columns that is intended after adding header*
 "Transponder","Cow","Bin","Start","End","Duration","Startweight","Endweight","Intake"
-1. **Transponder:** 
-2. **Cow:** 
-3. **Bin:** 
-4. **Start:** 
-5. **End:** 
-6. **Duration:** 
-7. **Startweight:** 
-8. **Endweight:** 
-9. **Intake:** 
+1. **Transponder:** The transponder ID of the bin
+2. **Cow:** cow ID
+3. **Bin:** bin number
+4. **Start:** start date and time
+5. **End:** end date and time
+6. **Duration:** total duration of this visit in seconds
+7. **Startweight:** start weight (when the cow enters the bin) of the bin in kg
+8. **Endweight:** end weight (when the cow leaves the bin) of the bin in kg
+9. **Intake:** total water intake Sstartweight - Endweight) of the visit in kg
 
