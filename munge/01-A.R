@@ -35,7 +35,7 @@ daylight_saving_table <- daylight_saving_process(daylight_saving_csv)
 warning_days$date <- ymd(warning_days$date, tz=time_zone)
 
 ################################################################################
-############# Feeding & Drinking Analysis from Insentec Data ###################
+##### Feeding & Drinking loading and initial processing from Insentec Data #####
 ################################################################################
 # check if you have both water and feed data for each day
 # we only retain the dates when both drinking and feeding data are available at
@@ -60,4 +60,12 @@ all.comb <- combine_feeder_and_water_datafunction(all.fed, all.wat)
 master_feeding <- merge_data(all.fed)
 master_drinking <- merge_data(all.wat)
 master_comb <- merge_data(all.comb)
+
+################################################################################
+############################## Quality Check ###################################
+################################################################################
+
+
+
+
 
