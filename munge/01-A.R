@@ -13,10 +13,10 @@ library(here)
 ################################################################################
 ###################### data loading & processing ###############################
 ################################################################################
+###### Load feed and water file names
 # set work directory and load data
 input_dir <- here("data")
 output_dir <- here("result")
-
 # load in feed and water data
 fileNames.f <- list.files(path = here("data/feed_test"),full.names = TRUE,
                           recursive = TRUE,pattern =".DAT")
@@ -25,10 +25,6 @@ fileNames.w <- list.files(path = here("data/water_test"),full.names = TRUE,
 fileNames.f <- sort(fileNames.f)
 fileNames.w <- sort(fileNames.w)
 
-# there are certain cow ID that should be deleted because they are not real cow, 
-# but test ear tag during calibration
-cow_delete_list <- c(0, 1556, 5015, 1111, 1112, 1113, 1114)
-
 ################################################################################
 ############# customized processing for this study (hard-coded) ################
 ################################################################################
@@ -36,7 +32,7 @@ cow_delete_list <- c(0, 1556, 5015, 1111, 1112, 1113, 1114)
 # please change this based on your study
 # process daylight saving dates dataframe and warning date data frame
 daylight_saving_table <- daylight_saving_process(daylight_saving_csv)
-warning_days$date <- ymd(warning_days$date, tz="America/Los_Angeles")
+warning_days$date <- ymd(warning_days$date, tz=time_zone)
 
 ################################################################################
 ############# Feeding & Drinking Analysis from Insentec Data ###################
@@ -55,20 +51,13 @@ end_date <- date_result$end_date
 date_range <- date_result$date_range
 
 # read in feed and water data into a list of dataframes
+all.fed <- process_all_feed(fileNames.f, coln, cow_delete_list, feed_transponder_delete_list, min_feed_bin, max_feed_Bin, feed_coln_to_keep)
+all.wat <- process_all_water(fileNames.w, coln.wat, cow_delete_list, wat_transponder_delete_list, min_wat_bin, max_wat_Bin, wat_coln_to_keep, bin_id_add)
+all.comb <- combine_feeder_and_water_datafunction(all.fed, all.wat)
 
-# Colnames in the feed and water bin log files, change based on your own file format
-coln=c("Transponder","Cow","Bin","Start","End","Duration","Startweight","Endweight","Comment","Intake","Intake2","X1","X2","X3","X4")
-coln.wat=c("Transponder","Cow","Bin","Start","End","Duration","Startweight","Endweight","Intake")
-
-#Check your bins of interest: Feed bins: 1-30, water bins:1-5 (all)
-#Get the feeder, drinker and combined data into a list
-len = length(fileNames.f)
-all.fed=list()
-all.wat=list()
-all.comb=list()
-
-cow_delete(df, cow_delete_list)
-
-
-
+# combine data frame different dates into 1 master dataframe
+# Calling the function for each data list:
+master_feeding <- merge_data(all.fed)
+master_drinking <- merge_data(all.wat)
+master_comb <- merge_data(all.comb)
 
