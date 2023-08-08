@@ -102,3 +102,110 @@ get_date_range <- function(df){
   
   list(start_date = start_date, end_date = end_date, date_range = date_range)
 }
+
+
+#' Remove specific cows from the dataframe
+#'
+#' This function filters out rows from the provided dataframe `df` 
+#' that contain cows specified in the `cow_delete_list`.
+#' 
+#' @param df A dataframe containing a column named "Cow".
+#' @param cow_delete_list A vector of cows to be deleted from `df`.
+#'
+#' @return A dataframe without the rows containing cows from `cow_delete_list`.
+#'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(Cow = c("A", "B", "C", "D"), Value = c(1, 2, 3, 4))
+#' cow_delete_list <- c("A", "C")
+#' cow_delete(df, cow_delete_list)
+#' }
+cow_delete <- function(df, cow_delete_list) {
+  to_delete <- df[which(df$Cow %in% cow_delete_list),]
+  if (nrow(to_delete) != 0) {
+    df_processed <- df[-which(df$Cow %in% cow_delete_list),]
+    return(df_processed)
+  } else {
+    return(df)
+  }
+}
+
+
+#' Delete rows with specific transponder ID
+#'
+#' @param df Data frame from which to delete rows.
+#' @param transponder_delete_list List of transponder ID to delete.
+#' @return Data frame with rows that contain certain trasponder ID deleted.
+transponder_delete <- function(df, transponder_delete_list) {
+  to_delete <- df[which(df$Transponder %in% transponder_delete_list), ]
+  if (nrow(to_delete) != 0) {
+    df[-which(df$Transponder %in% transponder_delete_list), ]
+  } else {
+    df
+  }
+}
+
+#' Delete rows outside specific bin range
+#'
+#' @param df Data frame from which to delete rows.
+#' @param min_bin Minimum bin ID to keep.
+#' @param max_bin Maximum bin ID to keep.
+#' @return Data frame with rows deleted.
+bin_delete <- function(df, min_bin, max_bin) {
+  df[df$Bin >= min_bin & df$Bin <= max_bin, ]
+}
+
+#' Process feeder data
+#'
+#' @param file_name File path for the feeder data.
+#' @param coln Column names for the feeder data.
+#' @param cow_delete_list List of cow values to delete.
+#' @param feed_transponder_delete_list List of transponder values specific to feeder data to delete.
+#' @param min_feed_bin Minimum feeder bin value to keep.
+#' @param max_feed_Bin Maximum feeder bin value to keep.
+#' @param feed_coln_to_keep Columns to keep in the feeder data.
+#' @return Processed data frame for feeder.
+process_feeder_data <- function(file_name, coln, cow_delete_list, feed_transponder_delete_list, min_feed_bin, max_feed_Bin, feed_coln_to_keep) {
+  feeder = read.table(file_name, header = F, sep = ",")
+  colnames(feeder) = coln
+  feeder = cow_delete(feeder, cow_delete_list)
+  feeder = transponder_delete(feeder, feed_transponder_delete_list)
+  feeder = bin_delete(feeder, min_feed_bin, max_feed_Bin)
+  feeder[, feed_coln_to_keep]
+}
+
+#' Process water data
+#'
+#' @param file_name File path for the water data.
+#' @param coln_wat Column names for the water data.
+#' @param cow_delete_list List of cow values to delete.
+#' @param wat_transponder_delete_list List of transponder values specific to water data to delete.
+#' @param min_wat_bin Minimum water bin value to keep.
+#' @param max_wat_Bin Maximum water bin value to keep.
+#' @param wat_coln_to_keep Columns to keep in the water data.
+#' @return Processed data frame for water.
+process_water_data <- function(file_name, coln_wat, cow_delete_list, wat_transponder_delete_list, min_wat_bin, max_wat_Bin, wat_coln_to_keep) {
+  water = read.table(file_name, header = F, sep = ",")
+  colnames(water) = coln_wat
+  water = cow_delete(water, cow_delete_list)
+  water = transponder_delete(water, wat_transponder_delete_list)
+  water = bin_delete(water, min_wat_bin, max_wat_Bin)
+  rename_water_bins(water[, wat_coln_to_keep], min_wat_bin, max_wat_Bin)
+}
+
+#' Rename water bins
+#'
+#' @param water_df Data frame of water data.
+#' @param bin_id_add The number to add to bin IDs.
+#' @param min_wat_bin Minimum water bin value for renaming.
+#' @param max_wat_Bin Maximum water bin value for renaming.
+#' @return Data frame with water bins renamed.
+rename_water_bins <- function(water_df, bin_id_add, min_wat_bin, max_wat_Bin) {
+  for (i in min_wat_bin:max_wat_Bin) {
+    water_df$Bin[which(water_df$Bin == i)] = bin_id_add + i
+  }
+  water_df
+}
+
+
+

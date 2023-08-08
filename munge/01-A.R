@@ -25,6 +25,10 @@ fileNames.w <- list.files(path = here("data/water_test"),full.names = TRUE,
 fileNames.f <- sort(fileNames.f)
 fileNames.w <- sort(fileNames.w)
 
+# there are certain cow ID that should be deleted because they are not real cow, 
+# but test ear tag during calibration
+cow_delete_list <- c(0, 1556, 5015, 1111, 1112, 1113, 1114)
+
 ################################################################################
 ############# customized processing for this study (hard-coded) ################
 ################################################################################
@@ -63,7 +67,7 @@ all.fed=list()
 all.wat=list()
 all.comb=list()
 
-
+cow_delete(df, cow_delete_list)
 
 
 
