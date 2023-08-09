@@ -44,3 +44,4 @@ high_feed_dur_threshold = 2000
 
 # duration threshold for what is coonsidered a long drinking visit  
 high_water_dur_threshold = 1800
+

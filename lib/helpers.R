@@ -764,6 +764,81 @@ get_all_double_detections_1cow2bin <- function(all_comb, Insentec_warning) {
 }
 
 
+#' Detect and Return Double Cow Detections for a Given Bin: The same bin regiesters 2 cows at the same time
+#'
+#' This function checks for overlapping visits by different cows for a given bin's data 
+#' and returns rows where double detections of cows occur.
+#' 
+#' @param dat2 A data frame containing data for a single bin.
+#' 
+#' @return A data frame containing rows where double detections of cows occurred for the given bin.
+get_double_cow_detection_for_bin <- function(dat2) {
+  double_detection_rows <- data.frame() # empty data frame 
+  
+  if (nrow(dat2) > 1) {
+    for(k in 2:nrow(dat2)) {
+      if(dat2[k, "Start"] < dat2[k-1, "End"]) {
+        double_detection_rows <- rbind(double_detection_rows, dat2[(k-1):k,])
+      }
+    }
+  }
+  
+  return(double_detection_rows)
+}
+
+#' Identify Double Cow Detections for All Bins for a Given Day's Data
+#'
+#' This function goes through each bin's data for a specific day and identifies
+#' cases of double cow detections (overlapping visits by different cows at the same bin).
+#' 
+#' @param dat A data frame containing a single day's data for all bins.
+#' 
+#' @return A data frame containing all rows where double detections of cows occurred for the given day.
+get_double_cow_detections_for_day <- function(dat) {
+  bins <- unique(dat$Bin)
+  daily_double_cow_detection <- data.frame() 
+  
+  for(bin in bins) {
+    bin_data = dat[dat$Bin == bin, ]
+    bin_data = bin_data[order(bin_data$Start), ]
+    double_detections = get_double_cow_detection_for_bin(bin_data)
+    daily_double_cow_detection <- rbind(daily_double_cow_detection, double_detections)
+  }
+  
+  return(daily_double_cow_detection)
+}
+
+#' Accumulate Double Cow Detections for All Days
+#'
+#' This function iterates through all given days and checks for cases of double cow detections.
+#' It also updates a warning data frame with detected instances.
+#' 
+#' @param all_comb A list of data frames, each containing data for a specific day.
+#' @param Insentec_warning A data frame where warnings regarding double cow detections are to be recorded.
+#' 
+#' @return A list containing two data frames: 
+#'         - DoubleCowDetection: Consolidated double cow detections across all days.
+#'         - WarningData: Updated Insentec_warning data frame with recorded warnings.
+get_all_double_cow_detections <- function(all_comb, Insentec_warning) {
+  double_cow_detection <- data.frame()  
+  double_cow_detection_list <- list()
+  
+  for(i in 1:length(all_comb)) {
+    daily_data = get_double_cow_detections_for_day(all_comb[[i]])
+    double_cow_detection <- rbind(double_cow_detection, daily_data)
+    
+    cur_index <- length(double_cow_detection_list) + 1
+    double_cow_detection_list[[cur_index]] <- daily_data
+    names(double_cow_detection_list)[cur_index] <- names(all_comb)[i]
+    
+    double_cow_detection_bin <- sort(unique(daily_data$Bin))
+    Insentec_warning$double_cow_detection_bin[i] <- paste(unlist(double_cow_detection_bin), collapse="; ")
+  }
+  
+  return(list("DoubleCowDetectionList" = double_cow_detection_list, "WarningData" = Insentec_warning))
+}
+
+
 
 
 #' Generate Warning Data
@@ -787,11 +862,15 @@ generate_warning_df <- function(df_list, data_source = "feed and water", all_fee
   results <- get_all_double_detections_1cow2bin(df_list, Insentec_warning)
   double_bin_detection_list <- results$double_bin_detection_list
   Insentec_warning <- results$WarningData
+  # double cow detection: same bin registers 2 cows
+  results <- get_all_double_cow_detections(df_list, Insentec_warning)
+  double_cow_detection_list <- results$DoubleCowDetectionList
+  Insentec_warning <- results$WarningData
   
   ##### feed data warning
   if ((data_source == "feed") | (data_source == "feed and water")) {
     # long feeding duration 
-    results <- long_feed_duration(all_feed, high_feed_dur_threshold, master_feed, Insentec_warning, type = "feed")
+    results <- check_long_durations(all_feed, high_feed_dur_threshold, master_feed, Insentec_warning, type = "feed")
     long_feed_dur_list <- results$LongDurationList
     Insentec_warning <- results$InsentecWarning
     
@@ -801,14 +880,15 @@ generate_warning_df <- function(df_list, data_source = "feed and water", all_fee
   ##### water data warning
   if ((data_source == "water") | (data_source == "feed and water")) {
     # long drinking duration 
-    results <- long_feed_duration(all_water, high_water_dur_threshold, master_wat, Insentec_warning, type = "water")
+    results <- check_long_durations(all_water, high_water_dur_threshold, master_wat, Insentec_warning, type = "water")
     long_wat_dur_list <- results$LongDurationList
     Insentec_warning <- results$InsentecWarning
     
     
   }
   
-  return(list(long_feed_dur_list, long_wat_dur_list, double_bin_detection_list, Insentec_warning))
+  return(list(long_feed_dur_list, long_wat_dur_list, double_bin_detection_list, 
+              double_cow_detection_list, Insentec_warning))
 }
 
 
