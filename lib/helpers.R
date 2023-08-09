@@ -791,7 +791,7 @@ generate_warning_df <- function(df_list, data_source = "feed and water", all_fee
   ##### feed data warning
   if ((data_source == "feed") | (data_source == "feed and water")) {
     # long feeding duration 
-    results <- long_feed_duration(all_feed, high_feed_dur_threshold, master_feed, Insentec_warning, type = "feed")
+    results <- check_long_durations(all_feed, high_feed_dur_threshold, master_feed, Insentec_warning, type = "feed")
     long_feed_dur_list <- results$LongDurationList
     Insentec_warning <- results$InsentecWarning
     
@@ -801,7 +801,7 @@ generate_warning_df <- function(df_list, data_source = "feed and water", all_fee
   ##### water data warning
   if ((data_source == "water") | (data_source == "feed and water")) {
     # long drinking duration 
-    results <- long_feed_duration(all_water, high_water_dur_threshold, master_wat, Insentec_warning, type = "water")
+    results <- check_long_durations(all_water, high_water_dur_threshold, master_wat, Insentec_warning, type = "water")
     long_wat_dur_list <- results$LongDurationList
     Insentec_warning <- results$InsentecWarning
     
