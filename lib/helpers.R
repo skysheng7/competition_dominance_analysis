@@ -527,15 +527,10 @@ combine_feeder_and_water_data <- function(all.fed, all.wat) {
   
   for(i in seq_along(all.fed)) {
     all.comb[[i]] = rbind(all.fed[[i]], all.wat[[i]])
+    #Adding dates as name
+    date = names(all.fed)[i]
+    names(all.comb)[i]=date
   }
-  
-  all.comb[[i]]$Start=paste(rep(date,dim(all.comb[[i]])[1]),all.comb[[i]]$Start)
-  all.comb[[i]]$Start=ymd_hms(all.comb[[i]]$Start, tz=time_zone)
-  all.comb[[i]]$End=paste(rep(date,dim(all.comb[[i]])[1]),all.comb[[i]]$End)
-  all.comb[[i]]$End=ymd_hms(all.comb[[i]]$End, tz=time_zone)
-  
-  #Adding dates as name
-  names(all.comb)[i]=names(all.fed)[i]
   
   return(all.comb)
 }
@@ -560,5 +555,260 @@ merge_data <- function(data_list) {
   return(master_data)
 }
 
+#' Generate empty dataframe prepared to hold Warning Data
+#'
+#' This function generates an empty data frame containing various warning/error
+#' indicators related to cow feeding data.
+#'
+#' @param df_list A list of data frames containing feed, or water, or both feed and water data grouped by dates
+#' @param data_source Insentec data source, can be "feed", "water" or "feed and water". To indicate is this just feed data, or just water data, or feed and water
+#'
+#' @return An empty warning data frame.
+generate_warning_df_empty <- function(df_list, data_source = "feed and water") {
+  
+  # Ensure the input list is not empty
+  if (length(df_list) == 0) {
+    stop("The input list is empty!")
+  }
+  
+  # Get date list
+  date_list <- names(df_list)
+  
+  # Create the initial data frame
+  Insentec_warning <- data.frame(date = ymd(date_list, tz = time_zone))
+  
+  # Adding additional columns with default values (blank)
+  general_columns <- c(
+    "total_cow_number", "missing_cow", "double_bin_detection_bin", 
+    "double_cow_detection_bin", "negative_duration_bin", "negative_intake_bin",  
+    "no_show_after_6pm_cows", "no_show_after_12pm_cows", "no_visit_after_6pm_bins",
+    "no_visit_after_12pm_bins", "bins_not_visited_today"
+  )
+  
+  feed_columns <- c(
+    "long_feed_duration_bin", "large_one_bout_feed_intake_bin", 
+    "large_feed_intake_in_short_time_bin", "feed_bins_with_low_visits_today", 
+    "cows_no_visit_to_feed_bin", "low_daily_feed_intake_cows", 
+    "high_daily_feed_intake_cows", "feed_add_time_no_found"
+  )
+  
+  wat_columns <- c(
+    "long_water_duration_bin", "large_one_bout_water_intake_bin", 
+    "large_water_intake_in_short_time_bin", "cows_no_visit_to_water_bin", 
+    "low_daily_water_intake_cows",
+    "high_daily_water_intake_cows"
+  )
+  
+  if (data_source == "feed and water") {
+    warning_columns <- c(general_columns, feed_columns, wat_columns)
+  } else if (data_source == "feed") {
+    warning_columns <- c(general_columns, feed_columns)
+  } else if (data_source == "water") {
+    warning_columns <- c(general_columns, wat_columns)
+  }
+  
+  
+  # Add warning columns to the data frame
+  for (col in warning_columns) {
+    Insentec_warning[[col]] <- ""
+  }
+  
+  return(Insentec_warning)
+}
+
+
+#' Compute Insentec warnings
+#' 
+#' This function processes the `all.comb` list to update the Insentec warning data frame.
+#' It orders the data frame by date and computes the total number of unique cows.
+#' 
+#' @param df_list A list of data frames containing feed, or water, or both feed and water data grouped by dates
+#' @param warning_df A data frame containing the Insentec warnings.
+#' 
+#' @return A modified Insentec warning data frame.
+total_cow_num <- function(df_list, warning_df) {
+  
+  # Order by date
+  warning_df <- warning_df[order(warning_df$date),]
+  
+  # Update total cow number based on unique cows
+  for (i in 1:length(df_list)) {
+    warning_df$total_cow_number[i] <- length(unique(df_list[[i]]$Cow))
+  }
+  
+  return(warning_df)
+}
+
+#' Check long visit durations
+#' 
+#' This function inspects visit durations (for feeding or drinking) and checks for outliers. 
+#' It also plots a boxplot of the master visit duration and updates the Insentec warning data frame 
+#' with long visit durations.
+#' 
+#' @param all_data A list of data frames containing either feeding or drinking data.
+#' @param high_duration A threshold for high durations. Default is 2000 seconds.
+#' @param master_data A data frame of master data (feeding or drinking).
+#' @param Insentec_warning A data frame containing the Insentec warnings.
+#' @param type Character, either "feed" or "water".
+#' 
+#' @return A list containing rows with long visit durations for each data in all_data, and updated Insentec warning dataframe.
+check_long_durations <- function(all_data, high_duration = 2000, master_data, 
+                                 Insentec_warning, type = "feed") {
+  
+  require(here)  # Ensure the required package is loaded
+  
+  # Define the file name based on type
+  plot_name <- ifelse(type == "feed", "feed_allDate_boxplot.pdf", "water_allDate_boxplot.pdf")
+  pdfPath = here::here(paste0("graphs/", plot_name))
+  
+  pdf(file=pdfPath)
+  boxplot(master_data$Duration, main=paste(names(all_data)[1], " to ", names(all_data)[length(all_data)], type, sep = "-"))
+  dev.off() # close the pdf file
+  
+  long_duration_list <- list()
+  for(u in 1:length(all_data)) {
+    extended_data <- all_data[[u]][which(all_data[[u]]$Duration > high_duration),]
+    cur_index <- length(long_duration_list)+1
+    long_duration_list[[cur_index]] <- extended_data
+    names(long_duration_list)[cur_index] <- names(all_data)[u]
+    extended_bin <- sort(unique(extended_data$Bin))
+    extended_bin_str <- paste(unlist(extended_bin), collapse="; ")
+    colname_to_update <- ifelse(type == "feed", "long_feed_duration_bin", "long_water_duration_bin")
+    Insentec_warning[colname_to_update][u] <- extended_bin_str #record it on warning message sheet
+  }
+  
+  return(list("LongDurationList" = long_duration_list, "InsentecWarning" = Insentec_warning))
+}
+
+
+#' Detect and Return Double Detections for a Given Cow
+#'
+#' This function checks for overlapping visits for a given cow's data 
+#' and returns rows where double detections occur.
+#' 
+#' @param dat2 A data frame containing data for a single cow.
+#' 
+#' @return A data frame containing rows where double detections occurred for the given cow.
+get_double_detections_for_cow <- function(dat2) {
+  detections <- data.frame()
+  
+  if(nrow(dat2) > 1) {
+    for(k in 2:nrow(dat2)) {
+      if(dat2[k, "Start"] < dat2[k-1, "End"]) {
+        detections <- rbind(detections, dat2[(k-1):k, ])
+      }
+    }
+  }
+  
+  return(detections)
+}
+
+
+#' Identify Double Detections for All Cows for a Given Day's Data
+#'
+#' This function goes through each cow's data for a specific day and identifies
+#' cases of double detections (overlapping visits).
+#' 
+#' @param dat A data frame containing a single day's data for all cows.
+#' 
+#' @return A data frame containing all rows where double detections occurred for the given day.
+get_double_detections_for_day <- function(dat) {
+  daily_double_detection <- data.frame()
+  cows <- unique(dat$Cow)
+  
+  for(cow in cows) {
+    cow_data <- dat[dat$Cow == cow, ]
+    cow_data <- cow_data[order(cow_data$Start), ]
+    
+    cow_double_detections <- get_double_detections_for_cow(cow_data)
+    daily_double_detection <- rbind(daily_double_detection, cow_double_detections)
+  }
+  
+  return(daily_double_detection)
+}
+
+
+#' Accumulate Double Detections for All Days
+#'
+#' This function iterates through all given days and checks for cases of double detections.
+#' It also updates a warning data frame with detected instances.
+#' 
+#' @param all_comb A list of data frames, each containing data for a specific day.
+#' @param Insentec_warning A data frame where warnings regarding double detections are to be recorded.
+#' 
+#' @return A list containing two data frames: 
+#'         - DoubleDetection: Consolidated double detections across all days
+#'         - WarningData: Updated Insentec_warning data frame with recorded warnings.
+get_all_double_detections_1cow2bin <- function(all_comb, Insentec_warning) {
+  double_detection <- data.frame()
+  double_bin_detection_list <- list()
+  
+  for(i in 1:length(all_comb)) {
+    daily_double_detection <- get_double_detections_for_day(all_comb[[i]])
+    
+    double_detection <- rbind(double_detection, daily_double_detection)
+    
+    if(nrow(daily_double_detection) > 0) {
+      faulty_bin <- daily_double_detection
+      faulty_bin$rowNum <- seq_len(nrow(faulty_bin))
+      faulty_bin2 <- faulty_bin[faulty_bin$rowNum %% 2 != 0, ]
+      double_detection_bin <- sort(unique(faulty_bin2$Bin))
+      Insentec_warning$double_bin_detection_bin[i] <- paste(double_detection_bin, collapse = "; ")
+    }
+    
+    double_bin_detection_list[[i]] <- daily_double_detection
+    names(double_bin_detection_list)[i] <- names(all_comb)[i]
+  }
+  
+  return(list(DoubleDetectionList = double_bin_detection_list, WarningData = Insentec_warning))
+}
+
+
+
+
+#' Generate Warning Data
+#'
+#' This function generates a data frame containing various warning/error
+#' indicators related to cow feeding data.
+#'
+#' @param df_list A list of data frames containing feed, or water, or both feed and water data grouped by dates
+#' @param data_source Insentec data source, can be "feed", "water" or "feed and water". To indicate is this just feed data, or just water data, or feed and water
+#'
+#' @return A warning data frame.
+generate_warning_df <- function(df_list, data_source = "feed and water", all_feed = NULL, all_water = NULL, high_feed_dur_threshold, master_feed, master_wat) {
+  Insentec_warning <- generate_warning_df(df_list, data_source)
+  long_feed_dur_list <- list()
+  long_wat_dur_list <- list()
+  
+  ##### general Insentec warning: 
+  # calculate total number of cows in the dataframe
+  Insentec_warning <- total_cow_num(df_list, Insentec_warning)
+  # double detection: same cow shows up at 2 bins
+  results <- get_all_double_detections_1cow2bin(df_list, Insentec_warning)
+  double_bin_detection_list <- results$double_bin_detection_list
+  Insentec_warning <- results$WarningData
+  
+  ##### feed data warning
+  if ((data_source == "feed") | (data_source == "feed and water")) {
+    # long feeding duration 
+    results <- long_feed_duration(all_feed, high_feed_dur_threshold, master_feed, Insentec_warning, type = "feed")
+    long_feed_dur_list <- results$LongDurationList
+    Insentec_warning <- results$InsentecWarning
+    
+    
+  }
+  
+  ##### water data warning
+  if ((data_source == "water") | (data_source == "feed and water")) {
+    # long drinking duration 
+    results <- long_feed_duration(all_water, high_water_dur_threshold, master_wat, Insentec_warning, type = "water")
+    long_wat_dur_list <- results$LongDurationList
+    Insentec_warning <- results$InsentecWarning
+    
+    
+  }
+  
+  return(list(long_feed_dur_list, long_wat_dur_list, double_bin_detection_list, Insentec_warning))
+}
 
 

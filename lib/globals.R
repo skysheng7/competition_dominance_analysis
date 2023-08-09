@@ -35,3 +35,12 @@ bin_id_add <- 100
 
 # Time zone to be used in date-time operations
 time_zone <- "America/Los_Angeles"
+
+# Insentec data source, is it just feed data, or just water data, or both.
+data_source <- "feed and water"  # can be "feed", or "water", or "feed and water" means has both water and feed data
+
+# duration threshold for what is coonsidered a long feeding visit  
+high_feed_dur_threshold = 2000
+
+# duration threshold for what is coonsidered a long drinking visit  
+high_water_dur_threshold = 1800

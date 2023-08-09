@@ -53,7 +53,7 @@ date_range <- date_result$date_range
 # read in feed and water data into a list of dataframes
 all.fed <- process_all_feed(fileNames.f, coln, cow_delete_list, feed_transponder_delete_list, min_feed_bin, max_feed_Bin, feed_coln_to_keep)
 all.wat <- process_all_water(fileNames.w, coln.wat, cow_delete_list, wat_transponder_delete_list, min_wat_bin, max_wat_Bin, wat_coln_to_keep, bin_id_add)
-all.comb <- combine_feeder_and_water_datafunction(all.fed, all.wat)
+all.comb <- combine_feeder_and_water_data(all.fed, all.wat)
 
 # combine data frame different dates into 1 master dataframe
 # Calling the function for each data list:
@@ -64,6 +64,9 @@ master_comb <- merge_data(all.comb)
 ################################################################################
 ############################## Quality Check ###################################
 ################################################################################
+# generate an empty warning dataframe
+
+
 
 
 
