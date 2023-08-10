@@ -889,6 +889,7 @@ generate_warning_df <- function(df_list, data_source = "feed and water", all_fee
   
   return(list(long_feed_dur_list, long_wat_dur_list, double_bin_detection_list, 
               double_cow_detection_list, Insentec_warning))
+
 }
 
 
