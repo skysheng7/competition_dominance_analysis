@@ -674,7 +674,7 @@ check_long_durations <- function(all_data, high_duration = 2000, master_data,
     extended_bin <- sort(unique(extended_data$Bin))
     extended_bin_str <- paste(unlist(extended_bin), collapse="; ")
     colname_to_update <- ifelse(type == "feed", "long_feed_duration_bin", "long_water_duration_bin")
-    Insentec_warning[colname_to_update][u] <- extended_bin_str #record it on warning message sheet
+    Insentec_warning[u, colname_to_update] <- extended_bin_str #record it on warning message sheet
   }
   
   return(list("LongDurationList" = long_duration_list, "InsentecWarning" = Insentec_warning))
@@ -730,8 +730,9 @@ get_double_detections_for_day <- function(dat) {
 
 #' Accumulate Double Detections for All Days
 #'
-#' This function iterates through all given days and checks for cases of double detections.
-#' It also updates a warning data frame with detected instances.
+#' This function iterates through all given days and checks for cases of 1 cow 2 
+#' bin double detections: when the same cow was registered at 2 bins at the same 
+#' time. It also updates a warning data frame with detected instances.
 #' 
 #' @param all_comb A list of data frames, each containing data for a specific day.
 #' @param Insentec_warning A data frame where warnings regarding double detections are to be recorded.
@@ -810,7 +811,8 @@ get_double_cow_detections_for_day <- function(dat) {
 
 #' Accumulate Double Cow Detections for All Days
 #'
-#' This function iterates through all given days and checks for cases of double cow detections.
+#' This function iterates through all given days and checks for cases of double 
+#' cow detections: when the same bin registeres 2 cows at the same time
 #' It also updates a warning data frame with detected instances.
 #' 
 #' @param all_comb A list of data frames, each containing data for a specific day.
@@ -850,8 +852,8 @@ get_all_double_cow_detections <- function(all_comb, Insentec_warning) {
 #' @param data_source Insentec data source, can be "feed", "water" or "feed and water". To indicate is this just feed data, or just water data, or feed and water
 #'
 #' @return A warning data frame.
-generate_warning_df <- function(df_list, data_source = "feed and water", all_feed = NULL, all_water = NULL, high_feed_dur_threshold, master_feed, master_wat) {
-  Insentec_warning <- generate_warning_df(df_list, data_source)
+generate_warning_df <- function(df_list, data_source = "feed and water", all_feed = NULL, all_water = NULL, high_feed_dur_threshold, high_water_dur_threshold, master_feed, master_wat) {
+  Insentec_warning <- generate_warning_df_empty(df_list, data_source)
   long_feed_dur_list <- list()
   long_wat_dur_list <- list()
   
@@ -860,7 +862,7 @@ generate_warning_df <- function(df_list, data_source = "feed and water", all_fee
   Insentec_warning <- total_cow_num(df_list, Insentec_warning)
   # double detection: same cow shows up at 2 bins
   results <- get_all_double_detections_1cow2bin(df_list, Insentec_warning)
-  double_bin_detection_list <- results$double_bin_detection_list
+  double_bin_detection_list <- results$DoubleDetectionList
   Insentec_warning <- results$WarningData
   # double cow detection: same bin registers 2 cows
   results <- get_all_double_cow_detections(df_list, Insentec_warning)
