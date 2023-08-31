@@ -115,20 +115,42 @@ If the data files are encoded in a supported file format (e.g., csv, dat), they'
 
 **Dataset Structure:** A list of data frames, where each data frame corresponds to a specific date. Each date might have multiple or no occurrences of double cow detections. 
 
-**Variable List:** 
-1. **Transponder:** The transponder ID of the bin.
-2. **Cow:** Cow ID.
-3. **Bin:** Bin number where the cow was detected.
-4. **Start:** Start date and time of the detection.
-5. **End:** End date and time of the detection.
-6. **Duration:** Total duration of this detection instance in seconds.
-7. **Startweight:** Start weight (when the cow is detected) of the bin in kg.
-8. **Endweight:** End weight (post-detection) of the bin in kg.
-9. **Intake:** Total water intake (Startweight - Endweight) during the detection in kg.
-10. **Rate:** Intake rate, derived from the Intake and Duration.
-**Note:** Given that for some dates, there might be no double cow detections, the associated data frame might have zero observations for that date.
-**Usage Recommendations:** The presence of double cow detections can be indicative of anomalies or errors in the Insentec bins.
-
+**Variable List:** same as `results/double_bin_detection_list.rda`
 
 
 ## Dataset Specific Information for: `results/negative_dur_list.rda`
+
+**Description:** 
+This dataset encompasses instances where visits to feed or water bin recorded negative visit duration, indicating potential errors in the data collection or logging process. These instances can be critical for assessing the quality and integrity of the data. Each entry provides comprehensive details about the cow, the bin, and related timestamps.
+
+**Number of Variables:** 
+10
+
+**Number of Cases/Rows:** 
+Varies based on the day and the detected negative durations.
+
+**Dataset Structure:** 
+A list of data frames, with each data frame corresponding to a specific date. Each date might have multiple or no occurrences of negative durations. 
+
+**Variable List:** same as `results/double_bin_detection_list.rda`
+
+
+
+## Dataset Specific Information for: `results/negative_intake_list.rda`
+
+**Description:**  
+This dataset records instances where the feed or water bin visit has negative intake, suggesting potential discrepancies or errors in the data collection or logging mechanisms. A negative intake can signal irregularities that may affect data analysis outcomes. Comprehensive details about the cow, bin, and corresponding timestamps are provided for each instance.
+
+**Number of Variables:**  
+10
+
+**Number of Cases/Rows:**  
+Varies depending on the day and detected negative intakes.
+
+**Dataset Structure:**  
+The data is organized as a list of data frames. Each data frame corresponds to a specific date. Depending on the date, there may be multiple, or no recorded instances of negative intakes. 
+
+**Variable List:** same as `results/double_bin_detection_list.rda`
+
+
+
