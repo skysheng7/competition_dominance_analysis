@@ -941,6 +941,93 @@ detect_large_intake <- function(data_list, threshold, Insentec_warning, source_d
 }
 
 
+#' Identify Large Intakes In Short Time
+#' 
+#' @param data_list A list of data frames representing daily intakes (either feed or water).
+#' @param Insentec_warning A data frame where warnings regarding intake in a short time are recorded.
+#' @param threshold_intake The intake value that is considered as large.
+#' @param threshold_rate The rate value that is considered as rapid.
+#' @param source_d if this is for water data or feed data
+#' 
+#' @return A named list containing data frames for days with large intakes in short time and insentec_warning data frame.
+detect_large_intake_short_time <- function(data_list, threshold_intake, threshold_rate, Insentec_warning, source_d) {
+  large_intake_short_time_list <- list()
+  
+  for(i in seq_along(data_list)) {
+    dat <- data_list[[i]]
+    short_time_intake <- dat[which(dat$Intake > threshold_intake & dat$rate > threshold_rate),]
+    large_intake_short_time_list[[i]] <- short_time_intake
+    names(large_intake_short_time_list)[i] <- names(data_list)[i]
+    
+    if (nrow(short_time_intake) > 0) {
+      if (source_d == "feed") {
+        Insentec_warning$large_feed_intake_in_short_time_bin[i] <- paste(sort(unique(short_time_intake$Bin)), collapse = "; ")
+      } else if (source_d == "water") {
+        Insentec_warning$large_water_intake_in_short_time_bin[i] <- paste(sort(unique(short_time_intake$Bin)), collapse = "; ")
+      }
+      
+    }
+  }
+  
+  return(list(
+    large_intake_short_time = large_intake_short_time_list,
+    Insentec_warning = Insentec_warning
+  ))
+}
+
+
+#' Determine Last Seen Time
+#'
+#' @param df The data frame to process.
+#' @param col The column name for which last seen times should be determined.
+#' @return A data frame with the column of interest and the 'End' column.
+determine_last_seen <- function(df, col) {
+  df <- df[order(df[[col]], df$End), ]
+  df$last_seen <- 0
+  df$last_seen[nrow(df)] <- 1
+  # go through every row to find the last time a cow was seen 
+  for (k in 1:(nrow(df)-1)) {
+    if (df$Cow[k] != df$Cow[k+1]){df$last_seen[k] <- 1}
+  }
+  last_seen_table <- df[df$last_seen == 1, c(col, "End")]
+  return(last_seen_table)
+}
+
+#' Extract Warnings For Entities Not Seen After A Particular Time
+#'
+#' @param df The data frame to process.
+#' @param col The column name.
+#' @param time The cut-off time to check against.
+#' @return A character string with the warnings.
+extract_warnings <- function(df, col, time) {
+  not_seen_df <- df[df$End < time, ]
+  not_seen_df$comb_string <- paste(not_seen_df[[col]], as.character(not_seen_df$End), sep = ", ")
+  warning_str <- paste(sort(unique(not_seen_df$comb_string)), collapse = "; ")
+  return(warning_str)
+}
+
+#' Main Function
+generate_warnings <- function(df_list, Insentec_warning) {
+  for (i in seq_along(df_list)) {
+    after6pm <- ymd_hms(paste(names(df_list)[i], "17:59:59"), tz = "America/Los_Angeles")
+    after12pm <- ymd_hms(paste(names(df_list)[i], "11:59:59"), tz = "America/Los_Angeles")
+    
+    # For Cows
+    last_seen_cow <- determine_last_seen(df_list[[i]], "Cow")
+    Insentec_warning$no_show_after_6pm_cows[i] <- extract_warnings(last_seen_cow, "Cow", after6pm)
+    Insentec_warning$no_show_after_12pm_cows[i] <- extract_warnings(last_seen_cow, "Cow", after12pm)
+    
+    # For Bins
+    last_seen_bin <- determine_last_seen(df_list[[i]], "Bin")
+    Insentec_warning$no_visit_after_6pm_bins[i] <- extract_warnings(last_seen_bin, "Bin", after6pm)
+    Insentec_warning$no_visit_after_12pm_bins[i] <- extract_warnings(last_seen_bin, "Bin", after12pm)
+  }
+  return(Insentec_warning)
+}
+
+# Call the function
+Insentec_warning <- generate_warnings(df_list, Insentec_warning)
+
 
 
 
@@ -975,15 +1062,19 @@ generate_warning_df <- function(data_source = "feed and water", all_feed = NULL,
   results <- get_all_double_detections_1cow2bin(df_list, Insentec_warning)
   double_bin_detection_list <- results$DoubleDetectionList
   Insentec_warning <- results$WarningData
+  save(double_bin_detection_list, file = (here::here(paste0("data/results/", "double_detection_1cow_2bins.rda"))))
   # double cow detection: same bin registers 2 cows
   results <- get_all_double_cow_detections(df_list, Insentec_warning)
   double_cow_detection_list <- results$DoubleCowDetectionList
   Insentec_warning <- results$WarningData
+  save(double_cow_detection_list, file = (here::here(paste0("data/results/", "double_detection_1bin_2cows.rda"))))
   # record negative duration and intake
   all_results <- record_negatives(df_list, Insentec_warning)
   negative_dur_list <- all_results$negative_duration
   negative_intake_list <- all_results$negative_intake
   Insentec_warning <- all_results$Insentec_warning
+  save(negative_dur_list, file = (here::here(paste0("data/results/", "negative_dur_list.rda"))))
+  save(negative_intake_list, file = (here::here(paste0("data/results/", "negative_intake_list.rda"))))
   
   ##### feed data warning
   if ((data_source == "feed") | (data_source == "feed and water")) {
@@ -991,12 +1082,23 @@ generate_warning_df <- function(data_source = "feed and water", all_feed = NULL,
     results <- check_long_durations(all_feed, high_feed_dur_threshold, Insentec_warning, type = "feed")
     long_feed_dur_list <- results$LongDurationList
     Insentec_warning <- results$InsentecWarning
+    save(long_feed_dur_list, file = (here::here(paste0("data/results/", "long_feed_duration.rda"))))
     # delete negative duration and intake for feed
     all_feed <- delete_negatives(all_feed)
-    # large feed intake
+    # large feed intake in 1 bout
     results <- detect_large_intake(all_feed, large_feed_intake_bout_threshold, Insentec_warning, "feed") 
     large_feed_intake_in_one_bout <- results$large_intake
     Insentec_warning <- results$Insentec_warning
+    save(large_feed_intake_in_one_bout, file = (here::here(paste0("data/results/", "large_feed_intake_in_one_bout.rda"))))
+    # large feed intake in short time
+    feed_results_short_time <- detect_large_intake_short_time(all_feed, large_feed_intake_short_time_threshold, 
+                                                              large_feed_rate_short_time_threshold, 
+                                                              Insentec_warning, "feed")
+    large_feed_intake_in_short_time <- feed_results_short_time$large_intake_short_time
+    Insentec_warning <- feed_results_short_time$Insentec_warning
+    save(large_feed_intake_in_short_time, file = (here::here(paste0("data/results/", "large_feed_intake_in_short_time.rda"))))
+    
+    
   }
   
   ##### water data warning
@@ -1005,19 +1107,27 @@ generate_warning_df <- function(data_source = "feed and water", all_feed = NULL,
     results <- check_long_durations(all_water, high_water_dur_threshold, Insentec_warning, type = "water")
     long_wat_dur_list <- results$LongDurationList
     Insentec_warning <- results$InsentecWarning
+    save(long_wat_dur_list, file = (here::here(paste0("data/results/", "long_water_duration.rda"))))
+    
     # delete negative duration and intake for water
     all_water <- delete_negatives(all_water)
-    # large water intake
+    # large water intake in 1 bout
     results <- detect_large_intake(all_water, large_water_intake_bout_threshold, Insentec_warning, "water") 
     large_water_intake_in_one_bout <- results$large_intake
     Insentec_warning <- results$Insentec_warning
+    save(large_water_intake_in_one_bout, file = (here::here(paste0("data/results/", "large_water_intake_in_one_bout.rda"))))
+    
+    # large water intake in short time
+    wat_results_short_time <- detect_large_intake_short_time(all_water, large_water_intake_short_time_threshold, 
+                                                             large_water_rate_short_time_threshold,
+                                                             Insentec_warning, "water")
+    large_water_intake_in_short_time <- wat_results_short_time$large_intake_short_time
+    Insentec_warning <- wat_results_short_time$Insentec_warning
+    save(large_water_intake_in_short_time, file = (here::here(paste0("data/results/", "large_water_intake_in_short_time.rda"))))
     
   }
   
-  return(list(long_feed_dur_list, long_wat_dur_list, double_bin_detection_list, 
-              double_cow_detection_list, negative_dur_list, negative_intake_list, 
-              large_feed_intake_in_one_bout, large_water_intake_in_one_bout,
-              Insentec_warning, all_feed, all_water))
+  return(list(Insentec_warning, all_feed, all_water))
 
 }
 

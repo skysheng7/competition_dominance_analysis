@@ -50,3 +50,15 @@ large_feed_intake_bout_threshold = 8
 
 #intake threshold for what is considered a large intake in 1 bout for water
 large_water_intake_bout_threshold = 30
+
+#intake threshold for what is considered a large intake in short time for feed
+large_feed_intake_short_time_threshold = 5
+
+#rate threshold for what is considered a large intake in short time for feed
+large_feed_rate_short_time_threshold = 0.008
+
+#intake threshold for what is considered a large intake in short time for water
+large_water_intake_short_time_threshold = 10
+
+#rate threshold for what is considered a large intake in short time for feed
+large_water_rate_short_time_threshold = 0.35
