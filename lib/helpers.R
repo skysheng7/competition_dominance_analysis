@@ -907,6 +907,38 @@ delete_negatives <- function(data_list) {
   
 }
 
+#' Identify Large Intakes In One Bout
+#' 
+#' @param data_list A list of data frames representing daily intakes (either feed or water).
+#' @param Insentec_warning A data frame where warnings regarding double cow detections are to be recorded.
+#' @param threshold The intake value that is considered as large.
+#' @param source_d if this is for water data or feed data
+#' 
+#' @return A named list containing data frames for days with large intakes and insentec_warning data frame.
+detect_large_intake <- function(data_list, threshold, Insentec_warning, source_d) {
+  large_intake_list <- list()
+  
+  for(i in seq_along(data_list)) {
+    dat <- data_list[[i]]
+    large_intake <- dat[which(dat$Intake > threshold),]
+    large_intake_list[[i]] <- large_intake
+    names(large_intake_list)[i] <- names(data_list)[i]
+    
+    if (nrow(large_intake) > 0) {
+      if (source_d == "feed") {
+        Insentec_warning$large_one_bout_feed_intake_bin[i] <- paste(sort(unique(large_intake$Bin)), collapse = "; ")
+      } else if (source_d == "water") {
+        Insentec_warning$large_one_bout_water_intake_bin[i] <- paste(sort(unique(large_intake$Bin)), collapse = "; ")
+      }
+      
+    }
+  }
+  
+  return(list(
+    large_intake = large_intake_list,
+    Insentec_warning = Insentec_warning
+  ))
+}
 
 
 
@@ -961,6 +993,10 @@ generate_warning_df <- function(data_source = "feed and water", all_feed = NULL,
     Insentec_warning <- results$InsentecWarning
     # delete negative duration and intake for feed
     all_feed <- delete_negatives(all_feed)
+    # large feed intake
+    results <- detect_large_intake(all_feed, large_feed_intake_bout_threshold, Insentec_warning, "feed") 
+    large_feed_intake_in_one_bout <- results$large_intake
+    Insentec_warning <- results$Insentec_warning
   }
   
   ##### water data warning
@@ -971,11 +1007,16 @@ generate_warning_df <- function(data_source = "feed and water", all_feed = NULL,
     Insentec_warning <- results$InsentecWarning
     # delete negative duration and intake for water
     all_water <- delete_negatives(all_water)
+    # large water intake
+    results <- detect_large_intake(all_water, large_water_intake_bout_threshold, Insentec_warning, "water") 
+    large_water_intake_in_one_bout <- results$large_intake
+    Insentec_warning <- results$Insentec_warning
     
   }
   
   return(list(long_feed_dur_list, long_wat_dur_list, double_bin_detection_list, 
               double_cow_detection_list, negative_dur_list, negative_intake_list, 
+              large_feed_intake_in_one_bout, large_water_intake_in_one_bout,
               Insentec_warning, all_feed, all_water))
 
 }
