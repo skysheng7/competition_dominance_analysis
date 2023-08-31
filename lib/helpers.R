@@ -647,15 +647,17 @@ total_cow_num <- function(df_list, warning_df) {
 #' 
 #' @param all_data A list of data frames containing either feeding or drinking data.
 #' @param high_duration A threshold for high durations. Default is 2000 seconds.
-#' @param master_data A data frame of master data (feeding or drinking).
 #' @param Insentec_warning A data frame containing the Insentec warnings.
 #' @param type Character, either "feed" or "water".
 #' 
 #' @return A list containing rows with long visit durations for each data in all_data, and updated Insentec warning dataframe.
-check_long_durations <- function(all_data, high_duration = 2000, master_data, 
+check_long_durations <- function(all_data, high_duration = 2000, 
                                  Insentec_warning, type = "feed") {
   
   require(here)  # Ensure the required package is loaded
+  
+  # create A data frame of master data (feeding or drinking).
+  master_data <- merge_data(all_data)
   
   # Define the file name based on type
   plot_name <- ifelse(type == "feed", "feed_allDate_boxplot.pdf", "water_allDate_boxplot.pdf")
@@ -841,6 +843,72 @@ get_all_double_cow_detections <- function(all_comb, Insentec_warning) {
 }
 
 
+#' Identify Negative Intakes and Durations
+#'
+#' @param data_list A list of data frames, either all_feed or all_water or both.
+#' @param Insentec_warning A data frame where warnings regarding double cow detections are to be recorded.
+#' @return A list containing negative duration list and negative intake list, insentec_warning dataframe.
+record_negatives <- function(data_list, Insentec_warning) {
+  
+  negative_dur_list <- list()
+  negative_intake_list <- list()
+  
+  for(i in 1:length(data_list)) {
+    dat <- data_list[[i]]
+    
+    # Identify negative durations
+    negative_duration <- dat[which(dat$Duration < 0),]
+    negative_dur_list[[i]] <- negative_duration
+    names(negative_dur_list)[i] <- names(data_list)[i]
+    negative_duration_bin <- sort(unique(negative_duration$Bin))
+    Insentec_warning$negative_duration_bin[i] <- paste(unlist(negative_duration_bin), collapse="; ")
+    
+    # Identify negative intakes (only those with more than 1 kg of negative intake)
+    negative_intake <- dat[which(dat$Intake < 0),]
+    negative_intake2 <- negative_intake[which(abs(negative_intake$Intake) > 1),]
+    negative_intake_list[[i]] <- negative_intake2
+    names(negative_intake_list)[i] <- names(data_list)[i]
+    negative_intake_bin <- sort(unique(negative_intake2$Bin))
+    Insentec_warning$negative_intake_bin[i] <- paste(unlist(negative_intake_bin), collapse="; ")
+    
+  }
+  
+  return(list(negative_duration = negative_dur_list, negative_intake = negative_intake_list, Insentec_warning = Insentec_warning))
+}
+
+#' Delete Negative Intakes and Durations
+#'
+#' @param data_list A list of data frames, either all_feed or all_water.
+#' @return A list containing processed data
+delete_negatives <- function(data_list) {
+  for(i in 1:length(data_list)) {
+    dat <- data_list[[i]]
+    # delete negative duration and intake first
+    dat <- dat[which(dat$Duration >= 0 & dat$Intake >= 0),]    
+    
+    # Set negative weights to zero and recalculate intake
+    dat[which(dat$Startweight < 0), "Startweight"] <- 0
+    dat[which(dat$Endweight < 0), "Endweight"] <- 0
+    
+    # Recalculate Intake after adjusting weights (assuming Intake = Startweight - Endweight)
+    dat$Intake <- dat$Startweight - dat$Endweight
+    
+    # Delete negative intake again
+    dat <- dat[which(dat$Intake >= 0),]
+    
+    # Calculate rate
+    dat$rate <- dat$Intake/dat$Duration
+    dat[is.infinite(dat$rate), "rate"] <- 0# Handle potential Inf values
+    
+    data_list[[i]] <- dat
+  }
+  
+  return(data_list)
+  
+}
+
+
+
 
 
 #' Generate Warning Data
@@ -848,11 +916,21 @@ get_all_double_cow_detections <- function(all_comb, Insentec_warning) {
 #' This function generates a data frame containing various warning/error
 #' indicators related to cow feeding data.
 #'
-#' @param df_list A list of data frames containing feed, or water, or both feed and water data grouped by dates
 #' @param data_source Insentec data source, can be "feed", "water" or "feed and water". To indicate is this just feed data, or just water data, or feed and water
 #'
 #' @return A warning data frame.
-generate_warning_df <- function(df_list, data_source = "feed and water", all_feed = NULL, all_water = NULL, high_feed_dur_threshold, high_water_dur_threshold, master_feed, master_wat) {
+generate_warning_df <- function(data_source = "feed and water", all_feed = NULL, all_water = NULL, high_feed_dur_threshold, high_water_dur_threshold) {
+  # create a list of data frames containing feed, or water, or both feed and water data grouped by dates
+  if ((!is.null(all_feed)) & (!is.null(all_water))) {
+    df_list <- combine_feeder_and_water_data(all_feed, all_water)
+  } else if (!is.null(all_feed)) {
+    df_list <- all_feed
+  } else if (!is.null(all_water)) {
+    df_list <- all_water
+  } else {
+    cat("No feed and water data was passed into the function! Please add feed data or water data or both.\n")
+  }
+  
   Insentec_warning <- generate_warning_df_empty(df_list, data_source)
   long_feed_dur_list <- list()
   long_wat_dur_list <- list()
@@ -868,29 +946,36 @@ generate_warning_df <- function(df_list, data_source = "feed and water", all_fee
   results <- get_all_double_cow_detections(df_list, Insentec_warning)
   double_cow_detection_list <- results$DoubleCowDetectionList
   Insentec_warning <- results$WarningData
+  # record negative duration and intake
+  all_results <- record_negatives(df_list, Insentec_warning)
+  negative_dur_list <- all_results$negative_duration
+  negative_intake_list <- all_results$negative_intake
+  Insentec_warning <- all_results$Insentec_warning
   
   ##### feed data warning
   if ((data_source == "feed") | (data_source == "feed and water")) {
     # long feeding duration 
-    results <- check_long_durations(all_feed, high_feed_dur_threshold, master_feed, Insentec_warning, type = "feed")
+    results <- check_long_durations(all_feed, high_feed_dur_threshold, Insentec_warning, type = "feed")
     long_feed_dur_list <- results$LongDurationList
     Insentec_warning <- results$InsentecWarning
-    
-    
+    # delete negative duration and intake for feed
+    all_feed <- delete_negatives(all_feed)
   }
   
   ##### water data warning
   if ((data_source == "water") | (data_source == "feed and water")) {
     # long drinking duration 
-    results <- check_long_durations(all_water, high_water_dur_threshold, master_wat, Insentec_warning, type = "water")
+    results <- check_long_durations(all_water, high_water_dur_threshold, Insentec_warning, type = "water")
     long_wat_dur_list <- results$LongDurationList
     Insentec_warning <- results$InsentecWarning
-    
+    # delete negative duration and intake for water
+    all_water <- delete_negatives(all_water)
     
   }
   
   return(list(long_feed_dur_list, long_wat_dur_list, double_bin_detection_list, 
-              double_cow_detection_list, Insentec_warning))
+              double_cow_detection_list, negative_dur_list, negative_intake_list, 
+              Insentec_warning, all_feed, all_water))
 
 }
 
