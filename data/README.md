@@ -260,3 +260,65 @@ The dataset is framed as a list of data frames, with each one representing data 
 
 **Variable List:** Same as `results/double_bin_detection_list.rda`.
 
+
+
+## Dataset Specific Information for: `results/bins_visit_num.rda`
+
+**Description:**  
+This dataset catalogs the frequency of total visits to each bin on a given day. Each bin ID, coupled with its respective visit count, offers a quick overview of bin utilization. Patterns in bin usage can assist in identifying potential problems or notable events in Insentec system.
+
+**Number of Variables:**  
+2
+
+**Number of Cases/Rows:**  
+The number changes depending on the day and the number of bins in operation.
+
+**Dataset Structure:**  
+This dataset is structured as a list of data frames. Each list item represents data corresponding to a specific date. Every data frame carries a count of visits for every bin for its respective day.
+
+**Variable List:**
+- **Bin**: Numerical values identifying the bin ID.
+- **Visit_freq**: Indicates the total number of visits to the associated bin on that day.
+
+
+
+## Dataset Specific Information for: `results/visit_per_bin_per_cow.rda`
+
+**Description:**  
+This dataset depicts the total number of times each cow visited each bins on a particular day. By isolating cow-bin interactions, we can assess individual cow behaviors and potentially pinpoint anomalies or consistant behaviors.
+
+**Number of Variables:**  
+3
+
+**Number of Cases/Rows:**  
+The count fluctuates based on the number of cows, the bins they visited, and the frequency of their visits for a specific day.
+
+**Dataset Structure:**  
+Organized as a list of data frames, each item in the list corresponds to a unique date. Every data frame lists out interactions of cows with bins for its respective day.
+
+**Variable List:**
+- **Cow**: Identifies the individual cow via its ID.
+- **Bin**: Represents the bin ID the cow visited.
+- **Visit_freq**: The total number of times a specific cow visited a particular bin on that day.
+
+
+
+## Dataset Specific Information for: `results/bin_num_visit_per_cow.rda`
+
+**Description:**  
+This dataset presents a breakdown of the number of bins (categorized into feed and water) visited by each cow on a specified date. By understanding the distribution of bin visits, we can glean insights into individual cow habits or possibly detect unusual patterns.
+
+**Number of Variables:**  
+4
+
+**Number of Cases/Rows:**  
+This varies, depending on the number of cows in the dataset for the specific date.
+
+**Dataset Structure:**  
+The dataset is a list of data frames. Each list item corresponds to a unique date, and every data frame gives a summary of bin visits for each cow for that day.
+
+**Variable List:**
+- **Cow**: The ID of the cow.
+- **num_of_feed_bins_visited**: Details the total number of feed bins a cow visited.
+- **num_of_water_bins_visited**: Details the total number of water bins a cow visited.
+- **total_num_of_bins_visit**: Offers the aggregated count of bins (feed + water) a cow visited.
