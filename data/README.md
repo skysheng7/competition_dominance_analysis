@@ -95,4 +95,4 @@ If the data files are encoded in a supported file format (e.g., csv, dat), they'
 **Note:** Given that for some dates, there might be no double cow detections, the associated data frame might have zero observations for that date.
 **Usage Recommendations:** The presence of double cow detections can be indicative of anomalies or errors in the Insentec bins.
 
-
+## Dataset Specific Information for: `results/negative_dur_list.rda`
