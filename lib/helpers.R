@@ -985,10 +985,11 @@ determine_last_seen <- function(df, col) {
   df <- df[order(df[[col]], df$End), ]
   df$last_seen <- 0
   df$last_seen[nrow(df)] <- 1
-  # go through every row to find the last time a cow was seen 
+  # go through every row to find the last time a cow/bin was seen 
   for (k in 1:(nrow(df)-1)) {
-    if (df$Cow[k] != df$Cow[k+1]){df$last_seen[k] <- 1}
+    if (df[k, col] != df[(k+1), col]){df$last_seen[k] <- 1}
   }
+  
   last_seen_table <- df[df$last_seen == 1, c(col, "End")]
   return(last_seen_table)
 }
@@ -1000,14 +1001,29 @@ determine_last_seen <- function(df, col) {
 #' @param time The cut-off time to check against.
 #' @return A character string with the warnings.
 extract_warnings <- function(df, col, time) {
+  df$End <- ymd_hms(df$End, tz = "America/Los_Angeles")
   not_seen_df <- df[df$End < time, ]
-  not_seen_df$comb_string <- paste(not_seen_df[[col]], as.character(not_seen_df$End), sep = ", ")
+  not_seen_df$comb_string <- paste(not_seen_df[[col]], as.character(format(not_seen_df$End, "%H:%M:%S")), sep = ", ")
   warning_str <- paste(sort(unique(not_seen_df$comb_string)), collapse = "; ")
   return(warning_str)
 }
 
-#' Main Function
-generate_warnings <- function(df_list, Insentec_warning) {
+#' Determine and Extract Cow No-Show Warnings
+#'
+#' This function iterates through a list of data frames and identifies 
+#' situations where cows (and bins) did not appear after specific times of 
+#' the day (6pm and 12pm). It returns a warning data frame with the extracted information.
+#'
+#' @param df_list A list of data frames, where each data frame represents 
+#' observations for a specific date. Each data frame should contain columns 
+#' related to the 'Cow' or 'Bin' and their respective timestamps.
+#'
+#' @param Insentec_warning A data frame where warnings related to cow no-shows 
+#' or bin visits are recorded. This data frame is updated during the function's 
+#' execution and returned as the main output.
+#' 
+#' @return Insentec_warning
+cows_no_show <- function(df_list, Insentec_warning) {
   for (i in seq_along(df_list)) {
     after6pm <- ymd_hms(paste(names(df_list)[i], "17:59:59"), tz = "America/Los_Angeles")
     after12pm <- ymd_hms(paste(names(df_list)[i], "11:59:59"), tz = "America/Los_Angeles")
@@ -1025,8 +1041,7 @@ generate_warnings <- function(df_list, Insentec_warning) {
   return(Insentec_warning)
 }
 
-# Call the function
-Insentec_warning <- generate_warnings(df_list, Insentec_warning)
+
 
 
 
@@ -1075,6 +1090,9 @@ generate_warning_df <- function(data_source = "feed and water", all_feed = NULL,
   Insentec_warning <- all_results$Insentec_warning
   save(negative_dur_list, file = (here::here(paste0("data/results/", "negative_dur_list.rda"))))
   save(negative_intake_list, file = (here::here(paste0("data/results/", "negative_intake_list.rda"))))
+  # record cows that did not visit any bins after 6 pm and 12 pm, and bins not 
+  # visited by any cow after 6 pm and 12 pm
+  Insentec_warning <- cows_no_show(df_list, Insentec_warning)
   
   ##### feed data warning
   if ((data_source == "feed") | (data_source == "feed and water")) {
@@ -1083,6 +1101,7 @@ generate_warning_df <- function(data_source = "feed and water", all_feed = NULL,
     long_feed_dur_list <- results$LongDurationList
     Insentec_warning <- results$InsentecWarning
     save(long_feed_dur_list, file = (here::here(paste0("data/results/", "long_feed_duration.rda"))))
+    
     # delete negative duration and intake for feed
     all_feed <- delete_negatives(all_feed)
     # large feed intake in 1 bout
@@ -1090,6 +1109,7 @@ generate_warning_df <- function(data_source = "feed and water", all_feed = NULL,
     large_feed_intake_in_one_bout <- results$large_intake
     Insentec_warning <- results$Insentec_warning
     save(large_feed_intake_in_one_bout, file = (here::here(paste0("data/results/", "large_feed_intake_in_one_bout.rda"))))
+    
     # large feed intake in short time
     feed_results_short_time <- detect_large_intake_short_time(all_feed, large_feed_intake_short_time_threshold, 
                                                               large_feed_rate_short_time_threshold, 
