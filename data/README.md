@@ -20,10 +20,11 @@ If the data files are encoded in a supported file format (e.g., csv, dat), they'
 2. **red_warning:** warnings saying those dates should be deleted and why
 3. **orange_warning:** warnings saying those dates should betreated with caution or even deleted and why
 
-## Dataset Specific Information for: `feed/VR******.DAT` 309 files in total from 2020-07-15 to 2021-05-19
+## Dataset Specific Information for: `feed/VR******.DAT`
 **Description:** raw data from electronic feeder using Insentec. File name has to be in the format of VR******.DAT, in y-m-d format. e.g., VR200715.DAT
 **Number of Variables:** 15
 **Number of Cases/Rows:** varies based on the day  
+**Dataset Structure:** 309 files in total from 2020-07-15 to 2021-05-19
 **Variable List:** *The .DAT file has no header. This is the sequence of columns that is intended after adding header*
 1. **Transponder:** The transponder ID of the bin
 2. **Cow:** cow ID
@@ -41,10 +42,11 @@ If the data files are encoded in a supported file format (e.g., csv, dat), they'
 14. **X3:** additional meaningless column
 15. **X4:** additional meaningless column
 
-## Dataset Specific Information for: `water/VW******.DAT` 309 files in total from 2020-07-15 to 2021-05-19
+## Dataset Specific Information for: `water/VW******.DAT` 
 **Description:** raw data from electronic drinker using Insentec. File name has to be in the format of VW******.DAT, in y-m-d format. e.g., VW200715.DAT
 **Number of Variables:** 9
 **Number of Cases/Rows:** varies based on the day  
+**Dataset Structure:** 309 files in total from 2020-07-15 to 2021-05-19
 **Variable List:** *The .DAT file has no header. This is the sequence of columns that is intended after adding header*
 "Transponder","Cow","Bin","Start","End","Duration","Startweight","Endweight","Intake"
 1. **Transponder:** The transponder ID of the bin
@@ -58,7 +60,7 @@ If the data files are encoded in a supported file format (e.g., csv, dat), they'
 9. **Intake:** total water intake Sstartweight - Endweight) of the visit in kg
 
 ## Dataset Specific Information for: `results/double_bin_detection_list.rda`
-**Description:**This dataset encapsulates information regarding cases where a cow's presence is detected simultaneously in two bins. Such occurrences can be indicative of potential sensor or data logging errors. The dataset provides detailed insights on each detection instance, including the cow's ID, bin details, and associated timestamps.
+**Description:** This dataset encapsulates information regarding cases where a cow's presence is detected simultaneously in two bins. Such occurrences can be indicative of potential sensor or data logging errors. The dataset provides detailed insights on each detection instance, including the cow's ID, bin details, and associated timestamps.
 **Number of Variables:** 10
 **Number of Cases/Rows:** Varies based on the day and detection occurrences.
 **Dataset Structure:** A list of data frames, where each data frame corresponds to a specific date. Each date might have multiple or no occurrences of double bin detections. 
