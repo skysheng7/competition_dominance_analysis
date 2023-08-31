@@ -354,15 +354,15 @@ bin_delete <- function(df, min_bin, max_bin) {
 #' @param cow_delete_list List of cow values to delete.
 #' @param feed_transponder_delete_list List of transponder values specific to feeder data to delete.
 #' @param min_feed_bin Minimum feeder bin value to keep.
-#' @param max_feed_Bin Maximum feeder bin value to keep.
+#' @param max_feed_bin Maximum feeder bin value to keep.
 #' @param feed_coln_to_keep Columns to keep in the feeder data.
 #' @return Processed data frame for feeder.
-process_feeder_data <- function(file_name, coln, cow_delete_list, feed_transponder_delete_list, min_feed_bin, max_feed_Bin, feed_coln_to_keep) {
+process_feeder_data <- function(file_name, coln, cow_delete_list, feed_transponder_delete_list, min_feed_bin, max_feed_bin, feed_coln_to_keep) {
   feeder = read.table(file_name, header = F, sep = ",")
   colnames(feeder) = coln
   feeder = cow_delete(feeder, cow_delete_list)
   feeder = transponder_delete(feeder, feed_transponder_delete_list)
-  feeder = bin_delete(feeder, min_feed_bin, max_feed_Bin)
+  feeder = bin_delete(feeder, min_feed_bin, max_feed_bin)
   feeder[, feed_coln_to_keep]
 }
 
@@ -373,18 +373,18 @@ process_feeder_data <- function(file_name, coln, cow_delete_list, feed_transpond
 #' @param cow_delete_list List of cow values to delete.
 #' @param wat_transponder_delete_list List of transponder values specific to water data to delete.
 #' @param min_wat_bin Minimum water bin value to keep.
-#' @param max_wat_Bin Maximum water bin value to keep.
+#' @param max_wat_bin Maximum water bin value to keep.
 #' @param wat_coln_to_keep Columns to keep in the water data.
 #' @param bin_id_add The number to add to bin IDs in order to distinguish with feed bin ID
 #
 #' @return Processed data frame for water.
-process_water_data <- function(file_name, coln_wat, cow_delete_list, wat_transponder_delete_list, min_wat_bin, max_wat_Bin, wat_coln_to_keep, bin_id_add) {
+process_water_data <- function(file_name, coln_wat, cow_delete_list, wat_transponder_delete_list, min_wat_bin, max_wat_bin, wat_coln_to_keep, bin_id_add) {
   water = read.table(file_name, header = F, sep = ",")
   colnames(water) = coln_wat
   water = cow_delete(water, cow_delete_list)
   water = transponder_delete(water, wat_transponder_delete_list)
-  water = bin_delete(water, min_wat_bin, max_wat_Bin)
-  rename_water_bins(water[, wat_coln_to_keep],bin_id_add, min_wat_bin, max_wat_Bin)
+  water = bin_delete(water, min_wat_bin, max_wat_bin)
+  rename_water_bins(water[, wat_coln_to_keep],bin_id_add, min_wat_bin, max_wat_bin)
 }
 
 #' Rename water bins
@@ -392,10 +392,10 @@ process_water_data <- function(file_name, coln_wat, cow_delete_list, wat_transpo
 #' @param water_df Data frame of water data.
 #' @param bin_id_add The number to add to bin IDs in order to distinguish with feed bin ID
 #' @param min_wat_bin Minimum water bin value for renaming.
-#' @param max_wat_Bin Maximum water bin value for renaming.
+#' @param max_wat_bin Maximum water bin value for renaming.
 #' @return Data frame with water bins renamed.
-rename_water_bins <- function(water_df, bin_id_add, min_wat_bin, max_wat_Bin) {
-  for (i in min_wat_bin:max_wat_Bin) {
+rename_water_bins <- function(water_df, bin_id_add, min_wat_bin, max_wat_bin) {
+  for (i in min_wat_bin:max_wat_bin) {
     water_df$Bin[which(water_df$Bin == i)] = bin_id_add + i
   }
   water_df
@@ -411,17 +411,17 @@ rename_water_bins <- function(water_df, bin_id_add, min_wat_bin, max_wat_Bin) {
 #' @param cow_delete_list A list of cows to be deleted from the analysis.
 #' @param feed_transponder_delete_list A list of feed transponders to be deleted from the analysis.
 #' @param min_feed_bin Numeric. Minimum ID for the feed bin.
-#' @param max_feed_Bin Numeric. Maximum ID for the feed bin.
+#' @param max_feed_bin Numeric. Maximum ID for the feed bin.
 #' @param feed_coln_to_keep A character vector of column names to retain in the final output.
 #'
 #' @return A list of processed feeder data, with each list item corresponding to a file.ID
-process_all_feed <- function(fileNames.f, coln, cow_delete_list, feed_transponder_delete_list, min_feed_bin, max_feed_Bin, feed_coln_to_keep) {
+process_all_feed <- function(fileNames.f, coln, cow_delete_list, feed_transponder_delete_list, min_feed_bin, max_feed_bin, feed_coln_to_keep) {
   len = length(fileNames.f)
   all.fed=list()
 
   for(i in 1:len)
   {
-    fed.1 = process_feeder_data(as.character(fileNames.f[i]), coln, cow_delete_list, feed_transponder_delete_list, min_feed_bin, max_feed_Bin, feed_coln_to_keep)
+    fed.1 = process_feeder_data(as.character(fileNames.f[i]), coln, cow_delete_list, feed_transponder_delete_list, min_feed_bin, max_feed_bin, feed_coln_to_keep)
     all.fed[[i]]=na.omit(fed.1)
     # trim the start and end time format
     all.fed[[i]]$Start <- trimws(all.fed[[i]]$Start, which = "both")
@@ -470,14 +470,14 @@ process_all_feed <- function(fileNames.f, coln, cow_delete_list, feed_transponde
 #' @examples
 #' # This is a placeholder for example usage, it's good practice to include a working example here.
 #' process_all_water(fileNames.w = c("path_to_water_file1", "path_to_water_file2"), ...)
-process_all_water <- function(fileNames.w, coln.wat, cow_delete_list, wat_transponder_delete_list, min_wat_bin, max_wat_Bin, wat_coln_to_keep, bin_id_add) {
+process_all_water <- function(fileNames.w, coln.wat, cow_delete_list, wat_transponder_delete_list, min_wat_bin, max_wat_bin, wat_coln_to_keep, bin_id_add) {
   
   len = length(fileNames.w)
   all.wat=list()
   
   for(i in 1:len)
   {
-    wat.1 = process_water_data(as.character(fileNames.w[i]), coln.wat, cow_delete_list, wat_transponder_delete_list, min_wat_bin, max_wat_Bin, wat_coln_to_keep, bin_id_add)
+    wat.1 = process_water_data(as.character(fileNames.w[i]), coln.wat, cow_delete_list, wat_transponder_delete_list, min_wat_bin, max_wat_bin, wat_coln_to_keep, bin_id_add)
     all.wat[[i]]=wat.1[which(wat.1$Bin>100),]
     all.wat[[i]]=na.omit(all.wat[[i]])
     # trim the start and end time format
@@ -582,14 +582,15 @@ generate_warning_df_empty <- function(df_list, data_source = "feed and water") {
     "total_cow_number", "missing_cow", "double_bin_detection_bin", 
     "double_cow_detection_bin", "negative_duration_bin", "negative_intake_bin",  
     "no_show_after_6pm_cows", "no_show_after_12pm_cows", "no_visit_after_6pm_bins",
-    "no_visit_after_12pm_bins", "bins_not_visited_today"
+    "no_visit_after_12pm_bins", "bins_not_visited_today", "bins_with_low_visits_today"
   )
   
   feed_columns <- c(
     "long_feed_duration_bin", "large_one_bout_feed_intake_bin", 
-    "large_feed_intake_in_short_time_bin", "feed_bins_with_low_visits_today", 
-    "cows_no_visit_to_feed_bin", "low_daily_feed_intake_cows", 
-    "high_daily_feed_intake_cows", "feed_add_time_no_found"
+    "large_feed_intake_in_short_time_bin", "cows_no_visit_to_feed_bin", 
+    "low_daily_feed_intake_cows", 
+    "high_daily_feed_intake_cows", 
+    "feed_add_time_no_found"
   )
   
   wat_columns <- c(
@@ -1042,18 +1043,137 @@ cows_no_show <- function(df_list, Insentec_warning) {
 }
 
 
+#' Count the number of visits to each bin on a given day
+#' 
+#' @param data A dataframe representing the data of a specific day.
+#' @param bin_list A dataframe of all bin numbers.
+#' 
+#' @return A dataframe with the number of visits to each bin on that day.
+count_visits_per_bin <- function(data, bin_list) {
+  visit_each_bin <- count(data, vars=c("Bin"))
+  colnames(visit_each_bin) <- c("Bin", "Visit_freq")
+  visit_each_bin2 <- merge(bin_list, visit_each_bin, all = TRUE)
+  visit_each_bin2[is.na(visit_each_bin2)] <- 0
+  
+  return(visit_each_bin2)
+}
+
+#' Count the number of visits for each cow on each bin on a given day
+#' 
+#' @param data A dataframe representing the data of a specific day.
+#' 
+#' @return A dataframe with the number of visits for each cow on each bin.
+count_visits_per_cow_bin <- function(data) {
+  cow_bin_visit <- count(data, vars=c("Cow","Bin"))
+  colnames(cow_bin_visit) <- c("Cow" ,"Bin", "Visit_freq")
+  
+  return(cow_bin_visit)
+}
+
+#' Determine the number of bins a cow visited on a given day
+#' 
+#' @param data A dataframe with the number of visits for each cow on each bin.
+#' 
+#' @return A dataframe detailing the number of feed and water bins each cow visited.
+number_of_bins_per_cow <- function(data, bin_id_add) {
+  cow_bin_visit_fed <- data[which(data$Bin < bin_id_add),]
+  cow_bin_visit_wat <- data[which(data$Bin > bin_id_add),]
+  num_bin_per_cow_fed <- count(cow_bin_visit_fed, vars=c("Cow"))
+  colnames(num_bin_per_cow_fed) <- c("Cow", "num_of_feed_bins_visited")
+  num_bin_per_cow_wat <- count(cow_bin_visit_wat, vars=c("Cow"))
+  colnames(num_bin_per_cow_wat) <- c("Cow", "num_of_water_bins_visited")
+  num_bin_per_cow_comb <- merge(num_bin_per_cow_fed, num_bin_per_cow_wat, all = TRUE)
+  num_bin_per_cow_comb[is.na(num_bin_per_cow_comb)] <- 0
+  num_bin_per_cow_comb$total_num_of_bins_visit <- num_bin_per_cow_comb$num_of_feed_bins_visited + num_bin_per_cow_comb$num_of_water_bins_visited
+  
+  return(num_bin_per_cow_comb)
+}
 
 
-
-
-#' Generate Warning Data
+#' Calculate Visits to Feed and Water Bins
 #'
-#' This function generates a data frame containing various warning/error
-#' indicators related to cow feeding data.
+#' This function computes the number of visits to feed and water bins.
+#' It also provides warnings for any irregularities such as bins not visited, 
+#' or cows that didn't visit certain bins.
 #'
-#' @param data_source Insentec data source, can be "feed", "water" or "feed and water". To indicate is this just feed data, or just water data, or feed and water
+#' @param df_list A list of data frames water bin or feed bin data or both water and feed bin data, grouped by date
+#' @param min_feed_bin The smallest ID number for feed bins.
+#' @param max_feed_bin The largest ID number for feed bins.
+#' @param min_wat_bin The smallest ID number for water bins.
+#' @param max_wat_bin The largest ID number for water bins.
+#' @param bin_id_add The amount to add to water bin IDs to distinguish them from feed bin IDs.
+#' @param total_cow_expt The expected total number of cows in the group
+#' @param low_visit_threshold The threshold below which the number of visits to a bin is considered low.
+#' @param Insentec_warning A data frame or list for storing warnings and irregularities.
 #'
-#' @return A warning data frame.
+#' @return Returns the `Insentec_warning` data frame or list with added warnings and irregularities detected during the analysis.
+bin_visit_count <- function(df_list, min_feed_bin, max_feed_bin, min_wat_bin, max_wat_bin, bin_id_add, total_cow_expt, low_visit_threshold, Insentec_warning) {
+  # create a table with all the bin numbers
+  feed_bin <- seq(min_feed_bin, max_feed_bin, by = 1)
+  wat_bin <- seq((min_wat_bin + bin_id_add), (max_wat_bin + bin_id_add), by = 1)
+  total_bin <- append(feed_bin, wat_bin)
+  bin_list <- data.frame(total_bin)
+  colnames(bin_list) <- c("Bin")
+  
+  bins_visit_num <- list()
+  visit_per_bin_per_cow <- list()
+  bin_num_visit_per_cow <- list()
+  
+  
+  for (i in 1:length(df_list)) {
+    # number of visits to each bin on each day
+    bins_visit_num[[i]] <- count_visits_per_bin(df_list[[i]], bin_list)
+    names(bins_visit_num)[i] <- names(df_list)[i]
+    
+    # number of visits for each cow on each bin on each day
+    visit_per_bin_per_cow[[i]] <- count_visits_per_cow_bin(df_list[[i]])
+    names(visit_per_bin_per_cow)[i] <- names(df_list)[i]
+    
+    # number of feed & water bins a cow visited each day
+    num_bin_per_cow_comb <- number_of_bins_per_cow(visit_per_bin_per_cow[[i]], bin_id_add)
+    bin_num_visit_per_cow[[i]] <- num_bin_per_cow_comb
+    names(bin_num_visit_per_cow)[i] <- names(df_list)[i]
+    
+    # Cows that did not visit water bin / feed bin
+    # Missing cow, cow ont showing up neither at water nor feed bin
+    if (nrow(num_bin_per_cow_comb) < total_cow_expt) {
+      Insentec_warning$missing_cow[i] <- "Yes"
+    }
+    # cows that no show at feed bin
+    fed_no_show <- num_bin_per_cow_comb[which(num_bin_per_cow_comb$num_of_feed_bins_visited == 0),]
+    fed_no_show_cow <- sort(unique(fed_no_show$Cow))
+    Insentec_warning$cows_no_visit_to_feed_bin[i] <- paste(unlist(fed_no_show_cow), collapse="; ")
+    # cows that no show at water bin
+    wat_no_show <- num_bin_per_cow_comb[which(num_bin_per_cow_comb$num_of_water_bins_visited == 0),]
+    wat_no_show_cow <- sort(unique(wat_no_show$Cow))
+    Insentec_warning$cows_no_visit_to_water_bin[i] <- paste(unlist(wat_no_show_cow), collapse="; ")
+    
+    # bins not visited on each day
+    no_visit <- bins_visit_num[[i]][which(bins_visit_num[[i]]$Visit_freq == 0),]
+    no_visit_bin <- sort(unique(no_visit$Bin))
+    Insentec_warning$bins_not_visited_today[i] <- paste(unlist(no_visit_bin), collapse="; ")
+    
+    # feed and water bins with low visits on each day
+    visit_each_bin3 <- bins_visit_num[[i]]
+    low_visit <- visit_each_bin3[which(visit_each_bin3$Visit_freq < low_visit_threshold),]
+    low_visit_bin <- sort(unique(low_visit$Bin))
+    Insentec_warning$bins_with_low_visits_today[i] <- paste(unlist(low_visit_bin), collapse="; ")
+  }
+  
+  save(bins_visit_num, file = (here::here(paste0("data/results/", "Bins_with_number_of_visits_daily.rda"))))
+  save(visit_per_bin_per_cow, file = (here::here(paste0("data/results/", "number_of_visits_for_each_bin_for_each_cow.rda"))))
+  save(bin_num_visit_per_cow, file = (here::here(paste0("data/results/", "number_of_bins_visited_by_each_cow.rda"))))
+  
+  
+  return(Insentec_warning)
+}
+
+
+
+
+
+
+
 generate_warning_df <- function(data_source = "feed and water", all_feed = NULL, all_water = NULL, high_feed_dur_threshold, high_water_dur_threshold) {
   # create a list of data frames containing feed, or water, or both feed and water data grouped by dates
   if ((!is.null(all_feed)) & (!is.null(all_water))) {
@@ -1093,6 +1213,9 @@ generate_warning_df <- function(data_source = "feed and water", all_feed = NULL,
   # record cows that did not visit any bins after 6 pm and 12 pm, and bins not 
   # visited by any cow after 6 pm and 12 pm
   Insentec_warning <- cows_no_show(df_list, Insentec_warning)
+  # record the total number of visits to each bin by each cow everyday
+  Insentec_warning <-  bin_visit_count(df_list, min_feed_bin, max_feed_bin, min_wat_bin, max_wat_bin, bin_id_add, total_cow_expt, low_visit_threshold, Insentec_warning)
+  
   
   ##### feed data warning
   if ((data_source == "feed") | (data_source == "feed and water")) {

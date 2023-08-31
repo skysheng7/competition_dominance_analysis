@@ -15,7 +15,7 @@ feed_transponder_delete_list <- c(0)
 
 # Min and Max values for feed bin
 min_feed_bin <- 1
-max_feed_Bin <- 30
+max_feed_bin <- 30
 
 # Columns to retain in the processed feed data
 feed_coln_to_keep <- c("Transponder", "Cow", "Bin", "Start", "End", "Duration", "Startweight", "Endweight", "Intake")
@@ -25,7 +25,10 @@ wat_transponder_delete_list <- c(0)
 
 # Min and Max values for water bin
 min_wat_bin <- 1
-max_wat_Bin <- 5
+max_wat_bin <- 5
+
+# how many cows do we expect to live in the pen
+total_cow_expt <- 48
 
 # Columns to retain in the processed water data
 wat_coln_to_keep <- c("Transponder", "Cow", "Bin", "Start", "End", "Duration", "Startweight", "Endweight", "Intake")
@@ -62,3 +65,6 @@ large_water_intake_short_time_threshold = 10
 
 #rate threshold for what is considered a large intake in short time for feed
 large_water_rate_short_time_threshold = 0.35
+
+# for bins with low total number of visits, what is the threshold for low total visits
+low_visit_threshold = 10
