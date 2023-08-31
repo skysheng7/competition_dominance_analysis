@@ -57,3 +57,42 @@ If the data files are encoded in a supported file format (e.g., csv, dat), they'
 8. **Endweight:** end weight (when the cow leaves the bin) of the bin in kg
 9. **Intake:** total water intake Sstartweight - Endweight) of the visit in kg
 
+## Dataset Specific Information for: `results/double_bin_detection_list.rda`
+**Description:**This dataset encapsulates information regarding cases where a cow's presence is detected simultaneously in two bins. Such occurrences can be indicative of potential sensor or data logging errors. The dataset provides detailed insights on each detection instance, including the cow's ID, bin details, and associated timestamps.
+**Number of Variables:** 10
+**Number of Cases/Rows:** Varies based on the day and detection occurrences.
+**Dataset Structure:** A list of data frames, where each data frame corresponds to a specific date. Each date might have multiple or no occurrences of double bin detections. 
+**Variable List:** 
+1. **Transponder:** The transponder ID of the bin.
+2. **Cow:** Cow ID.
+3. **Bin:** Bin number where the cow was detected.
+4. **Start:** Start date and time of the detection.
+5. **End:** End date and time of the detection.
+6. **Duration:** Total duration of this detection instance in seconds.
+7. **Startweight:** Start weight (when the cow is detected) of the bin in kg.
+8. **Endweight:** End weight (post-detection) of the bin in kg.
+9. **Intake:** Total water intake (Startweight - Endweight) during the detection in kg.
+10. **Rate:** Intake rate, derived from the Intake and Duration.
+**Note:** Given that for some dates, there might be no double bin detections, the associated data frame might have zero observations for that date.
+**Usage Recommendations:**  The presence of double cow detections can be indicative of anomalies or errors in the Insentec bins.
+
+## Dataset Specific Information for: `results/double_cow_detection_list.rda`
+**Description:** This dataset captures instances where a bin registers 2 different cows at the same time, potentially indicating discrepancies or anomalies in the data logging process. The dataset provides a structure to identify these occurrences based on dates
+**Number of Variables:** 10
+**Number of Cases/Rows:** Varies based on the day and detection occurrences.
+**Dataset Structure:** A list of data frames, where each data frame corresponds to a specific date. Each date might have multiple or no occurrences of double cow detections. 
+**Variable List:** 
+1. **Transponder:** The transponder ID of the bin.
+2. **Cow:** Cow ID.
+3. **Bin:** Bin number where the cow was detected.
+4. **Start:** Start date and time of the detection.
+5. **End:** End date and time of the detection.
+6. **Duration:** Total duration of this detection instance in seconds.
+7. **Startweight:** Start weight (when the cow is detected) of the bin in kg.
+8. **Endweight:** End weight (post-detection) of the bin in kg.
+9. **Intake:** Total water intake (Startweight - Endweight) during the detection in kg.
+10. **Rate:** Intake rate, derived from the Intake and Duration.
+**Note:** Given that for some dates, there might be no double cow detections, the associated data frame might have zero observations for that date.
+**Usage Recommendations:** The presence of double cow detections can be indicative of anomalies or errors in the Insentec bins.
+
+
