@@ -118,6 +118,7 @@ If the data files are encoded in a supported file format (e.g., csv, dat), they'
 **Variable List:** same as `results/double_bin_detection_list.rda`
 
 
+<<<<<<< HEAD
 ## Dataset Specific Information for: `results/negative_dur_list.rda`
 
 **Description:** 
@@ -154,3 +155,6 @@ The data is organized as a list of data frames. Each data frame corresponds to a
 
 
 
+=======
+## Dataset Specific Information for: 
+>>>>>>> 50b674ab9dc5a4e1b3cc9ef9a0f808f0f1355fa6
