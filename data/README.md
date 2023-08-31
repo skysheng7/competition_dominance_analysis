@@ -82,7 +82,7 @@ If the data files are encoded in a supported file format (e.g., csv, dat), they'
 
 
 ## Dataset Specific Information for: `results/double_bin_detection_list.rda`
-**Description:** This dataset encapsulates information regarding cases where a cow's presence is detected simultaneously in two bins. Such occurrences can be indicative of potential sensor or data logging errors. The dataset provides detailed insights on each detection instance, including the cow's ID, bin details, and associated timestamps.
+**Description:** This dataset encapsulates information regarding cases where a cow's presence is detected simultaneously in two bins. Such occurrences can be indicative of potential sensor or data logging errors, specifically malfunctioning of certain Insentec bins. The dataset provides detailed insights on each detection instance, including the cow's ID, bin details, and associated timestamps.
 
 **Number of Variables:** 10
 
@@ -102,12 +102,11 @@ If the data files are encoded in a supported file format (e.g., csv, dat), they'
 9. **Intake:** Total water intake (Startweight - Endweight) during the detection in kg.
 10. **Rate:** Intake rate, derived from the Intake and Duration.
 **Note:** Given that for some dates, there might be no double bin detections, the associated data frame might have zero observations for that date.
-**Usage Recommendations:**  The presence of double cow detections can be indicative of anomalies or errors in the Insentec bins.
 
 
 
 ## Dataset Specific Information for: `results/double_cow_detection_list.rda`
-**Description:** This dataset captures instances where a bin registers 2 different cows at the same time, potentially indicating discrepancies or anomalies in the data logging process. The dataset provides a structure to identify these occurrences based on dates
+**Description:** This dataset captures instances where a bin registers 2 different cows at the same time, potentially indicating anomalies in the data logging process, and malfunctioning of certain Insentec bins. The dataset provides a structure to identify these occurrences based on dates
 
 **Number of Variables:** 10
 
@@ -122,7 +121,7 @@ If the data files are encoded in a supported file format (e.g., csv, dat), they'
 ## Dataset Specific Information for: `results/negative_dur_list.rda`
 
 **Description:** 
-This dataset encompasses instances where visits to feed or water bin recorded negative visit duration, indicating potential errors in the data collection or logging process. These instances can be critical for assessing the quality and integrity of the data. Each entry provides comprehensive details about the cow, the bin, and related timestamps.
+This dataset encompasses instances where visit duration is negative in certain Insentec bins, indicating potential errors in the data collection or logging process, and malfunctioning of certain Insentec bins. These instances can be critical for assessing the quality and integrity of the data. Each entry provides comprehensive details about the cow, the bin, and related timestamps.
 
 **Number of Variables:** 
 10
@@ -140,7 +139,7 @@ A list of data frames, with each data frame corresponding to a specific date. Ea
 ## Dataset Specific Information for: `results/negative_intake_list.rda`
 
 **Description:**  
-This dataset records instances where the feed or water bin visit has negative intake, suggesting potential discrepancies or errors in the data collection or logging mechanisms. A negative intake can signal irregularities that may affect data analysis outcomes. Comprehensive details about the cow, bin, and corresponding timestamps are provided for each instance.
+This dataset records instances where the feed or water bin visit has negative intake (only visits with more than 1 kg of negative intake. instances with < 1 kg of negative intake were omitted), suggesting potential discrepancies or errors in the data collection or logging mechanisms, and malfunctioning of certain Insentec bins. Comprehensive details about the cow, bin, and corresponding timestamps are provided for each instance.
 
 **Number of Variables:**  
 10
@@ -154,4 +153,110 @@ The data is organized as a list of data frames. Each data frame corresponds to a
 **Variable List:** same as `results/double_bin_detection_list.rda`
 
 
+
+## Dataset Specific Information for: `results/long_feed_dur_list.rda`
+
+**Description:**  
+This dataset encompasses instances where cows had prolonged durations (set at > 2000 seconds) at the feed bins. Extended feeding durations might indicate Insentec bin malfunctioning as it might have not recorded the cow leaving. The dataset offers granular details about the cows, their associated bins, and the timestamps corresponding to the beginning and end of their activity.
+
+**Number of Variables:**  
+10
+
+**Number of Cases/Rows:**  
+Varies depending on the day and detected instances of prolonged feed durations.
+
+**Dataset Structure:**  
+The data is structured as a list of data frames. Each data frame represents data for a specific date. Depending on the day, there might be multiple, or no recorded instances of prolonged feed durations.
+
+**Variable List:**  Same as `results/double_bin_detection_list.rda`.
+
+
+
+## Dataset Specific Information for: `results/large_feed_intake_in_one_bout.rda`
+
+**Description:**  
+This dataset captures instances when cows have an unusually large feed intake (> 8 kg) in a single feeding bout. Such occurrences can signal malfunctioning of Insentec bins, and data collection errors. Detailed attributes of the cows, the bins they feed from, and the corresponding timestamps are presented for each instance.
+
+**Number of Variables:**  
+10
+
+**Number of Cases/Rows:**  
+The count varies based on the day and instances of large feed intakes in a single bout.
+
+**Dataset Structure:**  
+The dataset is organized as a list of data frames. Each data frame represents information for a specific date. Depending on the particular day, there may be several or no recorded instances of large feed intakes in one bout.
+
+**Variable List:** Same as `results/double_bin_detection_list.rda`.
+
+
+
+## Dataset Specific Information for: `results/large_feed_intake_in_short_time.rda`
+
+**Description:**  
+This dataset captures instances when cows have a high feed intake in an unusually short duration (intake per visit > 5kg, and rate > 0.008 kg/s). These events can indicate malfunctioning of Insentec bins or potential data collection errors. Detailed attributes of the cows, the bins they feed from, and the corresponding timestamps are documented for each occurrence.
+
+**Number of Variables:**  
+10
+
+**Number of Cases/Rows:**  
+The count varies based on the day.
+
+**Dataset Structure:**  
+The dataset is organized as a list of data frames. Each data frame provides data for a specific date. Depending on the particular day, there may be multiple or no recorded instances of large feed intakes in a short duration.
+
+**Variable List:** Same as `results/double_bin_detection_list.rda`.
+
+
+
+## Dataset Specific Information for: `results/long_wat_dur_list.rda`
+
+**Description:**  
+This dataset highlights instances where cows have a prolonged water intake duration (> 1800 seconds). Extended durations could be an indication of Insentec bin malfunction and data collection errors. Each record provides detailed attributes about the cows, the water bins they drank from, and the associated timestamps.
+
+**Number of Variables:**  
+10
+
+**Number of Cases/Rows:**  
+The count changes based on the day and instances of prolonged water intake durations.
+
+**Dataset Structure:**  
+The dataset is systematized as a list of data frames, with each data frame detailing information for a particular date. Depending on the specific day, there might be several or no documented instances of long water intake durations.
+
+**Variable List:** Same as `results/double_bin_detection_list.rda`.
+
+
+
+## Dataset Specific Information for: `results/large_water_intake_in_one_bout.rda`
+
+**Description:**  
+This dataset records occurrences when cows have a high large water intake (> 30 kg) in a single bout. Such patterns could suggest potential issues with the Insentec bins or data collection anomalies. The dataset provides a comprehensive overview of the cows, the water bins they accessed, and the pertinent timestamps for each case.
+
+**Number of Variables:**  
+10
+
+**Number of Cases/Rows:**  
+The count fluctuates based on the day and recorded instances of substantial water intakes in one bout.
+
+**Dataset Structure:**  
+Data is presented as a list of data frames, with each frame corresponding to a distinct date. Depending on the date in question, there may be multiple or no documented episodes of large water intakes in a single bout.
+
+**Variable List:** Same as `results/double_bin_detection_list.rda`.
+
+
+
+## Dataset Specific Information for: `results/large_water_intake_in_short_time.rda`
+
+**Description:**  
+This dataset identifies instances when cows exhibit a high water intake in an exceptionally short duration (intake per visit > 10 kg, and rate > 0.35 kg/s). Such events could hint at potential Insentec bin malfunctions or data collection errors. Detailed attributes of the cows, the water bins they used, and the related timestamps are enumerated for each incident.
+
+**Number of Variables:**  
+10
+
+**Number of Cases/Rows:**  
+The tally varies based on the day and occurrences of large water intakes in a short timeframe.
+
+**Dataset Structure:**  
+The dataset is framed as a list of data frames, with each one representing data for a specific date. Depending on the day in focus, there may be several or no recorded instances of rapid, large water intakes.
+
+**Variable List:** Same as `results/double_bin_detection_list.rda`.
 
