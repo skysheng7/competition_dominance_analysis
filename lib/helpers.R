@@ -1174,7 +1174,11 @@ bin_visit_count <- function(df_list, min_feed_bin, max_feed_bin, min_wat_bin, ma
 
 
 
-generate_warning_df <- function(data_source = "feed and water", all_feed = NULL, all_water = NULL, high_feed_dur_threshold, high_water_dur_threshold) {
+generate_warning_df <- function(data_source = "feed and water", all_feed = NULL, 
+                                all_water = NULL, high_feed_dur_threshold, 
+                                high_water_dur_threshold, min_feed_bin, max_feed_bin, 
+                                min_wat_bin, max_wat_bin, bin_id_add, 
+                                total_cow_expt, low_visit_threshold) {
   # create a list of data frames containing feed, or water, or both feed and water data grouped by dates
   if ((!is.null(all_feed)) & (!is.null(all_water))) {
     df_list <- combine_feeder_and_water_data(all_feed, all_water)
