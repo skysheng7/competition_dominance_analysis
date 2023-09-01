@@ -322,3 +322,57 @@ The dataset is a list of data frames. Each list item corresponds to a unique dat
 - **num_of_feed_bins_visited**: Details the total number of feed bins a cow visited.
 - **num_of_water_bins_visited**: Details the total number of water bins a cow visited.
 - **total_num_of_bins_visit**: Offers the aggregated count of bins (feed + water) a cow visited.
+
+
+
+## Dataset Specific Information for: `results/feed_delivery.rda`
+
+**Description:**  
+The dataset provides a structured overview of specific feed delivery times and intervals after the feed delivery. It is essential for tracking the feed delivery at different times of the day: morning, afternoon, and noon.
+
+**Number of Variables:**  
+16
+
+**Number of Cases/Rows:**  
+This can vary based on the dates available in the dataset.
+
+**Dataset Structure:**  
+The dataset is structured as a data frame. Each row corresponds to a unique date, and each column provides details about feed delivery and subsequent time intervals post delivery for that day.
+
+**Variable List:**
+- **date**: Date when the observation was made. It's in the POSIXct format.
+  
+- **morning_feed_add_start**: The exact time when the feed was added in the morning.
+
+- **morning_90min_after_feed**: Time marking 90 minutes after the morning feed was added.
+  
+- **morning_2h_after_feed**: Time marking 2 hours post the morning feed addition.
+  
+- **morning_3h_after_feed**: Time marking 3 hours post the morning feed addition.
+  
+- **afternoon_feed_add_start**: The exact time when the feed was added in the afternoon.
+  
+- **afternoon_90min_after_feed**: Time marking 90 minutes after the afternoon feed was added.
+  
+- **afternoon_2h_after_feed**: Time marking 2 hours post the afternoon feed addition.
+  
+- **afternoon_3h_after_feed**: Time marking 3 hours post the afternoon feed addition.
+  
+- **morning_feed_delivery_no_found**: Character indicator if the morning feed delivery was not found. An empty string indicates that the delivery was found.
+  
+- **afternoon_feed_delivery_no_found**: Character indicator if the afternoon feed delivery was not found. An empty string indicates that the delivery was found.
+
+- **noon_feed_add_start**: The exact time when the feed was added at noon.
+
+- **noon_90min_after_feed**: Time marking 90 minutes post the noon feed addition.
+
+- **noon_2h_after_feed**: Time marking 2 hours post the noon feed addition.
+
+- **noon_3h_after_feed**: Time marking 3 hours post the noon feed addition.
+
+- **noon_feed_delivery_found**: Character indicator if the noon feed delivery was found. An empty string indicates that the delivery was not found.
+
+**Notes:** 
+1. NA values in the dataset indicate that the data was not available or the event (like feed addition) did not occur.
+2. Time variables are in POSIXct format, providing precise timestamp information, including date and time.
+3. The variables ending with "_no_found" or "_found" provide indicators on whether feed was delivered or not during those specific times of the day.

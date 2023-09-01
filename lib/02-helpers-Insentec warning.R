@@ -1,3 +1,7 @@
+###################################################################################################
+######################### Insentec data initial processing & quality check ########################
+###################################################################################################
+
 
 #' Generate empty dataframe prepared to hold Warning Data
 #'
@@ -616,6 +620,10 @@ bin_visit_count <- function(df_list, min_feed_bin, max_feed_bin, min_wat_bin, ma
 
 
 
+#' Handle double detections 
+#' The idea behind this double detection handling is that we always keep the second bout in 
+#' double detections intact. We mark the end time of the first bout to the same as the start time of
+#' the second bout
 
 
 
@@ -691,6 +699,8 @@ generate_warning_df <- function(data_source = "feed and water", all_feed = NULL,
     Insentec_warning <- feed_results_short_time$Insentec_warning
     save(large_feed_intake_in_short_time, file = (here::here(paste0("data/results/", "large_feed_intake_in_short_time.rda"))))
     
+    # detect feed delivery time
+    Insentec_warning <- feed_delivery_check(all_feed, time_zone, Insentec_warning)
     
   }
   
@@ -722,6 +732,236 @@ generate_warning_df <- function(data_source = "feed and water", all_feed = NULL,
   
   return(list(Insentec_warning, all_feed, all_water))
 
+}
+
+
+###################################################################################################
+#################################### Feed delivery time record ####################################
+###################################################################################################
+
+#' Create Default Feed Time Sheet
+#'
+#' This function creates a default feed time sheet based on the provided feed data.
+#' All time-related columns are initialized with NA, while the columns indicating if 
+#' the delivery was found are initialized with an empty string.
+#'
+#' @param all_feed A list of feed data, where each element is a data frame representing feed details for a specific date.
+#' @param time_zone Time zone to be used in date-time operations
+#' @return A data frame with default feed time columns.
+#' @export
+create_default_feed_time_sheet <- function(all_feed, time_zone) {
+  
+  # Extract date list from the feed data
+  date_list <- names(all_feed)
+  place_holder <- ymd_hms("1997-01-01 01:00:00", tz=time_zone)
+  
+  # Create the data frame with default columns
+  time_interval_after_feed_added <- data.frame(
+    date = date_list,
+    morning_feed_add_start = place_holder,
+    morning_90min_after_feed = place_holder,
+    morning_2h_after_feed = place_holder,
+    morning_3h_after_feed = place_holder,
+    afternoon_feed_add_start = place_holder,
+    afternoon_90min_after_feed = place_holder,
+    afternoon_2h_after_feed = place_holder,
+    afternoon_3h_after_feed = place_holder,
+    morning_feed_delivery_no_found = "",
+    afternoon_feed_delivery_no_found = "",
+    noon_feed_add_start = place_holder,
+    noon_90min_after_feed = place_holder,
+    noon_2h_after_feed = place_holder,
+    noon_3h_after_feed = place_holder,
+    noon_feed_delivery_found = ""
+  )
+  
+  return(time_interval_after_feed_added)
+}
+
+
+#' Identify feed added times in a sheet
+#'
+#' @param sheet The current sheet to check for feed additions.
+#' @return The sheet with an added 'feed_added' column.
+identify_feed_add_times <- function(sheet) {
+  # sort by bin number and start time
+  sheet <- sheet[order(sheet$Bin, sheet$Start),]
+  sheet$feed_added <- 0
+  
+  # if the bin number didn't change, but feed in the bin increased by more than 10 kg, then this is when feed get added
+  for (k in 2:nrow(sheet)) {
+    if ((sheet$Bin[k] == sheet$Bin[k-1]) & ((sheet$Startweight[k] - sheet$Endweight[k-1]) > 10)) {
+      sheet$feed_added[k] <- 1
+    }
+  }
+  
+  return(sheet)
+}
+
+#' Extract and update feed times based on identified feed addition
+#'
+#' @param sheet The current sheet with identified feed additions.
+#' @param cur_date The specific date for the time intervals.
+#' @param time_zone Time zone to be used in date-time operations
+#' 
+#' @return A list of feed times for morning, afternoon, and noon.
+extract_feed_times <- function(sheet, cur_date, time_zone) {
+  feed_add_time <- sheet[which(sheet$feed_added == 1),]
+  
+  feed_add_morning <- data.frame()
+  special_feed_add <- data.frame()
+  feed_add_afternoon <- data.frame()
+  
+  # feed delivery in the morning
+  feed_add_morning <- feed_add_time[which(feed_add_time$Start < ymd_hms(paste(cur_date, "11:00:00"), tz=time_zone)), ] 
+  feed_add_morning <- feed_add_morning[order(feed_add_morning$Start),]
+  
+  # if there are feed add time in the afternoon after 11AM
+  temp <- feed_add_time[which(feed_add_time$Start >= ymd_hms(paste(cur_date, "11:00:00"), tz=time_zone)), ]
+  if (nrow(temp) > 0 ) {
+    # sometimes feed was added at noon. Handle those cases
+    special_feed_add <- feed_add_time[which((feed_add_time$Start >= ymd_hms(paste(cur_date, "11:00:00" ), tz=time_zone)) & 
+                                              (feed_add_time$Start <= ymd_hms(paste(cur_date, "14:00:00" ), tz=time_zone))), ]
+    
+    # feed delivery in the afternoon
+    feed_add_afternoon <- feed_add_time[which(feed_add_time$Start > ymd_hms(paste(cur_date, "14:00:00"), tz=time_zone)), ]
+    
+    # sort by time
+    feed_add_afternoon <- feed_add_afternoon[order(feed_add_afternoon$Start),]
+    special_feed_add <- special_feed_add[order(special_feed_add$Start),]
+  }
+  
+  return(list(morning = feed_add_morning, afternoon = feed_add_afternoon, noon = special_feed_add))
+}
+
+
+#' Get the earliest feed time and update data sheet
+#'
+#' This function determines the earliest time the feed was added based on the input period, 
+#' and then updates the time interval data sheet accordingly.
+#' 
+#' @param time_interval_after_feed_added Data frame containing feed time for each day
+#' @param Insentec_warning Data frame containing warnings related to feed timings.
+#' @param feed_time_df Data frame containing feed add times for each bin.
+#' @param period A character string indicating the time of the day (morning, afternoon, or noon).
+#' @param i Index of the current row being processed.
+#' 
+#' @return A list containing the updated `time_interval_after_feed_added` and `Insentec_warning`.
+earlist_feed_time <- function(time_interval_after_feed_added, Insentec_warning, feed_time_df, period, i) {
+  # if this is noon feed delivery
+  if (period == "noon") {
+    
+    #pick the earliest time when feed was added as the start time
+    if (nrow(feed_time_df) > 5) {
+      earliest_feed_time <- feed_time_df$Start[1]
+      
+      # add everything to the datasheet
+      time_interval_after_feed_added[i, paste0(period, "_feed_add_start")] <- earliest_feed_time
+      time_interval_after_feed_added[i, paste0(period, "_90min_after_feed")] <- earliest_feed_time + hours(1) + minutes(30)
+      time_interval_after_feed_added[i, paste0(period, "_2h_after_feed")] <- earliest_feed_time + hours(2)
+      time_interval_after_feed_added[i, paste0(period, "_3h_after_feed")] <- earliest_feed_time + hours(3)
+      
+      time_interval_after_feed_added[i, paste0(period, "_feed_delivery_found")] <- "YES"
+    } else {
+      time_interval_after_feed_added[i, c(paste0(period, "_feed_add_start"), 
+                                          paste0(period, "_90min_after_feed"), 
+                                          paste0(period, "_2h_after_feed"), 
+                                          paste0(period, "_3h_after_feed"))] <- NA
+    }
+    
+    
+    # morning or afternoon feed delivery
+  } else {
+    
+    #pick the earliest time when feed was added as the start time
+    if (nrow(feed_time_df) > 0) {
+      earliest_feed_time <- feed_time_df$Start[1]
+      
+      # add everything to the datasheet
+      time_interval_after_feed_added[i, paste0(period, "_feed_add_start")] <- earliest_feed_time
+      time_interval_after_feed_added[i, paste0(period, "_90min_after_feed")] <- earliest_feed_time + hours(1) + minutes(30)
+      time_interval_after_feed_added[i, paste0(period, "_2h_after_feed")] <- earliest_feed_time + hours(2)
+      time_interval_after_feed_added[i, paste0(period, "_3h_after_feed")] <- earliest_feed_time + hours(3)
+    } else {
+      time_interval_after_feed_added[i, paste0(period, "_feed_delivery_no_found")] <- "YES"
+      Insentec_warning$feed_add_time_no_found[i] <- "YES"
+      
+      time_interval_after_feed_added[i, c(paste0(period, "_feed_add_start"), 
+                                          paste0(period, "_90min_after_feed"), 
+                                          paste0(period, "_2h_after_feed"), 
+                                          paste0(period, "_3h_after_feed"))] <- NA
+    }
+  }
+  
+  
+  return(list(time_interval_after_feed_added = time_interval_after_feed_added, 
+              Insentec_warning = Insentec_warning))
+}
+
+
+#' Update feed time data sheet based on extracted feed times
+#'
+#' This function updates the feed time data sheet using the earliest feed times for morning, 
+#' afternoon, and noon periods.
+#' 
+#' @param time_interval_after_feed_added Data frame containing feed time intervals.
+#' @param Insentec_warning Data frame containing warnings related to feed timings.
+#' @param feed_times A list containing feed times for morning, afternoon, and noon for each bin.
+#' @param i Index of the current row being processed.
+#' 
+#' @return A list containing the updated `time_interval_after_feed_added` and `Insentec_warning`.
+update_feed_time_sheet <- function(time_interval_after_feed_added, Insentec_warning, feed_times, i) {
+  feed_add_morning <- feed_times$morning
+  feed_add_afternoon <- feed_times$afternoon
+  special_feed_add <- feed_times$noon
+  
+  # morning feed delivery
+  result <- earlist_feed_time(time_interval_after_feed_added, Insentec_warning, feed_add_morning, "morning", i)
+  time_interval_after_feed_added <- result$time_interval_after_feed_added
+  Insentec_warning <- result$Insentec_warning
+  
+  # afternoon feed delivery
+  result <- earlist_feed_time(time_interval_after_feed_added, Insentec_warning, feed_add_afternoon, "afternoon", i)
+  time_interval_after_feed_added <- result$time_interval_after_feed_added
+  Insentec_warning <- result$Insentec_warning
+  
+  # noon feed delivery
+  result <- earlist_feed_time(time_interval_after_feed_added, Insentec_warning, special_feed_add, "noon", i)
+  time_interval_after_feed_added <- result$time_interval_after_feed_added
+  Insentec_warning <- result$Insentec_warning
+  
+  return(list(time_interval_after_feed_added = time_interval_after_feed_added, 
+              Insentec_warning = Insentec_warning))
+}
+
+#' Check and process feed delivery times
+#'
+#' This function checks and processes feed delivery times for each date in the `all_feed` list. 
+#' It then updates the feed time intervals and warnings based on the extracted feed times.
+#' 
+#' @param all_feed A list of data frames, each containing feed data for a specific date.
+#' @param time_zone A character string indicating the time zone.
+#' @param Insentec_warning Data frame containing warnings related to feed timings.
+#' 
+#' @return A list containing the updated `time_interval_after_feed_added` and `Insentec_warning`.
+feed_delivery_check <- function(all_feed, time_zone, Insentec_warning) {
+  time_interval_after_feed_added <- create_default_feed_time_sheet(all_feed, time_zone)
+  for (i in 1:length(all_feed)) {
+    cur_date <- as.character(date(all_feed[[i]]$Start[1]))
+    cur_sheet <- all_feed[[i]]
+    
+    cur_sheet <- identify_feed_add_times(cur_sheet)
+    feed_times <- extract_feed_times(cur_sheet, cur_date, time_zone)
+    result <- update_feed_time_sheet(time_interval_after_feed_added, Insentec_warning, feed_times, i)
+    time_interval_after_feed_added <- result$time_interval_after_feed_added
+    Insentec_warning <- result$Insentec_warning
+  }
+  
+  time_interval_after_feed_added$date <- ymd(time_interval_after_feed_added$date, tz=time_zone)
+  
+  save(time_interval_after_feed_added, file = (here::here(paste0("data/results/", "feed_delivery.rda"))))
+  
+  return(Insentec_warning)
 }
 
 
