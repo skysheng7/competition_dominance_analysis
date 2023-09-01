@@ -6,9 +6,10 @@
 #'
 #' @param df_list A list of data frames containing feed, or water, or both feed and water data grouped by dates
 #' @param data_source Insentec data source, can be "feed", "water" or "feed and water". To indicate is this just feed data, or just water data, or feed and water
-#'
+#' @param time_zone Time zone to be used in date-time operations
+#' 
 #' @return An empty warning data frame.
-generate_warning_df_empty <- function(df_list, data_source = "feed and water") {
+generate_warning_df_empty <- function(df_list, data_source = "feed and water", time_zone) {
   
   # Ensure the input list is not empty
   if (length(df_list) == 0) {
@@ -444,9 +445,10 @@ determine_last_seen <- function(df, col) {
 #' @param df The data frame to process.
 #' @param col The column name.
 #' @param time The cut-off time to check against.
+#' @param time_zone Time zone to be used in date-time operations
 #' @return A character string with the warnings.
-extract_warnings <- function(df, col, time) {
-  df$End <- ymd_hms(df$End, tz = "America/Los_Angeles")
+extract_warnings <- function(df, col, time, time_zone) {
+  df$End <- ymd_hms(df$End, tz = time_zone)
   not_seen_df <- df[df$End < time, ]
   not_seen_df$comb_string <- paste(not_seen_df[[col]], as.character(format(not_seen_df$End, "%H:%M:%S")), sep = ", ")
   warning_str <- paste(sort(unique(not_seen_df$comb_string)), collapse = "; ")
@@ -462,26 +464,26 @@ extract_warnings <- function(df, col, time) {
 #' @param df_list A list of data frames, where each data frame represents 
 #' observations for a specific date. Each data frame should contain columns 
 #' related to the 'Cow' or 'Bin' and their respective timestamps.
-#'
 #' @param Insentec_warning A data frame where warnings related to cow no-shows 
 #' or bin visits are recorded. This data frame is updated during the function's 
 #' execution and returned as the main output.
+#' @param time_zone Time zone to be used in date-time operations
 #' 
 #' @return Insentec_warning
-cows_no_show <- function(df_list, Insentec_warning) {
+cows_no_show <- function(df_list, Insentec_warning, time_zone) {
   for (i in seq_along(df_list)) {
-    after6pm <- ymd_hms(paste(names(df_list)[i], "17:59:59"), tz = "America/Los_Angeles")
-    after12pm <- ymd_hms(paste(names(df_list)[i], "11:59:59"), tz = "America/Los_Angeles")
+    after6pm <- ymd_hms(paste(names(df_list)[i], "17:59:59"), tz = time_zone)
+    after12pm <- ymd_hms(paste(names(df_list)[i], "11:59:59"), tz = time_zone)
     
     # For Cows
     last_seen_cow <- determine_last_seen(df_list[[i]], "Cow")
-    Insentec_warning$no_show_after_6pm_cows[i] <- extract_warnings(last_seen_cow, "Cow", after6pm)
-    Insentec_warning$no_show_after_12pm_cows[i] <- extract_warnings(last_seen_cow, "Cow", after12pm)
+    Insentec_warning$no_show_after_6pm_cows[i] <- extract_warnings(last_seen_cow, "Cow", after6pm, time_zone)
+    Insentec_warning$no_show_after_12pm_cows[i] <- extract_warnings(last_seen_cow, "Cow", after12pm, time_zone)
     
     # For Bins
     last_seen_bin <- determine_last_seen(df_list[[i]], "Bin")
-    Insentec_warning$no_visit_after_6pm_bins[i] <- extract_warnings(last_seen_bin, "Bin", after6pm)
-    Insentec_warning$no_visit_after_12pm_bins[i] <- extract_warnings(last_seen_bin, "Bin", after12pm)
+    Insentec_warning$no_visit_after_6pm_bins[i] <- extract_warnings(last_seen_bin, "Bin", after6pm, time_zone)
+    Insentec_warning$no_visit_after_12pm_bins[i] <- extract_warnings(last_seen_bin, "Bin", after12pm, time_zone)
   }
   return(Insentec_warning)
 }
@@ -622,7 +624,7 @@ generate_warning_df <- function(data_source = "feed and water", all_feed = NULL,
                                 all_water = NULL, high_feed_dur_threshold, 
                                 high_water_dur_threshold, min_feed_bin, max_feed_bin, 
                                 min_wat_bin, max_wat_bin, bin_id_add, 
-                                total_cow_expt, low_visit_threshold) {
+                                total_cow_expt, low_visit_threshold, time_zone) {
   # create a list of data frames containing feed, or water, or both feed and water data grouped by dates
   if ((!is.null(all_feed)) & (!is.null(all_water))) {
     df_list <- combine_feeder_and_water_data(all_feed, all_water)
@@ -634,7 +636,7 @@ generate_warning_df <- function(data_source = "feed and water", all_feed = NULL,
     cat("No feed and water data was passed into the function! Please add feed data or water data or both.\n")
   }
   
-  Insentec_warning <- generate_warning_df_empty(df_list, data_source)
+  Insentec_warning <- generate_warning_df_empty(df_list, data_source, time_zone)
   long_feed_dur_list <- list()
   long_wat_dur_list <- list()
   
@@ -660,7 +662,7 @@ generate_warning_df <- function(data_source = "feed and water", all_feed = NULL,
   save(negative_intake_list, file = (here::here(paste0("data/results/", "negative_intake_list.rda"))))
   # record cows that did not visit any bins after 6 pm and 12 pm, and bins not 
   # visited by any cow after 6 pm and 12 pm
-  Insentec_warning <- cows_no_show(df_list, Insentec_warning)
+  Insentec_warning <- cows_no_show(df_list, Insentec_warning, time_zone)
   # record the total number of visits to each bin by each cow everyday
   Insentec_warning <-  bin_visit_count(df_list, min_feed_bin, max_feed_bin, min_wat_bin, max_wat_bin, bin_id_add, total_cow_expt, low_visit_threshold, Insentec_warning)
   
