@@ -620,14 +620,113 @@ bin_visit_count <- function(df_list, min_feed_bin, max_feed_bin, min_wat_bin, ma
 
 
 
-#' Handle double detections 
+#' Handle double detection for when the same cow shows up at different bins. 
 #' The idea behind this double detection handling is that we always keep the second bout in 
-#' double detections intact. We mark the end time of the first bout to the same as the start time of
+#' double detections intact. We mark the end time of the first bout to 1 second less than the start time of
 #' the second bout
+#'
+#' @param comb_list A list of data.frames representing combined feed & water data.
+#'
+#' @return A list of data.frames with corrected end times for overlapping bouts.
+handle_double_detection_cow <- function(comb_list) {
+  for(i in 1:length(comb_list)){
+    comb_list[[i]] <- comb_list[[i]][order(comb_list[[i]]$Cow, comb_list[[i]]$Start, comb_list[[i]]$End),]
+    for (k in 2:nrow(comb_list[[i]])) {
+      if ((comb_list[[i]]$Cow[k] == comb_list[[i]]$Cow[k-1]) & (comb_list[[i]]$Start[k] < comb_list[[i]]$End[k-1])) {
+        comb_list[[i]]$End[k-1] <- comb_list[[i]]$Start[k] - seconds(1)
+      }
+    }
+  }
+  return(comb_list)
+}
 
+#' Handle double detection for when the same bin registers 2 different cows.
+#'
+#' @param comb_list A list of data.frames representing combined data.
+#'
+#' @return A list of data.frames with corrected end times for overlapping bouts.
+handle_double_detection_bin <- function(comb_list) {
+  for(i in 1:length(comb_list)){
+    comb_list[[i]] <- comb_list[[i]][order(comb_list[[i]]$Bin, comb_list[[i]]$Start, comb_list[[i]]$End),]
+    for (k in 2:nrow(comb_list[[i]])) {
+      if ((comb_list[[i]]$Bin[k] == comb_list[[i]]$Bin[k-1]) & (comb_list[[i]]$Start[k] < comb_list[[i]]$End[k-1])) {
+        comb_list[[i]]$End[k-1] <- comb_list[[i]]$Start[k] - seconds(1)
+      }
+    }
+  }
+  return(comb_list)
+}
 
+#' Update the duration in the combined list.
+#'
+#' @param comb_list A list of data.frames representing combined data.
+#'
+#' @return A list of data.frames with updated durations.
+update_duration <- function(comb_list) {
+  for(i in 1:length(comb_list)){
+    comb_list[[i]]$Duration <- comb_list[[i]]$Start %--% comb_list[[i]]$End
+    comb_list[[i]]$Duration <- seconds(as.duration(comb_list[[i]]$Duration))
+    comb_list[[i]]$Duration <- trimws(as.character(comb_list[[i]]$Duration), which = "both")
+    comb_list[[i]]$Duration <- substr(comb_list[[i]]$Duration, 1, (nchar(comb_list[[i]]$Duration)-1))
+    comb_list[[i]]$Duration <- as.numeric(comb_list[[i]]$Duration)
+  }
+  return(comb_list)
+}
 
+#' Delete rows with negative durations.
+#'
+#' @param comb_list A list of data.frames representing combined data.
+#'
+#' @return A list of data.frames without rows of negative durations.
+delete_negative_durations <- function(comb_list) {
+  for (i in 1:length(comb_list)) {
+    comb_list[[i]] <- comb_list[[i]][which(comb_list[[i]]$Duration > 0),]
+  }
+  return(comb_list)
+}
 
+#' Update changes to feed and water after cleaning double detections.
+#'
+#' @param comb_list A list of data.frames representing combined data.
+#' @param feed_list A list of data.frames representing feed data.
+#' @param water_list A list of data.frames representing water data.
+#' @param bin_id_add the threshold for ID to tell water bins apart from feed bins
+#'
+#' @return A list containing updated feed and water lists.
+update_feed_water <- function(comb_list, feed_list, water_list, bin_id_add) {
+  for (i in 1:length(comb_list)) {
+    cur_date <- names(comb_list)[i]
+    feed_list[[cur_date]] <- comb_list[[i]][which(comb_list[[i]]$Bin < bin_id_add),]
+    water_list[[cur_date]] <- comb_list[[i]][which(comb_list[[i]]$Bin > bin_id_add),]
+  }
+  return(list(feed_list = feed_list, water_list = water_list))
+}
+
+#' Generate Warning Data Frame
+#'
+#' This function processes feed and water data and generates warnings based on
+#' specific criteria, such as double detections, negative durations, large intakes,
+#' and more.
+#'
+#' @param data_source Character. Indicates if the data source is "feed", "water", or "feed and water".
+#' @param all_feed A list of data frames containing feed data.
+#' @param all_water A list of data frames containing water data.
+#' @param high_feed_dur_threshold Numeric. Threshold for high feed duration.
+#' @param high_water_dur_threshold Numeric. Threshold for high water duration.
+#' @param min_feed_bin Numeric. Minimum feed bin number.
+#' @param max_feed_bin Numeric. Maximum feed bin number.
+#' @param min_wat_bin Numeric. Minimum water bin number.
+#' @param max_wat_bin Numeric. Maximum water bin number.
+#' @param bin_id_add Numeric. Bin identification addition value to tell feed and water bins apart.
+#' @param total_cow_expt Numeric. Total number of cows in the experiment.
+#' @param low_visit_threshold Numeric. Threshold for low visits.
+#' @param time_zone Character. Time zone for the data.
+#' 
+#' @return A list containing:
+#'   * Insentec_warning: data frame of generated warnings.
+#'   * feed: cleaned and processed feed data.
+#'   * water: cleaned and processed water data.
+#'   * comb: combined feed and water data.
 generate_warning_df <- function(data_source = "feed and water", all_feed = NULL, 
                                 all_water = NULL, high_feed_dur_threshold, 
                                 high_water_dur_threshold, min_feed_bin, max_feed_bin, 
@@ -730,7 +829,36 @@ generate_warning_df <- function(data_source = "feed and water", all_feed = NULL,
     
   }
   
-  return(list(Insentec_warning, all_feed, all_water))
+  # regenerate a combined list of data frames containing feed, or water, or both feed and water data grouped by dates
+  # after data processing above
+  if ((!is.null(all_feed)) & (!is.null(all_water))) {
+    df_list2 <- combine_feeder_and_water_data(all_feed, all_water)
+  } else if (!is.null(all_feed)) {
+    df_list2 <- all_feed
+  } else if (!is.null(all_water)) {
+    df_list2 <- all_water
+  } else {
+    cat("No feed and water data was passed into the function! Please add feed data or water data or both.\n")
+  }
+  
+  # handle double detections
+  df_list2 <- handle_double_detection_cow(df_list2)
+  df_list2 <- handle_double_detection_bin(df_list2)
+  df_list2 <- update_duration(df_list2)
+  df_list2 <- delete_negative_durations(df_list2)
+  results <- update_feed_water(df_list2, all_feed, all_water)
+  all_feed2 <- results$feed_list
+  all_water2 <- results$water_list
+  
+  save(Insentec_warning, file = (here::here(paste0("data/results/", "Insentec_warning.rda"))))
+  save(all_feed2, file = (here::here(paste0("data/results/", "Cleaned_feeding_original_data.rda"))))
+  save(all_water2, file = (here::here(paste0("data/results/", "Cleaned_drinking_original_data.rda"))))
+  save(df_list2, file = (here::here(paste0("data/results/", "Cleaned_combined_original_data.rda"))))
+  
+  return(list(Insentec_warning = Insentec_warning, 
+              feed = all_feed2, 
+              water = all_water2, 
+              comb = df_list2))
 
 }
 

@@ -552,5 +552,7 @@ merge_data <- function(data_list) {
   # Use do.call with rbind to efficiently concatenate all data frames in the list
   master_data <- do.call(rbind, data_list)
   
+  master_data$date <- date(master_data$Start)
+  
   return(master_data)
 }

@@ -58,15 +58,28 @@ all.wat <- process_all_water(fileNames.w, coln.wat, cow_delete_list, wat_transpo
 ################################################################################
 ############################## Quality Check ###################################
 ################################################################################
-# generate an empty warning dataframe
-
-
-
-
+# initial process and quaity check for Insentec data, and generate warning dataframe
+results <- generate_warning_df(data_source = "feed and water", all_feed = all.fed, 
+                                all_water = all.wat, high_feed_dur_threshold, 
+                                high_water_dur_threshold, min_feed_bin, max_feed_bin, 
+                                min_wat_bin, max_wat_bin, bin_id_add, 
+                                total_cow_expt, low_visit_threshold, time_zone) 
+Insentec_warning <- results$Insentec_warning
+all.fed2 <- results$feed
+all.wat2 <- results$water
+all.comb2 <- results$comb
 
 # combine data frame different dates into 1 master dataframe
 # Calling the function for each data list:
-all.comb <- combine_feeder_and_water_data(all.fed, all.wat)
-master_feeding <- merge_data(all.fed)
-master_drinking <- merge_data(all.wat)
-master_comb <- merge_data(all.comb)
+master_feeding <- merge_data(all.fed2)
+master_drinking <- merge_data(all.wat2)
+master_comb <- merge_data(all.comb2)
+save(master_feeding, file = (here::here(paste0("data/results/", "Cleaned_feeding_original_data_combined.rda"))))
+save(master_drinking, file = (here::here(paste0("data/results/", "Cleaned_drinking_original_data_combined.rda"))))
+save(master_comb, file = (here::here(paste0("data/results/", "Cleaned_feeding_drinking_original_data_combined.rda"))))
+
+
+
+
+
+
