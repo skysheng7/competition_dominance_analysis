@@ -107,41 +107,59 @@ check_intake <- function(intake_data, warning_data, type = c("feeding", "drinkin
 merge_feed_water_summary <- function(master_f = NULL, master_d = NULL, Insentec_warning, 
                                      feed_intake_low_bar, feed_intake_high_bar,
                                      water_intake_low_bar, water_intake_high_bar) {
+  
+  # Initializing lists
+  list_to_join <- list()
+  
   # get feed and drinking summary for each day for each cow
-  feed_summary <- summarize_feed_water_data(master_f, type = "Feeding")
-  drink_summary <- summarize_feed_water_data(master_d, type = "Drinking")
-  # feeding
-  feeding_intake <- feed_summary$intake
-  feeding_duration <- feed_summary$duration
-  feeding_visits <- feed_summary$visits
-  # drinking
-  drinking_intake <- drink_summary$intake
-  drinking_duration <- drink_summary$duration
-  drinking_visits <- drink_summary$visits
   
-  # check for low feeding and drinking intake
-  Insentec_warning <- check_intake(feeding_intake, Insentec_warning, type = "feeding", 
-                                   limit = "low", feed_intake_low_bar, feed_intake_high_bar,
-                                   water_intake_low_bar, water_intake_high_bar)
-  Insentec_warning <- check_intake(feeding_intake, Insentec_warning, type = "feeding", 
-                                   limit = "high", feed_intake_low_bar, feed_intake_high_bar,
-                                   water_intake_low_bar, water_intake_high_bar)
-  Insentec_warning <- check_intake(drinking_intake, Insentec_warning, type = "drinking", 
-                                   limit = "low", feed_intake_low_bar, feed_intake_high_bar,
-                                   water_intake_low_bar, water_intake_high_bar)
-  Insentec_warning <- check_intake(drinking_intake, Insentec_warning, type = "drinking", 
-                                   limit = "high", feed_intake_low_bar, feed_intake_high_bar,
-                                   water_intake_low_bar, water_intake_high_bar)
+  if (!is.null(master_f)) {
+    feed_summary <- summarize_feed_water_data(master_f, type = "Feeding")
+    # feeding
+    feeding_intake <- feed_summary$intake
+    feeding_duration <- feed_summary$duration
+    feeding_visits <- feed_summary$visits
+    
+    # check for low feeding intake
+    Insentec_warning <- check_intake(feeding_intake, Insentec_warning, type = "feeding", 
+                                     limit = "low", feed_intake_low_bar, feed_intake_high_bar,
+                                     water_intake_low_bar, water_intake_high_bar)
+    Insentec_warning <- check_intake(feeding_intake, Insentec_warning, type = "feeding", 
+                                     limit = "high", feed_intake_low_bar, feed_intake_high_bar,
+                                     water_intake_low_bar, water_intake_high_bar)
+    
+    list_to_join <- c(list_to_join, list(feeding_intake, feeding_duration, feeding_visits))
+  }
   
-  Insentec_final_summary <- join_all(list(feeding_intake, feeding_duration, feeding_visits, drinking_intake, drinking_duration, drinking_visits), by = c("date", "Cow"))
-  Insentec_final_summary <- Insentec_final_summary[order(Insentec_final_summary$date, Insentec_final_summary$Cow),]
-  Insentec_final_summary[is.na(Insentec_final_summary)] <- 0 # remove NA with 0
+  if (!is.null(master_d)) {
+    drink_summary <- summarize_feed_water_data(master_d, type = "Drinking")
+    # drinking
+    drinking_intake <- drink_summary$intake
+    drinking_duration <- drink_summary$duration
+    drinking_visits <- drink_summary$visits
+    
+    # check for low drinking intake
+    Insentec_warning <- check_intake(drinking_intake, Insentec_warning, type = "drinking", 
+                                     limit = "low", feed_intake_low_bar, feed_intake_high_bar,
+                                     water_intake_low_bar, water_intake_high_bar)
+    Insentec_warning <- check_intake(drinking_intake, Insentec_warning, type = "drinking", 
+                                     limit = "high", feed_intake_low_bar, feed_intake_high_bar,
+                                     water_intake_low_bar, water_intake_high_bar)
+    
+    list_to_join <- c(list_to_join, list(drinking_intake, drinking_duration, drinking_visits))
+  }
   
-  save(Insentec_warning, file = (here::here(paste0("data/results/", "Insentec_warning.rda"))))
-  save(Insentec_final_summary, file = (here::here(paste0("data/results/", "Feeding and drinking analysis.rda"))))
+  if (length(list_to_join) > 0) {
+    Insentec_final_summary <- join_all(list_to_join, by = c("date", "Cow"))
+    Insentec_final_summary <- Insentec_final_summary[order(Insentec_final_summary$date, Insentec_final_summary$Cow),]
+    Insentec_final_summary[is.na(Insentec_final_summary)] <- 0 # replace NA with 0
+    
+    save(Insentec_warning, file = (here::here(paste0("data/results/", "Insentec_warning.rda"))))
+    save(Insentec_final_summary, file = (here::here(paste0("data/results/", "Feeding and drinking analysis.rda"))))
+  }
   
-  return(list(Insentec_final_summary = Insentec_final_summary,
-         Insentec_warning = Insentec_warning))
+  return(list(Insentec_final_summary = ifelse(exists("Insentec_final_summary"), Insentec_final_summary, NULL),
+              Insentec_warning = Insentec_warning))
 }
 
 

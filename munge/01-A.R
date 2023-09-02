@@ -18,9 +18,9 @@ library(here)
 input_dir <- here("data")
 output_dir <- here("result")
 # load in feed and water data
-fileNames.f <- list.files(path = here("data/feed_test"),full.names = TRUE,
+fileNames.f <- list.files(path = here("data/feed"),full.names = TRUE,
                           recursive = TRUE,pattern =".DAT")
-fileNames.w <- list.files(path = here("data/water_test"),full.names = TRUE,
+fileNames.w <- list.files(path = here("data/water"),full.names = TRUE,
                           recursive = TRUE,pattern =".DAT")
 fileNames.f <- sort(fileNames.f)
 fileNames.w <- sort(fileNames.w)
