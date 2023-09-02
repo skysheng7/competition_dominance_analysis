@@ -78,6 +78,17 @@ save(master_feeding, file = (here::here(paste0("data/results/", "Cleaned_feeding
 save(master_drinking, file = (here::here(paste0("data/results/", "Cleaned_drinking_original_data_combined.rda"))))
 save(master_comb, file = (here::here(paste0("data/results/", "Cleaned_feeding_drinking_original_data_combined.rda"))))
 
+# get feed and drinking summary for each day for each cow
+feed_summary <- summarize_data(master_feeding3, type = "Feeding")
+drink_summary <- summarize_data(master_drinking3, type = "Drinking")
+# feeding
+feeding_intake <- feed_summary$intake
+feeding_duration <- feed_summary$duration
+feeding_visits <- feed_summary$visits
+# drinking
+drinking_intake <- drink_summary$intake
+drinking_duration <- drink_summary$duration
+drinking_visits <- drink_summary$visits
 
 
 

@@ -184,7 +184,8 @@ get_double_detections_for_day <- function(dat) {
 #'
 #' This function iterates through all given days and checks for cases of 1 cow 2 
 #' bin double detections: when the same cow was registered at 2 bins at the same 
-#' time. It also updates a warning data frame with detected instances.
+#' time. The first bin in a double detection event is the faulty bin. 
+#' It also updates a warning data frame with detected instances.
 #' 
 #' @param all_comb A list of data frames, each containing data for a specific day.
 #' @param Insentec_warning A data frame where warnings regarding double detections are to be recorded.
@@ -846,7 +847,7 @@ generate_warning_df <- function(data_source = "feed and water", all_feed = NULL,
   df_list2 <- handle_double_detection_bin(df_list2)
   df_list2 <- update_duration(df_list2)
   df_list2 <- delete_negative_durations(df_list2)
-  results <- update_feed_water(df_list2, all_feed, all_water)
+  results <- update_feed_water(df_list2, all_feed, all_water, bin_id_add)
   all_feed2 <- results$feed_list
   all_water2 <- results$water_list
   
