@@ -347,6 +347,30 @@ bin_delete <- function(df, min_bin, max_bin) {
   df[df$Bin >= min_bin & df$Bin <= max_bin, ]
 }
 
+#' Safely Read Data from a File
+#'
+#' This function attempts to read a data file and returns an empty data frame if the file appears empty.
+#' Any other error during reading will also result in an empty data frame being returned.
+#'
+#' @param file_name Character string specifying the path to the file to read.
+#'
+#' @return A data frame containing the file contents. If the file is empty or another error occurs, an empty data frame is returned.
+
+read_data_safely <- function(file_name) {
+  result <- tryCatch(
+    {
+      data <- read.table(file_name, header = F, sep = ",")
+      return(data)
+    },
+    error = function(e) {
+      #message("The file seems to be empty or there's another issue. Returning an empty data frame.")
+      return(data.frame())
+    }
+  )
+  return(result)
+}
+
+
 #' Process feeder data
 #'
 #' @param file_name File path for the feeder data.
@@ -358,12 +382,19 @@ bin_delete <- function(df, min_bin, max_bin) {
 #' @param feed_coln_to_keep Columns to keep in the feeder data.
 #' @return Processed data frame for feeder.
 process_feeder_data <- function(file_name, coln, cow_delete_list, feed_transponder_delete_list, min_feed_bin, max_feed_bin, feed_coln_to_keep) {
-  feeder = read.table(file_name, header = F, sep = ",")
-  colnames(feeder) = coln
-  feeder = cow_delete(feeder, cow_delete_list)
-  feeder = transponder_delete(feeder, feed_transponder_delete_list)
-  feeder = bin_delete(feeder, min_feed_bin, max_feed_bin)
-  feeder[, feed_coln_to_keep]
+  feeder = read_data_safely(file_name)
+  if (nrow(feeder) == 0) {
+    return(data.frame())
+  } else {
+    colnames(feeder) = coln
+    feeder = cow_delete(feeder, cow_delete_list)
+    feeder = transponder_delete(feeder, feed_transponder_delete_list)
+    feeder = bin_delete(feeder, min_feed_bin, max_feed_bin)
+    feeder <- feeder[, feed_coln_to_keep]
+    
+    return(feeder)
+  }
+  
 }
 
 #' Process water data
@@ -379,12 +410,19 @@ process_feeder_data <- function(file_name, coln, cow_delete_list, feed_transpond
 #
 #' @return Processed data frame for water.
 process_water_data <- function(file_name, coln_wat, cow_delete_list, wat_transponder_delete_list, min_wat_bin, max_wat_bin, wat_coln_to_keep, bin_id_add) {
-  water = read.table(file_name, header = F, sep = ",")
-  colnames(water) = coln_wat
-  water = cow_delete(water, cow_delete_list)
-  water = transponder_delete(water, wat_transponder_delete_list)
-  water = bin_delete(water, min_wat_bin, max_wat_bin)
-  rename_water_bins(water[, wat_coln_to_keep],bin_id_add, min_wat_bin, max_wat_bin)
+  water = read_data_safely(file_name)
+  if (nrow(water) == 0) {
+    return(data.frame())
+  } else {
+    colnames(water) = coln_wat
+    water = cow_delete(water, cow_delete_list)
+    water = transponder_delete(water, wat_transponder_delete_list)
+    water = bin_delete(water, min_wat_bin, max_wat_bin)
+    water <- rename_water_bins(water[, wat_coln_to_keep],bin_id_add, min_wat_bin, max_wat_bin)
+    
+    return(water)
+  }
+  
 }
 
 #' Rename water bins
@@ -423,23 +461,26 @@ process_all_feed <- function(fileNames.f, coln, cow_delete_list, feed_transponde
   {
     fed.1 = process_feeder_data(as.character(fileNames.f[i]), coln, cow_delete_list, feed_transponder_delete_list, min_feed_bin, max_feed_bin, feed_coln_to_keep)
     all.fed[[i]]=na.omit(fed.1)
-    # trim the start and end time format
-    all.fed[[i]]$Start <- trimws(all.fed[[i]]$Start, which = "both")
-    all.fed[[i]]$End <- trimws(all.fed[[i]]$End, which = "both")
     
-    ############################ Daylight saving change ########################
-    date=substring(as.character(fileNames.f[i]),nchar(as.character(fileNames.f[i]))-9,nchar(as.character(fileNames.f[i]))-4) #this gets the date from the file name
-    cur_date <- ymd(date, tz=time_zone)
-    date = as.character(cur_date)
-    cur_year <- as.integer(year(cur_date))
-    cur_month <- as.integer(month(cur_date))
-    all.fed[[i]] = daylight_saving_adjust(all.fed[[i]], cur_date, cur_year, cur_month, daylight_saving_table)
-    
-    #Adjusting start and end times to make R recognize the date and time format
-    all.fed[[i]]$Start=paste(rep(date,dim(all.fed[[i]])[1]),all.fed[[i]]$Start)
-    all.fed[[i]]$Start=ymd_hms(all.fed[[i]]$Start, tz=time_zone)
-    all.fed[[i]]$End=paste(rep(date,dim(all.fed[[i]])[1]),all.fed[[i]]$End)
-    all.fed[[i]]$End=ymd_hms(all.fed[[i]]$End, tz=time_zone)
+    if (nrow(fed.1) > 0) {
+      # trim the start and end time format
+      all.fed[[i]]$Start <- trimws(all.fed[[i]]$Start, which = "both")
+      all.fed[[i]]$End <- trimws(all.fed[[i]]$End, which = "both")
+      
+      ############################ Daylight saving change ########################
+      date=substring(as.character(fileNames.f[i]),nchar(as.character(fileNames.f[i]))-9,nchar(as.character(fileNames.f[i]))-4) #this gets the date from the file name
+      cur_date <- ymd(date, tz=time_zone)
+      date = as.character(cur_date)
+      cur_year <- as.integer(year(cur_date))
+      cur_month <- as.integer(month(cur_date))
+      all.fed[[i]] = daylight_saving_adjust(all.fed[[i]], cur_date, cur_year, cur_month, daylight_saving_table)
+      
+      #Adjusting start and end times to make R recognize the date and time format
+      all.fed[[i]]$Start=paste(rep(date,dim(all.fed[[i]])[1]),all.fed[[i]]$Start)
+      all.fed[[i]]$Start=ymd_hms(all.fed[[i]]$Start, tz=time_zone)
+      all.fed[[i]]$End=paste(rep(date,dim(all.fed[[i]])[1]),all.fed[[i]]$End)
+      all.fed[[i]]$End=ymd_hms(all.fed[[i]]$End, tz=time_zone)
+    }
 
     #Adding dates as name
     names(all.fed)[i]=date
@@ -477,26 +518,31 @@ process_all_water <- function(fileNames.w, coln.wat, cow_delete_list, wat_transp
   
   for(i in 1:len)
   {
+
     wat.1 = process_water_data(as.character(fileNames.w[i]), coln.wat, cow_delete_list, wat_transponder_delete_list, min_wat_bin, max_wat_bin, wat_coln_to_keep, bin_id_add)
-    all.wat[[i]]=wat.1[which(wat.1$Bin>100),]
-    all.wat[[i]]=na.omit(all.wat[[i]])
-    # trim the start and end time format
-    all.wat[[i]]$Start <- trimws(all.wat[[i]]$Start, which = "both")
-    all.wat[[i]]$End <- trimws(all.wat[[i]]$End, which = "both")
+    all.wat[[i]]=na.omit(wat.1)
     
-    ############################ Daylight saving change ########################
-    date=substring(as.character(fileNames.w[i]),nchar(as.character(fileNames.w[i]))-9,nchar(as.character(fileNames.w[i]))-4) #this gets the date from the file name
-    cur_date <- ymd(date, tz=time_zone)
-    date = as.character(cur_date)
-    cur_year <- as.integer(year(cur_date))
-    cur_month <- as.integer(month(cur_date))
-    all.wat[[i]] = daylight_saving_adjust(all.wat[[i]], cur_date, cur_year, cur_month, daylight_saving_table)
-    
-    #Adjusting start and end times to make R recognize the date and time format
-    all.wat[[i]]$Start=paste(rep(date,dim(all.wat[[i]])[1]),all.wat[[i]]$Start)
-    all.wat[[i]]$Start=ymd_hms(all.wat[[i]]$Start, tz=time_zone)
-    all.wat[[i]]$End=paste(rep(date,dim(all.wat[[i]])[1]),all.wat[[i]]$End)
-    all.wat[[i]]$End=ymd_hms(all.wat[[i]]$End, tz=time_zone)
+    if (nrow(wat.1) > 0 ) {
+      all.wat[[i]]=all.wat[[i]][which(all.wat[[i]]$Bin>bin_id_add),]
+      
+      # trim the start and end time format
+      all.wat[[i]]$Start <- trimws(all.wat[[i]]$Start, which = "both")
+      all.wat[[i]]$End <- trimws(all.wat[[i]]$End, which = "both")
+      
+      ############################ Daylight saving change ########################
+      date=substring(as.character(fileNames.w[i]),nchar(as.character(fileNames.w[i]))-9,nchar(as.character(fileNames.w[i]))-4) #this gets the date from the file name
+      cur_date <- ymd(date, tz=time_zone)
+      date = as.character(cur_date)
+      cur_year <- as.integer(year(cur_date))
+      cur_month <- as.integer(month(cur_date))
+      all.wat[[i]] = daylight_saving_adjust(all.wat[[i]], cur_date, cur_year, cur_month, daylight_saving_table)
+      
+      #Adjusting start and end times to make R recognize the date and time format
+      all.wat[[i]]$Start=paste(rep(date,dim(all.wat[[i]])[1]),all.wat[[i]]$Start)
+      all.wat[[i]]$Start=ymd_hms(all.wat[[i]]$Start, tz=time_zone)
+      all.wat[[i]]$End=paste(rep(date,dim(all.wat[[i]])[1]),all.wat[[i]]$End)
+      all.wat[[i]]$End=ymd_hms(all.wat[[i]]$End, tz=time_zone)
+    }
     
     #Adding dates as name
     names(all.wat)[i]=date

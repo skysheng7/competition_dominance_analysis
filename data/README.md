@@ -389,7 +389,7 @@ This dataset contains warning logs and possible anomalies detected related to bi
 26
 
 **Number of Cases/Rows:**  
-317
+309
 
 **Dataset Structure:**  
 The dataset is a data frame containing various observations and warnings related to cows' bin visits, such as double detections, missing cows, and unusual intake patterns.
@@ -499,7 +499,7 @@ The `Insentec_final_summary` dataset provides a comprehensive overview of the fe
 8
 
 **Number of Cases/Rows:**  
-147 observations.
+14680 observations.
 
 **Dataset Structure:**  
 The dataset is stored as a data frame. Each observation represents a cow's feeding & drinking statistics recorded on a specific date.

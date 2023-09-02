@@ -51,8 +51,8 @@ end_date <- date_result$end_date
 date_range <- date_result$date_range
 
 # read in feed and water data into a list of dataframes
-all.fed <- process_all_feed(fileNames.f, coln, cow_delete_list, feed_transponder_delete_list, min_feed_bin, max_feed_Bin, feed_coln_to_keep)
-all.wat <- process_all_water(fileNames.w, coln.wat, cow_delete_list, wat_transponder_delete_list, min_wat_bin, max_wat_Bin, wat_coln_to_keep, bin_id_add)
+all.fed <- process_all_feed(fileNames.f, coln, cow_delete_list, feed_transponder_delete_list, min_feed_bin, max_feed_bin, feed_coln_to_keep)
+all.wat <- process_all_water(fileNames.w, coln.wat, cow_delete_list, wat_transponder_delete_list, min_wat_bin, max_wat_bin, wat_coln_to_keep, bin_id_add)
 
 
 ################################################################################
