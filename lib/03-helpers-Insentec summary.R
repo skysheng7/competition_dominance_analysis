@@ -80,7 +80,8 @@ check_intake <- function(intake_data, warning_data, type = c("feeding", "drinkin
       cur_date <- warning_data$date[i]
       cur_day_abnormal <- abnormal_intake[which(abnormal_intake$date == cur_date), ]
       cur_day_abnormal_cow <- sort(unique(cur_day_abnormal$comb_str))
-      colname <- paste0(limit, "_daily_", type, "_intake_cows")
+      middle_name <- ifelse(type == "feeding", "feed", "water")
+      colname <- paste0(limit, "_daily_", middle_name, "_intake_cows")
       warning_data[[colname]][i] <- paste(unlist(cur_day_abnormal_cow), collapse = "; ")
     }
   }
@@ -120,7 +121,7 @@ merge_feed_water_summary <- function(master_f = NULL, master_d = NULL, Insentec_
     feeding_duration <- feed_summary$duration
     feeding_visits <- feed_summary$visits
     
-    # check for low feeding intake
+    # check for low & high feeding intake
     Insentec_warning <- check_intake(feeding_intake, Insentec_warning, type = "feeding", 
                                      limit = "low", feed_intake_low_bar, feed_intake_high_bar,
                                      water_intake_low_bar, water_intake_high_bar)
@@ -138,7 +139,7 @@ merge_feed_water_summary <- function(master_f = NULL, master_d = NULL, Insentec_
     drinking_duration <- drink_summary$duration
     drinking_visits <- drink_summary$visits
     
-    # check for low drinking intake
+    # check for low & high drinking intake
     Insentec_warning <- check_intake(drinking_intake, Insentec_warning, type = "drinking", 
                                      limit = "low", feed_intake_low_bar, feed_intake_high_bar,
                                      water_intake_low_bar, water_intake_high_bar)

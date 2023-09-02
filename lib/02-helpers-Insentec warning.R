@@ -477,18 +477,22 @@ extract_warnings <- function(df, col, time, time_zone) {
 #' @return Insentec_warning
 cows_no_show <- function(df_list, Insentec_warning, time_zone) {
   for (i in seq_along(df_list)) {
-    after6pm <- ymd_hms(paste(names(df_list)[i], "17:59:59"), tz = time_zone)
-    after12pm <- ymd_hms(paste(names(df_list)[i], "11:59:59"), tz = time_zone)
     
-    # For Cows
-    last_seen_cow <- determine_last_seen(df_list[[i]], "Cow")
-    Insentec_warning$no_show_after_6pm_cows[i] <- extract_warnings(last_seen_cow, "Cow", after6pm, time_zone)
-    Insentec_warning$no_show_after_12pm_cows[i] <- extract_warnings(last_seen_cow, "Cow", after12pm, time_zone)
+    if (nrow(df_list[[i]]) >0) {
+      after6pm <- ymd_hms(paste(names(df_list)[i], "17:59:59"), tz = time_zone)
+      after12pm <- ymd_hms(paste(names(df_list)[i], "11:59:59"), tz = time_zone)
+      
+      # For Cows
+      last_seen_cow <- determine_last_seen(df_list[[i]], "Cow")
+      Insentec_warning$no_show_after_6pm_cows[i] <- extract_warnings(last_seen_cow, "Cow", after6pm, time_zone)
+      Insentec_warning$no_show_after_12pm_cows[i] <- extract_warnings(last_seen_cow, "Cow", after12pm, time_zone)
+      
+      # For Bins
+      last_seen_bin <- determine_last_seen(df_list[[i]], "Bin")
+      Insentec_warning$no_visit_after_6pm_bins[i] <- extract_warnings(last_seen_bin, "Bin", after6pm, time_zone)
+      Insentec_warning$no_visit_after_12pm_bins[i] <- extract_warnings(last_seen_bin, "Bin", after12pm, time_zone)
+    } 
     
-    # For Bins
-    last_seen_bin <- determine_last_seen(df_list[[i]], "Bin")
-    Insentec_warning$no_visit_after_6pm_bins[i] <- extract_warnings(last_seen_bin, "Bin", after6pm, time_zone)
-    Insentec_warning$no_visit_after_12pm_bins[i] <- extract_warnings(last_seen_bin, "Bin", after12pm, time_zone)
   }
   return(Insentec_warning)
 }

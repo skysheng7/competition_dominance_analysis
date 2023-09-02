@@ -363,7 +363,7 @@ read_data_safely <- function(file_name) {
       return(data)
     },
     error = function(e) {
-      #message("The file seems to be empty or there's another issue. Returning an empty data frame.")
+      message(paste0("The file seems to be empty or there's another issue. Returning an empty data frame: ", file_name))
       return(data.frame())
     }
   )
@@ -461,6 +461,9 @@ process_all_feed <- function(fileNames.f, coln, cow_delete_list, feed_transponde
   {
     fed.1 = process_feeder_data(as.character(fileNames.f[i]), coln, cow_delete_list, feed_transponder_delete_list, min_feed_bin, max_feed_bin, feed_coln_to_keep)
     all.fed[[i]]=na.omit(fed.1)
+    date=substring(as.character(fileNames.f[i]),nchar(as.character(fileNames.f[i]))-9,nchar(as.character(fileNames.f[i]))-4) #this gets the date from the file name
+    cur_date <- ymd(date, tz=time_zone)
+    date = as.character(cur_date)
     
     if (nrow(fed.1) > 0) {
       # trim the start and end time format
@@ -468,9 +471,7 @@ process_all_feed <- function(fileNames.f, coln, cow_delete_list, feed_transponde
       all.fed[[i]]$End <- trimws(all.fed[[i]]$End, which = "both")
       
       ############################ Daylight saving change ########################
-      date=substring(as.character(fileNames.f[i]),nchar(as.character(fileNames.f[i]))-9,nchar(as.character(fileNames.f[i]))-4) #this gets the date from the file name
-      cur_date <- ymd(date, tz=time_zone)
-      date = as.character(cur_date)
+      
       cur_year <- as.integer(year(cur_date))
       cur_month <- as.integer(month(cur_date))
       all.fed[[i]] = daylight_saving_adjust(all.fed[[i]], cur_date, cur_year, cur_month, daylight_saving_table)
@@ -522,6 +523,10 @@ process_all_water <- function(fileNames.w, coln.wat, cow_delete_list, wat_transp
     wat.1 = process_water_data(as.character(fileNames.w[i]), coln.wat, cow_delete_list, wat_transponder_delete_list, min_wat_bin, max_wat_bin, wat_coln_to_keep, bin_id_add)
     all.wat[[i]]=na.omit(wat.1)
     
+    date=substring(as.character(fileNames.w[i]),nchar(as.character(fileNames.w[i]))-9,nchar(as.character(fileNames.w[i]))-4) #this gets the date from the file name
+    cur_date <- ymd(date, tz=time_zone)
+    date = as.character(cur_date)
+    
     if (nrow(wat.1) > 0 ) {
       all.wat[[i]]=all.wat[[i]][which(all.wat[[i]]$Bin>bin_id_add),]
       
@@ -530,9 +535,6 @@ process_all_water <- function(fileNames.w, coln.wat, cow_delete_list, wat_transp
       all.wat[[i]]$End <- trimws(all.wat[[i]]$End, which = "both")
       
       ############################ Daylight saving change ########################
-      date=substring(as.character(fileNames.w[i]),nchar(as.character(fileNames.w[i]))-9,nchar(as.character(fileNames.w[i]))-4) #this gets the date from the file name
-      cur_date <- ymd(date, tz=time_zone)
-      date = as.character(cur_date)
       cur_year <- as.integer(year(cur_date))
       cur_month <- as.integer(month(cur_date))
       all.wat[[i]] = daylight_saving_adjust(all.wat[[i]], cur_date, cur_year, cur_month, daylight_saving_table)
