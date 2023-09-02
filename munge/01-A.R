@@ -86,14 +86,14 @@ Insentec_final_summary <- result$Insentec_final_summary
 Insentec_warning <- result$Insentec_warning
 
 # store all intermediate files
-cache(all.fed2)
-cache(all.wat2)
-cache(all.comb2)
-cache(master_feeding)
-cache(master_drinking)
-cache(master_comb)
-cache(Insentec_final_summary)
-cache(Insentec_warning)
+cache("all.fed2")
+cache("all.wat2")
+cache("all.comb2")
+cache("master_feeding")
+cache("master_drinking")
+cache("master_comb")
+cache("Insentec_final_summary")
+cache("Insentec_warning")
 
 
 
