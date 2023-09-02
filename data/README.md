@@ -376,3 +376,149 @@ The dataset is structured as a data frame. Each row corresponds to a unique date
 1. NA values in the dataset indicate that the data was not available or the event (like feed addition) did not occur.
 2. Time variables are in POSIXct format, providing precise timestamp information, including date and time.
 3. The variables ending with "_no_found" or "_found" provide indicators on whether feed was delivered or not during those specific times of the day.
+
+
+
+
+## Dataset Specific Information for: `results/Insentec_warning.rda`
+
+**Description:**  
+This dataset contains warning logs and possible anomalies detected related to bin malfunctioning or cow abnormal feeding & drinking behaivours on specific dates.
+
+**Number of Variables:**  
+26
+
+**Number of Cases/Rows:**  
+317
+
+**Dataset Structure:**  
+The dataset is a data frame containing various observations and warnings related to cows' bin visits, such as double detections, missing cows, and unusual intake patterns.
+
+**Variable List:**
+1. **date**: The date of the observations (in POSIXct format).
+2. **total_cow_number**: The total number of cows detected.
+3. **missing_cow**: Yes or No, if there are cows missing (total number of cows < expected total number of cows in the pen)
+4. **double_bin_detection_bin**: bin ID for the bins that are involved in double detections (the same cows being detected by 2 bins at the same time, the first bin is considered the malfunctioning bin as this is likely caused by the first bin did not register the cow leaving) 
+5. **double_cow_detection_bin**: Information on bins that registers 2 cows at the same time
+6. **negative_duration_bin**: Bins that registered a negative duration for a visit
+7. **negative_intake_bin**: Bins that registered a negative intake value.
+8. **no_show_after_6pm_cows**: Cows that did not visit any bin after 6 PM, indicative of losing ear tag
+9. **no_show_after_12pm_cows**: Cows that did not visit any bin after 12 PM, indicative of losing ear tag
+10. **no_visit_after_6pm_bins**: Bins that had no cow visits after 6 PM, indicative of bin malfunctioning
+11. **no_visit_after_12pm_bins**: Bins that had no cow visits after 12 PM, indicative of bin malfunctioning
+12. **bins_not_visited_today**: Bins that had no cow visits on the specified date, indicative of bin malfunctioning
+13. **bins_with_low_visits_today**: Bins that had unusually low visits on the specified date, indicative of bin malfunctioning
+14. **long_feed_duration_bin**: Bins that registers the same cow feeding for an unusually long duration, indicative of bin malfunctioning
+15. **large_one_bout_feed_intake_bin**: Bins where a large intake was recorded in a single bout, indicative of bin malfunctioning
+16. **large_feed_intake_in_short_time_bin**: Bins where a large feed intake was recorded in a short time span, indicative of bin malfunctioning
+17. **cows_no_visit_to_feed_bin**: Cows that did not visit any feed bin, indicative of losing ear tag
+18. **low_daily_feed_intake_cows**: Cows with low daily feed intake, indicative of abnormal status
+19. **high_daily_feed_intake_cows**: Cows with high daily feed intake, indicative of abnormal status
+20. **feed_add_time_no_found**: Instances where the time of adding feed was not found, indicative of no feed was added today
+21. **long_water_duration_bin**: Bins that registers a cow drinking for an unusually long duration for water, indicative of bin malfunctioning
+22. **large_one_bout_water_intake_bin**: Bins where a large water intake was recorded in a single bout, indicative of bin malfunctioning
+23. **large_water_intake_in_short_time_bin**: Bins where a large water intake was recorded in a short time span, indicative of bin malfunctioning
+24. **cows_no_visit_to_water_bin**: Cows that did not visit any water bin, indicative of losing ear tag or sickness
+25. **low_daily_water_intake_cows**: Cows with low daily water intake, indicative of abnormal status
+26. **high_daily_water_intake_cows**: Cows with high daily water intake, indicative of abnormal status
+
+
+
+## Dataset Specific Information for: `results/Cleaned_feeding_original_data.rda`
+
+**Description:**  
+This dataset contains cleaned individual feeding visit data of each cow to each bin on specific dates.
+
+**Number of Variables:**  
+10
+
+**Number of Cases/Rows:**  
+Varies depending on the date.
+
+**Dataset Structure:**  
+The dataset is a list of data frames. Each item in the list corresponds to a specific date and contains data related to feeding visit for that date.
+
+**Variable List:**
+1. **Transponder**: Unique ID of the transponder.
+2. **Cow**: ID of the cow.
+3. **Bin**: Bin ID the cow visited.
+4. **Start**: Starting time of the visit (in POSIXct format).
+5. **End**: Ending time of the visit (in POSIXct format).
+6. **Duration**: Duration of the visit (in seconds).
+7. **Startweight**: Weight of the feed at the start of the visit, in kg
+8. **Endweight**: Weight of the feed at the end of the visit, in kg
+9. **Intake**: Amount of feed intake (difference between start and end weights).
+10. **rate**: Feeding rate of intake.
+
+
+
+## Dataset Specific Information for: `results/Cleaned_drinking_original_data.rda`
+
+**Description:**  
+This dataset contains cleaned original data related to the drinking visits of cows to different bins on specific dates.
+
+**Number of Variables:**  
+10
+
+**Number of Cases/Rows:**  
+Varies depending on the date
+
+**Dataset Structure:**  
+The dataset is a list of data frames. Each item in the list corresponds to a specific date and contains data related to drinking for that date.
+
+**Variable List:**  
+same as `results/Cleaned_feeding_original_data.rda`
+
+
+
+## Dataset Specific Information for: `results/Cleaned_combined_original_data.rda`
+
+**Description:**  
+This dataset contains cleaned original data related to the drinking and feeding visits of cows to different bins on specific dates.
+
+**Number of Variables:**  
+10
+
+**Number of Cases/Rows:**  
+Varies depending on the date
+
+**Dataset Structure:**  
+The dataset is a list of data frames. Each item in the list corresponds to a specific date and contains data related to feeding and drinking combined for that date.
+
+**Variable List:**  
+same as `results/Cleaned_feeding_original_data.rda`
+
+
+
+## Dataset Specific Information for: `results/Insentec_final_summary`
+
+**Description:**  
+The `Insentec_final_summary` dataset provides a comprehensive overview of the feeding and drinking patterns of cows across different dates. Each row corresponds to individual observations detailing the feeding and drinking statistics (intake, duration, total number of visits, rate) of a particular cow on a given date.
+
+**Number of Variables:**  
+8
+
+**Number of Cases/Rows:**  
+147 observations.
+
+**Dataset Structure:**  
+The dataset is stored as a data frame. Each observation represents a cow's feeding & drinking statistics recorded on a specific date.
+
+**Variable List:**
+
+1. **date**: Date of observation. Format: YYYY-MM-DD.
+
+2. **Cow**: Unique identifier for each cow.Data Type: Integer.
+
+3. **Feeding_Intake(kg)**: The total amount of feed intake by the cow on the particular day, expressed in kg. Data Type: Numeric.
+
+4. **Feeding_Duration(s)**: Total time the cow spent feeding on the specific day, recorded in seconds. Data Type: Numeric.
+
+5. **Feeding_Visits**: Count of the cow's visits to the feeding area on the observed date. Data Type: Integer.
+
+6. **Drinking_Intake(kg)**: The volume of water consumed by the cow on the day, denoted in kg.Data Type: Numeric.
+
+7. **Drinking_Duration(s)**: Total time the cow spent drinking on the day, recorded in seconds.Data Type: Numeric.
+
+8. **Drinking_Visits**: Count of the cow's visits to the drinking area on the observed date. Data Type: Integer.
+

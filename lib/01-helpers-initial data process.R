@@ -556,3 +556,26 @@ merge_data <- function(data_list) {
   
   return(master_data)
 }
+
+#' Capitalize the first letter of a string.
+#'
+#' This function capitalizes the first letter of a given string while making all other characters lowercase.
+#' 
+#' @param s A character string to be capitalized.
+#' 
+#' @return A string with the first letter capitalized.
+capitalizeFirst <- function(s) {
+  paste0(toupper(substr(s, 1, 1)), tolower(substr(s, 2, nchar(s))))
+}
+
+#' De-capitalize the first letter of a string.
+#'
+#' This function de-capitalizes the first letter of a given string while keeping the rest of the characters unchanged.
+#' 
+#' @param s A character string whose first letter will be de-capitalized.
+#' 
+#' @return A string with the first letter de-capitalized.
+deCapitalizeFirst <- function(s) {
+  paste0(tolower(substr(s, 1, 1)), substr(s, 2, nchar(s)))
+}
+

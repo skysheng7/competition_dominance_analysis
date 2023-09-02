@@ -68,3 +68,16 @@ large_water_rate_short_time_threshold = 0.35
 
 # for bins with low total number of visits, what is the threshold for low total visits
 low_visit_threshold = 10
+
+# what is considered low daily feed intake for a cow
+feed_intake_low_bar = 35
+
+# what is considered high daily feed intake for a cow
+feed_intake_high_bar = 75
+
+# what is considered low daily water intake for a cow
+water_intake_low_bar = 60
+
+# what is considered high daily water intake for a cow
+water_intake_high_bar = 180
+  
