@@ -94,7 +94,7 @@ empty_synch_matrix <- function(data_list, min_feed_bin, max_feed_bin) {
 #' to populate the matrices based on each list element.
 #' It process MATRIX1 (synch_master_cow): Time X CowID for which cow is eating/drinking
 #' AND MARTRIX2 (synch_master_bin): Time X CowID for which bin the cow is at
-#' AND MATRIX3 (synch_master_feed): Time X Bin for how much feed/watr is at each bin at each second
+#' AND MATRIX3 (synch_master_feed): Time X Bin for how much feed/water is at each bin at each second
 #'
 #' @param data_list A list of data frames.
 #' @param min_feed_bin Minimum value of the feed bin.

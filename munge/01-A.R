@@ -105,9 +105,9 @@ feeding_synch_master_cow <- results$synch_master_cow
 feeding_synch_master_bin <- results$synch_master_bin
 feeding_synch_master_feed <- results$synch_master_feed
 
-cache(feeding_synch_master_cow)
-cache(feeding_synch_master_bin)
-cache(feeding_synch_master_feed)
+cache("feeding_synch_master_cow")
+cache("feeding_synch_master_bin")
+cache("feeding_synch_master_feed")
 
 save(feeding_synch_master_cow, file = (here::here(paste0("data/results/", "which cows are present each second for feed.rda"))))
 save(feeding_synch_master_bin, file = (here::here(paste0("data/results/", "which bins are occupied each second for feed.rda"))))

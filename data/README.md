@@ -37,7 +37,7 @@ If the data files are encoded in a supported file format (e.g., csv, dat), they'
 
 **Number of Cases/Rows:** varies based on the day  
 
-**Dataset Structure:** 309 files in total from 2020-07-15 to 2021-05-19
+**Dataset Structure:** 306 files in total from 2020-07-15 to 2021-05-19
 
 **Variable List:** *The .DAT file has no header. This is the sequence of columns that is intended after adding header*
 1. **Transponder:** The transponder ID of the bin
@@ -65,7 +65,7 @@ If the data files are encoded in a supported file format (e.g., csv, dat), they'
 
 **Number of Cases/Rows:** varies based on the day  
 
-**Dataset Structure:** 309 files in total from 2020-07-15 to 2021-05-19
+**Dataset Structure:** 306 files in total from 2020-07-15 to 2021-05-19
 
 **Variable List:** *The .DAT file has no header. This is the sequence of columns that is intended after adding header*
 "Transponder","Cow","Bin","Start","End","Duration","Startweight","Endweight","Intake"
@@ -389,7 +389,7 @@ This dataset contains warning logs and possible anomalies detected related to bi
 26
 
 **Number of Cases/Rows:**  
-309
+306
 
 **Dataset Structure:**  
 The dataset is a data frame containing various observations and warnings related to cows' bin visits, such as double detections, missing cows, and unusual intake patterns.
@@ -521,4 +521,85 @@ The dataset is stored as a data frame. Each observation represents a cow's feedi
 7. **Drinking_Duration(s)**: Total time the cow spent drinking on the day, recorded in seconds.Data Type: Numeric.
 
 8. **Drinking_Visits**: Count of the cow's visits to the drinking area on the observed date. Data Type: Integer.
+
+
+
+## Dataset Specific Information for: `results/which cows are present each second for feed.rda`
+
+**Description:**  
+This is a list of matrix grouped by date. Each matrix documents Time X CowID for which cow is eating/drinking at each second. 0 means this cow is not present, 1 means this cow is present at the feeder at this second.
+
+**Number of Variables:**  
+varies depending on the day, each column correspondes to a cow ID, total columns should be around 53
+
+**Number of Cases/Rows:**  
+varies depending on the day, each row correspondes to 1 second in that day when >=1 cows are present.
+
+**Dataset Structure:**  
+The dataset is composed of lists, each corresponding to a particular date. Each list holds a data frame of instantaneous feeding observations based on timestamps.
+
+**Variable List:**
+
+1. **Time**: Timestamp of observation. Data Type: POSIXct.
+  
+2. **2007, 2074, ... (and so on for multiple cows)**: Each variable after the timestamp and before the aggregate variables represents a unique cow identifier. For each cow, the value signifies whether the cow is feeding at the given timestamp (1 for feeding, 0 for not feeding). Data Type: Numeric.
+
+3. **total_cow_num**: Total number of cows feeding at the given timestamp. Data Type: Numeric.
+
+4. **total_bin_occupied**: Total number of feeding bins occupied at the given timestamp. same as total_cow_num. Data Type: Numeric.
+
+5. **empty_bin_num**: Number of feeding bins that are not occupied at the given timestamp. Equals to total number of bins - total_bin_occupied. Data Type: Numeric.
+
+6. **date**: Date of observation. Data Type: Date.
+
+
+
+## Dataset Specific Information for: `results/which bins are occupied each second for feed.rda`
+
+**Description:**  
+This is a list of matrix, each matrix records Time X CowID for which bin the cow is at at each second
+
+**Number of Variables:**  
+Each dataset in the list contains around 50 variables for each date entry. This number includes the timestamp, date, specific cow identifiers, and some aggregate variables.
+
+**Number of Cases/Rows:**  
+The number of rows for each date's data frame corresponds to the number of seconds when one or more cows are present. This varies by day.
+
+**Dataset Structure:**  
+The dataset is a list where each entry corresponds to a particular date. Each entry contains a data frame detailing which bin the cow is feeding at based on timestamps, 0 means the cow is not feeding at any bins
+
+**Variable List:**
+
+1. **Time**: Timestamp of observation for that specific second. Data Type: POSIXct.
+  
+2. **Cow Identifiers (e.g., 2007, 2074, ...)**: Each of these variables is a unique cow identifier. The values in these columns indicate the bin ID a specific cow that is feeding (e.g., 1, 2, 3...30) at the given timestamp. If the cow is not feeding at that second, it is represented as 0. Data Type: Numeric.
+
+3. **date**: Date of observation. Represents the day for which the observations were taken. Data Type: Date.
+
+
+
+## Dataset Specific Information for: `results/how much feed left each bin.rda`
+
+**Description:**  
+This is a list of matrix grouped by date. Each matrix records Time X Bin for how much feed is at each bin at each second
+
+**Number of Variables:**  
+Each dataset in the list has approximately 33 variables. This includes the timestamp (`Time`), date (`date`), total feed (`totalFeed`), and 30 individual variables that record the feed amount for each bin.
+
+**Number of Cases/Rows:**  
+The number of rows in each date's data frame signifies the timestamps for which observations are available. As an example, for the date "2020-07-15", there are 76,678 observations, while for "2020-07-16", there are 73,047 observations.
+
+**Dataset Structure:**  
+The dataset is a list where each entry is associated with a specific date. Each data frame entry provides details about the feed amount in different bins at specific timestamps.
+
+**Variable List:**
+
+1. **Time**: Timestamp of observation. Data Type: POSIXct.
+  
+2. **1-30**: These variables represent individual feeding bins. Each variable captures the amount of feed in the respective bin at the given timestamp. Data Type: Numeric.
+
+3. **date**: Date of observation. Indicates the day the observations were taken. Data Type: Date.
+
+4. **totalFeed**: Represents the total feed amount at the specified timestamp. Data Type: Numeric.
+
 
