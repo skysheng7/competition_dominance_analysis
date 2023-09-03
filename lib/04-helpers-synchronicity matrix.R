@@ -148,6 +148,41 @@ matrix_initialize <- function(data_list, min_feed_bin, max_feed_bin) {
               synch_master_feed = synch_master_feed))
 }
 
+#' Process the current synchronization data to replace NA values and compute total feed
+#'
+#' This function processes the provided `cur_synch` data matrix. 
+#' It replaces the initial NA values of each column with the first non-NA value in that column.
+#' Then, it replaces any subsequent NA values in each column with the last observed non-NA value in that column.
+#' Finally, it calculates the total feed in all bins and adds it as a new column.
+#'
+#' @param cur_synch A matrix/dataframe representing the current synchronization data.
+#'                  The first column is expected to be 'Time', and the other columns represent bins.
+#'                  The matrix should have NA values where feed data is not available.
+#' @param total_bin An integer indicating the total number of bins.
+#'
+#' @return A matrix/dataframe where the NA values in the bin columns are replaced,
+#'         and a new column `totalFeed` is added which represents the sum of feeds in all bins.
+process_cur_synch <- function(cur_synch, total_bin) {
+  
+  # Set the first row of cur_synch if it's NA.
+  # Use apply to go column by column and replace NA with the first non-NA value.
+  first_non_na <- apply(cur_synch[, 2:(ncol(cur_synch) - 1)], 
+                        2, function(x) x[which(!is.na(x))[1]])
+  cur_synch[1, 2:(ncol(cur_synch) - 1)] <- ifelse(is.na(cur_synch[1, 2:(ncol(cur_synch) - 1)]),
+                                                  first_non_na, 
+                                                  cur_synch[1, 2:(ncol(cur_synch) - 1)])
+  
+  # Replace NA values with the last observed non-NA value.
+  # Do this column by column.
+  cur_synch[, 2:(ncol(cur_synch) - 1)] <- apply(cur_synch[, 2:(ncol(cur_synch) - 1)], 2, na.locf)
+  
+  # Add a new column calculating the total feed in all bins.
+  cur_synch$totalFeed <- rowSums(cur_synch[, 2:(total_bin + 1)], na.rm = TRUE)
+  
+  return(cur_synch)
+}
+
+
 #' Process matrices and add derived columns.
 #'
 #' This function processes a list of matrices, adds several derived columns like total number of cows,
@@ -188,6 +223,9 @@ matrix_process <- function(data_list, min_feed_bin, max_feed_bin) {
     synch_master_cow2[[i]]$date <- date(synch_master_cow2[[i]]$Time)
     synch_master_bin2[[i]]$date <- date(synch_master_bin2[[i]]$Time)
     synch_master_feed2[[i]]$date <- date(synch_master_feed2[[i]]$Time)
+    
+    # fill in feed amount at each second at each bin
+    synch_master_feed2[[i]] <- process_cur_synch(synch_master_feed2[[i]], total_bin)
   }
   
   return(list(synch_master_cow2 = synch_master_cow2,
@@ -196,32 +234,5 @@ matrix_process <- function(data_list, min_feed_bin, max_feed_bin) {
 }
 
 
-process_cur_synch_feed <- function(cur_synch_feed, total_bin) {
-  
-  # Set the first row of cur_synch_feed if it's NA.
-  # Use apply to go column by column and replace NA with the first non-NA value.
-  first_non_na <- apply(cur_synch_feed[, 2:(ncol(cur_synch_feed) - 1)], 
-                        2, function(x) x[which(!is.na(x))[1]])
-  cur_synch_feed[1, 2:(ncol(cur_synch_feed) - 1)] <- ifelse(is.na(cur_synch_feed[1, 2:(ncol(cur_synch_feed) - 1)]),
-                                                            first_non_na, 
-                                                            cur_synch_feed[1, 2:(ncol(cur_synch_feed) - 1)])
-  
-  # Replace NA values with the last observed non-NA value.
-  # Do this column by column.
-  cur_synch_feed[, 2:(ncol(cur_synch_feed) - 1)] <- apply(cur_synch_feed[, 2:(ncol(cur_synch_feed) - 1)], 2, na.locf)
-  
-  # Add a new column calculating the total feed in all bins.
-  cur_synch_feed$totalFeed <- rowSums(cur_synch_feed[, 2:(total_bin + 1)], na.rm = TRUE)
-  
-  return(cur_synch_feed)
-}
 
 
-#results <- matrix_process(all.fed2, min_feed_bin, max_feed_bin)
-results <- matrix_process(test, min_feed_bin, max_feed_bin)
-feeding_synch_master_cow <- results$synch_master_cow
-feeding_synch_master_bin <- results$synch_master_bin
-feeding_synch_master_feed <- results$synch_master_feed
-
-# Call the function
-synch_master_feed2[[i]] <- process_cur_synch_feed(synch_master_feed2[[i]], total_bin)
