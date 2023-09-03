@@ -80,4 +80,7 @@ water_intake_low_bar = 60
 
 # what is considered high daily water intake for a cow
 water_intake_high_bar = 180
+
+# threshold for replacement behaviours in seconds. the interval between the first cow leaving and the next cow entering
+replacement_threshold = 26
   
