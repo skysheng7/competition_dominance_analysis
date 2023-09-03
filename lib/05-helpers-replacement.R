@@ -1,10 +1,14 @@
-#' Sort and filter data based on bins
+#' identify and recprd replacements for a single day. replacements are identified if the time interval
+#' between the first cow leaving and the next cow entering is < 26s
 #' 
 #' @param cur_data The data frame containing feeding/drinking data
+#' @param replacement_threshold threshold for replacement behaviours in seconds. 
+#' the interval between the first cow leaving and the next cow entering
 #' @return A data frame filtered by bins
-process_bins <- function(cur_data, replacement_threshold = replacement_threshold) {
+record_replacement_1day <- function(cur_data, replacement_threshold = replacement_threshold) {
   sorted_data <- cur_data[order(cur_data$Bin, cur_data$Start, cur_data$End),]
-  sorted_data <- sorted_data[, c("Cow", "Bin", "Start", "End", "date")]
+  sorted_data <- sorted_data[, c("Cow", "Bin", "Start", "End")]
+  sorted_data$date <- date(sorted_data$Start)
   bin_list <- sort(unique(sorted_data$Bin))
   
   master_df <- data.frame()
@@ -27,7 +31,8 @@ process_bins <- function(cur_data, replacement_threshold = replacement_threshold
       which((cur_data_bin$time_dif <= replace_cutoff) & 
               (cur_data_bin$Cow != cur_data_bin$next_cow)),]
     
-    cur_data_bin <- cur_data_bin[, -c(3,6)]
+    cur_data_bin <- cur_data_bin[, c("Cow", "Bin", "End", "date", "next_cow", "time_dif")]
+    # the time of replacement is the end time of the reactor cow's feeding event
     colnames(cur_data_bin) <- c("Reactor_cow", "Bin", "Time", "date", "Actor_cow", "Bout_interval")
     
     master_df <- rbind(master_df, cur_data_bin)
@@ -36,14 +41,22 @@ process_bins <- function(cur_data, replacement_threshold = replacement_threshold
   return(master_df)
 }
 
-#' Main function to process feeding data
+#' identify and recprd replacements for all the dates in a list. replacements are identified if the time interval
+#' between the first cow leaving and the next cow entering is < 26s
 #' 
 #' @param feeding_data The data frame containing feeding data
-#' @return A processed data frame
-process_feeding_data <- function(feeding_data) {
-  processed_data <- process_bins(feeding_data)
-  return(processed_data)
+#' @param replacement_threshold threshold for replacement behaviours in seconds. 
+#' the interval between the first cow leaving and the next cow entering
+#' 
+#' @return a list of dataframes containing replacements for each day
+record_replacement_allDay <- function(feeding_data, replacement_threshold) {
+  replacement_list_by_date <- list()
+  for (i in 1:length(all.fed2)) {
+    feeding_data <- all.fed2[[i]]
+    replacement_list_by_date[[i]] <- record_replacement_1day(feeding_data, replacement_threshold)
+    names(replacement_list_by_date)[i] <- names(all.fed2)[i]
+  }
+
+  return(replacement_list_by_date)
 }
 
-# Example usage:
-# processed_result <- process_feeding_data(master_feeding3)
