@@ -5,7 +5,7 @@
 #' @param replacement_threshold threshold for replacement behaviours in seconds. 
 #' the interval between the first cow leaving and the next cow entering
 #' @return A data frame filtered by bins
-record_replacement_1day <- function(cur_data, replacement_threshold = replacement_threshold) {
+record_replacement_1day <- function(cur_data, replacement_threshold = 26) {
   sorted_data <- cur_data[order(cur_data$Bin, cur_data$Start, cur_data$End),]
   sorted_data <- sorted_data[, c("Cow", "Bin", "Start", "End")]
   sorted_data$date <- date(sorted_data$Start)
@@ -41,20 +41,20 @@ record_replacement_1day <- function(cur_data, replacement_threshold = replacemen
   return(master_df)
 }
 
-#' identify and recprd replacements for all the dates in a list. replacements are identified if the time interval
+#' identify and record replacements for all the dates in a list. replacements are identified if the time interval
 #' between the first cow leaving and the next cow entering is < 26s
 #' 
-#' @param feeding_data The data frame containing feeding data
+#' @param data_list The data frame containing feeding/drinking data
 #' @param replacement_threshold threshold for replacement behaviours in seconds. 
 #' the interval between the first cow leaving and the next cow entering
 #' 
 #' @return a list of dataframes containing replacements for each day
-record_replacement_allDay <- function(feeding_data, replacement_threshold) {
+record_replacement_allDay <- function(data_list, replacement_threshold) {
   replacement_list_by_date <- list()
-  for (i in 1:length(all.fed2)) {
-    feeding_data <- all.fed2[[i]]
-    replacement_list_by_date[[i]] <- record_replacement_1day(feeding_data, replacement_threshold)
-    names(replacement_list_by_date)[i] <- names(all.fed2)[i]
+  for (i in 1:length(data_list)) {
+    cur_data <- data_list[[i]]
+    replacement_list_by_date[[i]] <- record_replacement_1day(cur_data, replacement_threshold)
+    names(replacement_list_by_date)[i] <- names(data_list)[i]
   }
 
   return(replacement_list_by_date)
