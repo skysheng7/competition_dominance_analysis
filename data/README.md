@@ -603,3 +603,32 @@ The dataset is a list where each entry is associated with a specific date. Each 
 4. **totalFeed**: Represents the total feed amount at the specified timestamp. Data Type: Numeric.
 
 
+## Dataset Specific Information for: `results/Replacement_behaviour_by_date.rda`
+
+**Description:**  
+The dataset is a list where each entry corresponds to a specific date and captures the replacement behaviours (a cow physically pushing another cow away from the feed bin and starts feeding at the same bin) of cows at feed bins. A replacement is observed when the time difference between one cow leaving the bin and the next cow entering is below a specific threshold (default set at 26 seconds). 
+
+**Number of Variables:**  
+Each data frame in the list consists of 6 variables, capturing information about the cows involved in the replacement, the bin involved, the exact time of the replacement, and the interval between the first cow leaving and the next cow entering
+
+**Number of Cases/Rows:**  
+The number of rows in each data frame varies depending on the observed replacements for a given day. For example, on "2020-07-15", there are 813 observed replacements, while on "2020-07-16", there are 774 observed replacements.
+
+**Dataset Structure:**  
+The dataset is structured as a list where each entry represents data for a specific date. Each data frame entry provides details about the observed replacements on that date.
+
+**Variable List:**
+
+1. **Reactor_cow**: The cow that was replaced. This is the cow that is occupying and feeding from the feed bin in the first place. Data Type: Integer.
+
+2. **Bin**: The bin at which the replacement was observed. There are several feeding bins, and this variable indicates the specific bin where the activity occurred. Data Type: Numeric.
+
+3. **Time**: The exact timestamp when the replacement was observed. Data Type: POSIXct.
+
+4. **date**: The specific date of observation. This helps segregate the data day-wise and provides a reference for when the observation took place. Data Type: Date.
+
+5. **Actor_cow**: The cow that initiated the replacement behaviour. The cow that physically pushed another cow away and started feeding at the same bin. Data Type: Integer.
+
+6. **Bout_interval**: The duration between the `Reactor_cow` leaving the bin and the `Actor_cow` entering the bin. This variable captures how fast the replacement happened. Data Type: Duration (from the `lubridate` package).
+
+
