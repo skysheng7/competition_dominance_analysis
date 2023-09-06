@@ -9,7 +9,10 @@ library(lubridate)
 library(plyr)
 library(here)
 library(zoo)
-#library(ggplot2)
+library(ggplot2)
+library(EloRating)
+library(EloSteepness)
+library(viridis)
 
 ################################################################################
 ###################### data loading & processing ###############################
@@ -72,9 +75,9 @@ all.comb2 <- results$comb
 
 # combine data frame different dates into 1 master dataframe
 # Calling the function for each data list:
-master_feeding <- merge_data(all.fed2)
-master_drinking <- merge_data(all.wat2)
-master_comb <- merge_data(all.comb2)
+master_feeding <- merge_data_add_date(all.fed2)
+master_drinking <- merge_data_add_date(all.wat2)
+master_comb <- merge_data_add_date(all.comb2)
 save(master_feeding, file = (here::here(paste0("data/results/", "Cleaned_feeding_original_data_combined.rda"))))
 save(master_drinking, file = (here::here(paste0("data/results/", "Cleaned_drinking_original_data_combined.rda"))))
 save(master_comb, file = (here::here(paste0("data/results/", "Cleaned_feeding_drinking_original_data_combined.rda"))))
@@ -115,5 +118,9 @@ save(feeding_synch_master_feed, file = (here::here(paste0("data/results/", "how 
 replacement_list_by_date <- record_replacement_allDay(all.fed2, replacement_threshold)
 # filter replacement based on actor cow's alibi (the actor is feeding/drinking at another place when replacement happened)
 replacement_list_by_date <- check_alibi_all(replacement_list_by_date, all.comb2)
+master_feed_replacement_all <- merge_data(replacement_list_by_date)
+
 cache("replacement_list_by_date")
+cache("master_feed_replacement_all")
 save(replacement_list_by_date, file = (here::here(paste0("data/results/", "Replacement_behaviour_by_date.rda"))))
+save(master_feed_replacement_all, file = (here::here(paste0("data/results/", "master_feed_replacement_all.rda"))))

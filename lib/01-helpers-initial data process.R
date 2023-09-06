@@ -583,7 +583,23 @@ combine_feeder_and_water_data <- function(all.fed, all.wat) {
   return(all.comb)
 }
 
-#' Merge data into a master sheet
+#' Merge data into a master sheet, and add a date column
+#'
+#' This function consolidates all the data frames present in the input list
+#' and returns a single data frame.
+#'
+#' @param data_list A list containing data frames.
+#'
+#' @return A consolidated data frame.
+merge_data_add_date <- function(data_list) {
+  master_data <- merge_data(data_list)
+  
+  master_data$date <- date(master_data$Start)
+  
+  return(master_data)
+}
+
+#' Just merge data into a master sheet
 #'
 #' This function consolidates all the data frames present in the input list
 #' and returns a single data frame.
@@ -599,8 +615,6 @@ merge_data <- function(data_list) {
   
   # Use do.call with rbind to efficiently concatenate all data frames in the list
   master_data <- do.call(rbind, data_list)
-  
-  master_data$date <- date(master_data$Start)
   
   return(master_data)
 }

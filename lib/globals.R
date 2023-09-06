@@ -84,3 +84,26 @@ water_intake_high_bar = 180
 # threshold for replacement behaviours in seconds. the interval between the first cow leaving and the next cow entering
 replacement_threshold = 26
   
+# which method you wish to use to calculate feeder occupancy. there are 4 different methods
+################################################################################
+# Feeder Occupancy calculation method 1:             
+#                    Occupied bin num                  
+#   -------------------------------------------------- 
+#                    total bin num (30)   
+################################################################################
+# Feeder Occupancy calculation method 2:             
+#                    Occupied bin num                  
+#   -------------------------------------------------- 
+#                 total bin with feed num   
+################################################################################
+# Feeder Occupancy calculation method 3:
+#                    Occupied bin num
+#   --------------------------------------------------
+#      total bin num - unoccupied bins that are empty 
+################################################################################
+# Feeder Occupancy calculation method 4:             
+#                 Occupied bin with feed num                  
+#   -------------------------------------------------- 
+#                 total bin with feed num   
+################################################################################
+method_type = 3
