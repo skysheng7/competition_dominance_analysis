@@ -113,5 +113,7 @@ save(feeding_synch_master_feed, file = (here::here(paste0("data/results/", "how 
 ###################### record feeding replacements #############################
 ################################################################################
 replacement_list_by_date <- record_replacement_allDay(all.fed2, replacement_threshold)
+# filter replacement based on actor cow's alibi (the actor is feeding/drinking at another place when replacement happened)
+replacement_list_by_date <- check_alibi_all(replacement_list_by_date, all.comb2)
 cache("replacement_list_by_date")
 save(replacement_list_by_date, file = (here::here(paste0("data/results/", "Replacement_behaviour_by_date.rda"))))

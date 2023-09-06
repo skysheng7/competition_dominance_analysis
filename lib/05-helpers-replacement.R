@@ -45,7 +45,7 @@ record_replacement_1day <- function(cur_data, replacement_threshold = 26) {
 #' between the first cow leaving and the next cow entering is < 26s
 #' 
 #' @param data_list The data frame containing feeding/drinking data
-#' @param replacement_threshold threshold for replacement behaviours in seconds. 
+#' @param replacement_threshold time interval threshold between the first cow leaving and the next cow entering to be considered as a replacement behaviour
 #' the interval between the first cow leaving and the next cow entering
 #' 
 #' @return a list of dataframes containing replacements for each day
@@ -60,7 +60,51 @@ record_replacement_allDay <- function(data_list, replacement_threshold) {
   return(replacement_list_by_date)
 }
 
-
-check_aliby <- function(replacement_list_by_date, all_comb2) {
+#' Check if Actor Cow Has an Alibi on a Specific Day
+#'
+#' This function determines whether, at the end time of the reactor cow's feeding event, 
+#' the actor is eating/drinking from another bin. If that's the case, 
+#' the replacement is potentially invalid as the actor has an alibi.
+#'
+#' @param cur_replacement A data frame of replacement data for a given day.
+#' @param cur_feed_wat A data frame containing feeding and drinking events for a given day.
+#'
+#' @return A data frame of filtered replacement events after checking alibi
+check_alibi_daily <- function(cur_replacement, cur_feed_wat) {
   
+  cur_replacement$actor_at_another_bin <- 0
+  for (k in 1:nrow(cur_replacement)) {
+    cur_time <-cur_replacement$Time[k]
+    cur_actor <- cur_replacement$Actor_cow[k]
+    cur_actor_feed_wat <- cur_feed_wat[which((cur_feed_wat$Cow == cur_actor) & (cur_feed_wat$Start <= cur_time) & (cur_feed_wat$End >= cur_time)),]
+    if(nrow(cur_actor_feed_wat)>0) {
+      cur_replacement$actor_at_another_bin[k] <- 1
+    }
+  }
+  
+  #delete the helper column
+  cur_replacement2 <- cur_replacement[which(cur_replacement$actor_at_another_bin == 0),]
+  cur_replacement2$actor_at_another_bin <- NULL
+  
+  return(cur_replacement2)
+}
+
+#' Check if Actor Cow Has an Alibi Across Multiple Days
+#'
+#' This function applies the check_alibi_daily function across multiple days 
+#' to determine valid replacement events.
+#'
+#' @param replacement_list_by_date A list of data frames, each containing replacement data for a specific day.
+#' @param all_comb2 A list of data frames, each containing feeding and drinking data for a specific day.
+#'
+#' @return A list of data frames with filtered replacement events.
+check_alibi_all <- function(replacement_list_by_date, all_comb2) {
+  for (i in 1:length(all_comb2)) {
+    cur_replacement <- replacement_list_by_date[[i]]
+    cur_feed_wat <- all_comb2[[i]]
+    modified_cur_replacement <- check_alibi_daily(cur_replacement, cur_feed_wat)
+    replacement_list_by_date[[i]] <- modified_cur_replacement
+  }
+  
+  return(replacement_list_by_date)
 }
