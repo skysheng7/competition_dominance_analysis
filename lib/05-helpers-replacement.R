@@ -60,3 +60,7 @@ record_replacement_allDay <- function(data_list, replacement_threshold) {
   return(replacement_list_by_date)
 }
 
+
+check_aliby <- function(replacement_list_by_date, all_comb2) {
+  
+}
