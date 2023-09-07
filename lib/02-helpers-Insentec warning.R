@@ -107,7 +107,7 @@ check_long_durations <- function(all_data, high_duration = 2000,
   require(here)  # Ensure the required package is loaded
   
   # create A data frame of master data (feeding or drinking).
-  master_data <- merge_data(all_data)
+  master_data <- merge_data_add_date(all_data)
   
   # Define the file name based on type
   plot_name <- ifelse(type == "feed", "feed_allDate_boxplot.pdf", "water_allDate_boxplot.pdf")
