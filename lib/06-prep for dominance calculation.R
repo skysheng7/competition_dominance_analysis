@@ -457,7 +457,7 @@ replace_by_h_per_day <- function(master_feed_replacement_all, total_bin_num){
   total_cow <- length(unique(c(master_feed_replacement_all$Reactor_cow, master_feed_replacement_all$Actor_cow)))
   
   temp_plot <- ggplot(master_feed_replacement_all, 
-                      aes(y=(..count../total_days),
+                      aes(y=after_stat(count)/total_days,
                           x=hour, 
                           fill = cut(average_CD_10mon*100, 24))) + 
     geom_histogram(bins = 24) + 

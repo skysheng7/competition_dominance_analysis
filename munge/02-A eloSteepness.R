@@ -21,6 +21,7 @@ feed_each_bin_list <- feeding_synch_master_feed
 
 # process the feed replacement data 
 master_feed_replacement_all <- replace_processing(master_feed_replacement_all, cows_present_each_second_list, bins_occupied_for_feed_list, feed_each_bin_list, method_type)
+save(master_feed_replacement_all, file = here("data/results/master_feed_replacement_all_with_feeder_occupancy.rda"))
 
 # plot histogram
 output_dir <- here("graphs/")
