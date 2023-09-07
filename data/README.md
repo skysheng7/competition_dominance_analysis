@@ -698,3 +698,28 @@ The dataset is structured as a data frame where each row signifies an individual
 9. **Red_warning**: Any critical warnings or issues that were recorded on the regrouping date. For instance, technical breakdowns. Data Type: Character.
 
 10. **orange_warning**: Any minor or less critical warnings recorded on the regrouping date. Data Type: Character.
+
+
+Absolutely! Using the provided template, here's the README script for the `replacement_per_hour2` data frame:
+
+
+## Dataset Specific Information for: `results/replacement_per_hour.rda`
+**Description:**  
+The `replacement_per_hour` dataset captures information related to feed replacements, categorized by hour of the day. It provides insights into the number and percentage of replacements made during each hour.
+
+**Number of Variables:**  
+3
+
+**Number of Cases/Rows:**  
+24
+
+**Dataset Structure:**  
+The dataset is structured as a data frame where each row represents an hour of the day, showing the number of feed replacements made and the proportion of these replacements to the total.
+
+**Variable List:**
+
+1. **hour**: Represents each hour of the day in a 24-hour format, ranging from 0 (midnight) to 23 (11 PM). Data Type: Integer.
+
+2. **replacement_num**: The number of feed replacements that occurred during the respective hour. This variable provides insights into the absolute count of replacements in each hour. Data Type: Numeric.
+
+3. **replacement_percent**: The proportion of replacements that took place during the respective hour, relative to the total number of replacements across all hours. This variable gives an understanding of how the replacements are distributed throughout the day in terms of percentage. Data Type: Numeric.

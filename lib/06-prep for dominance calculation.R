@@ -381,13 +381,12 @@ pick_method <- function(master_feed_replacement_all, method_type) {
 #'
 #' @param master_feed_replacement_all A dataframe containing feed replacement data.
 #' @param total_bin_num Total number of bins.
-#' @param output_dir Directory where the plot should be saved.
 #'
 #' @return A dataframe showing the number of replacements for each feeder occupancy bucket.
 #'
 #' @importFrom dplyr %>% group_by summarise
 #' @importFrom ggplot2 ggsave
-plot_replace_hist <- function(master_feed_replacement_all, total_bin_num, output_dir){
+plot_replace_hist <- function(master_feed_replacement_all, total_bin_num){
   
   # plot number of replacements under different bin Feeder Occupancy  (how many bins are occupied)
   replace_by_density<- replace_by_den(master_feed_replacement_all, total_bin_num)
@@ -399,9 +398,8 @@ plot_replace_hist <- function(master_feed_replacement_all, total_bin_num, output
   replac_num_each_bucket <- master_feed_replacement_all %>% group_by(resource_occupancy) %>% summarise(n = n())
   replac_num_each_bucket$resource_occupancy <- round(replac_num_each_bucket$resource_occupancy, digits = 5)
   
-  setwd(output_dir)
-  ggsave("replace_by_density.png", plot = replace_by_density, width = 25, height = 13, limitsize = FALSE)
-  ggsave("replace_by_hour_per_day.png", plot = replace_by_hour_per_day, width = 25, height = 13, limitsize = FALSE)
+  ggsave(here("graphs/replace_by_density.png"), plot = replace_by_density, width = 25, height = 13, limitsize = FALSE)
+  ggsave(here("graphs/replace_by_hour_per_day.png"), plot = replace_by_hour_per_day, width = 25, height = 13, limitsize = FALSE)
   
   return(replac_num_each_bucket)
 }
@@ -477,7 +475,16 @@ replace_by_h_per_day <- function(master_feed_replacement_all, total_bin_num){
 }
 
 
-
+#' Calculate total number of Replacements Per Hour
+#'
+#' This function returns a dataframe containing the total number of replacements 
+#' and the percentage of replacements for each hour.
+#'
+#' @param master_feed_replacement_all A dataframe containing the data.
+#'
+#' @return A dataframe with columns: hour, replacement_num, and replacement_percent.
+#'
+#' @importFrom stats aggregate
 calculate_replacement_per_hour <- function(master_feed_replacement_all) {
   replacement_per_hour <- master_feed_replacement_all
   replacement_per_hour$n <- 1
@@ -492,8 +499,19 @@ calculate_replacement_per_hour <- function(master_feed_replacement_all) {
 ################################################################################
 ######## Elo Steepness calculation based on Feeder Occupancy ###################
 ################################################################################
-
-# modify the plot_scores function in EloSteepness
+#' Plot Scores with Customizations
+#'
+#' This function is a modified version of the `plot_scores` function from the `EloSteepness` package.
+#' It plots the scores based on the provided data and offers additional customization options.
+#'
+#' @param x A list containing results from EloSteepness package
+#' @param fo Feeder Occupancy percentage to be displayed in the plot title.
+#' @param adjustpar Adjust parameter for density estimation. Default is 4.
+#' @param color Logical or character vector specifying colors for the plot. If TRUE, uses a sample of 'zissou' colors. If FALSE, uses grayscale. If a character vector, it should match the number of ids.
+#' @param subset_ids A character vector of ids to subset. If provided, only these ids will be highlighted in the plot.
+#' @param include_others Logical. If TRUE (default), other ids not in `subset_ids` will still be shown but in a different style.
+#'
+#' @return A plot showing the scores.
 plot_scores2 <- function(x,
                          fo,
                          adjustpar = 4,
@@ -589,9 +607,16 @@ plot_scores2 <- function(x,
   }
 }
 
-# this function calculates the minimum number of replacements among all buckets,
-# this number will be used as the sample size, we take random sample of replacements 
-# from each buckets (they all have different number of events) to calculate hierarchy
+#' Calculate Minimum Sample Size Per feeder occupancy Bucket
+#'
+#' This function calculates the minimum number of replacements among all feeder occupancy buckets.
+#' This number will be used as the sample size. It takes a random sample of replacements
+#' from each bucket (which may have different numbers of events) to calculate hierarchy.
+#'
+#' @param res_occupancy_seq A numeric vector representing the resource occupancy (feeder occupancy) sequence.
+#' @param replac_num_each_bucket A data frame containing the number of replacements for each bucket. It should have columns 'resource_occupancy' and 'n'.
+#'
+#' @return A numeric value representing the minimum sample size among all buckets.
 sample_size_per_bucket <- function(res_occupancy_seq, replac_num_each_bucket) {
   res_occupancy_seq <- round(res_occupancy_seq, digits = 5)
   replac_num_each_bucket$resource_occupancy <- round(replac_num_each_bucket$resource_occupancy, digits = 5)
@@ -619,17 +644,33 @@ sample_size_per_bucket <- function(res_occupancy_seq, replac_num_each_bucket) {
   return(cur_sample_size)
 }
 
+#' Save Plot to PNG File
+#'
+#' This function saves a plot generated by the `plot_scores2` function to a PNG file.
+#'
+#' @param elo_steep_result A result object from the EloSteepness analysis.
+#' @param feeder_occupancy A numeric value representing the feeder occupancy.
+#'
+#' @return NULL. The function saves the plot to a PNG file and does not return any value.
 save_plot_score <- function(elo_steep_result, feeder_occupancy) {
-  feeder_occupancy <- as.numeric(names(result_list[[1]])[i])*100
   file_name <- paste(here("graphs/"), feeder_occupancy, ".png", sep = "")
   png(file_name, width = 1106, height = 550) # set the width and height of the PNG file
   print(plot_scores2(elo_steep_result, feeder_occupancy))
   dev.off() # close the PNG file
 }
 
-
-# calculate elo under different Feeder Occupancy 
-elo_steepness_competition <- function(master_feed_replacement_all, master_comb6, res_occupancy_seq, sample_size, output_dir) {
+#' Calculate Elo Steepness Under Different Feeder Occupancies
+#'
+#' This function calculates the Elo steepness under different feeder occupancies,
+#' saves the results, and generates plots for each feeder occupancy.
+#'
+#' @param master_feed_replacement_all A data frame containing replacement data.
+#' @param master_comb A data frame containing combined data.
+#' @param res_occupancy_seq A numeric vector representing the resource occupancy sequence.
+#' @param sample_size A numeric value indicating the sample size.
+#'
+#' @return NULL. The function saves various results to `.rda` files and does not return any value.
+elo_steepness_competition <- function(master_feed_replacement_all, master_comb, res_occupancy_seq, sample_size) {
   for (cur_den in 2:length(res_occupancy_seq)) {
     print(paste0("cur_den: ", cur_den))
     # only the information for events happened in the current Feeder Occupancy 
@@ -669,8 +710,8 @@ elo_steepness_competition <- function(master_feed_replacement_all, master_comb6,
     start_date_hour <- unique(start_date_hour)
     end_date_hour <- start_date_hour
     colnames(end_date_hour) <- c("date", "end_hour")
-    temp_merge_start <- merge(master_comb6, start_date_hour)
-    temp_merge_end <- merge(master_comb6, end_date_hour)
+    temp_merge_start <- merge(master_comb, start_date_hour)
+    temp_merge_end <- merge(master_comb, end_date_hour)
     temp_master_comb <- merge(temp_merge_start, temp_merge_end, all = TRUE) 
     temp_master_comb <- unique(temp_master_comb)
     temp_master_comb <- temp_master_comb[, c("Cow", "Bin", "Start", "End", "date", "start_hour", "end_hour")]
@@ -769,7 +810,15 @@ elo_steepness_competition <- function(master_feed_replacement_all, master_comb6,
 
 }
 
-# randomly sample certain replacement events, make sure each cow show up at least once
+#' Randomly Sample Replacement Events
+#'
+#' This function randomly samples replacement events from the provided data, ensuring
+#' that each cow appears at least once, either as an actor or a reactor.
+#'
+#' @param temp_replacement_prep A data frame containing replacement data. It should have columns 'Reactor_cow' and 'Actor_cow'.
+#' @param sample_size A numeric value indicating the desired sample size.
+#'
+#' @return A data frame containing the sampled replacement events.
 random_sample <- function(temp_replacement_prep, sample_size) {
   
   set.seed(1)
@@ -794,7 +843,14 @@ random_sample <- function(temp_replacement_prep, sample_size) {
 ################################################################################
 ############################### Steepness Plot #################################
 ################################################################################
-# create the plot reflecting changes of Elo steepness as Feeder Occupancy increases
+#' Plot Elo Steepness by Feeder Occupancy
+#'
+#' This function creates a plot that visualizes the changes in Elo steepness 
+#' as Feeder Occupancy increases.
+#'
+#' @param master_steepness A data frame containing the Elo steepness data. It should have columns 'resource_occupancy' and 'steepness_mean'.
+#'
+#' @return A ggplot object visualizing the changes in Elo steepness by Feeder Occupancy.
 elo_steepness_by_competition_plot <- function(master_steepness) {
   
   steepness_plot <- ggplot(master_steepness, aes(x=resource_occupancy, y = steepness_mean)) + 
@@ -811,11 +867,17 @@ elo_steepness_by_competition_plot <- function(master_steepness) {
   return(steepness_plot)
 }
 
-# save the plot as a file
-elo_steepness_plot <- function(master_steepness, output_dir) {
+#' Save Elo Steepness Plot to PNG File
+#'
+#' This function saves the plot visualizing the changes in Elo steepness 
+#' as Feeder Occupancy increases to a PNG file.
+#'
+#' @param master_steepness A data frame containing the Elo steepness data. It should have columns 'resource_occupancy' and 'steepness_mean'.
+#'
+#' @return NULL. The function saves the plot to a PNG file and does not return any value.
+elo_steepness_plot <- function(master_steepness) {
   steepness_plot <- elo_steepness_by_competition_plot(master_steepness)
-  setwd(output_dir)
-  file_name = "Elo_steepness_by_competition.png"
+  file_name = here("graphs/Elo_steepness_by_competition.png")
   ggsave(file_name, plot = steepness_plot, width = 15, height = 13, limitsize = FALSE)
   
 }

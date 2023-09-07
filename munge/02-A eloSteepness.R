@@ -9,7 +9,8 @@ master_comb <- feed_extra_processing(master_comb)
 
 # prepare replacement data
 total_bin <- max_feed_bin - min_feed_bin + 1
-master_feed_replacement_all$total_bin <- total_bin
+master_feed_replacement_all_with_feeder_occupancy <- master_feed_replacement_all
+master_feed_replacement_all_with_feeder_occupancy$total_bin <- total_bin
 
 # load synchronicity matrix
 load(here::here(paste0("data/results/", "which cows are present each second for feed.rda")))
@@ -20,20 +21,17 @@ bins_occupied_for_feed_list <- feeding_synch_master_bin
 feed_each_bin_list <- feeding_synch_master_feed
 
 # process the feed replacement data 
-master_feed_replacement_all <- replace_processing(master_feed_replacement_all, cows_present_each_second_list, bins_occupied_for_feed_list, feed_each_bin_list, method_type)
-save(master_feed_replacement_all, file = here("data/results/master_feed_replacement_all_with_feeder_occupancy.rda"))
+master_feed_replacement_all_with_feeder_occupancy <- replace_processing(master_feed_replacement_all_with_feeder_occupancy, cows_present_each_second_list, bins_occupied_for_feed_list, feed_each_bin_list, method_type)
+cache("master_feed_replacement_all_with_feeder_occupancy")
 
 # plot histogram
 output_dir <- here("graphs/")
 dir_check_create(output_dir) # check if that output_dir exists, and create one if it does not exist
-replac_num_each_bucket <- plot_replace_hist(master_feed_replacement_all, total_bin, output_dir)
+replac_num_each_bucket <- plot_replace_hist(master_feed_replacement_all_with_feeder_occupancy, total_bin)
 
 # calculate the percentage of replacement occured per hour
-replacement_per_hour2 <- calculate_replacement_per_hour(master_feed_replacement_all)
-
-# calculate the average CD per hour
-cd_per_hour <- aggregate(master_feed_replacement_all$resource_occupancy, by = list(master_feed_replacement_all$hour), FUN = mean)
-colnames(cd_per_hour) <- c("hour", "resource_occupancy")
+replacement_per_hour2 <- calculate_replacement_per_hour(master_feed_replacement_all_with_feeder_occupancy)
+save(replacement_per_hour2, file = here("data/results/replacement_per_hour.rda"))
 
 # calculate how many levels of Feeder Occupancy  is needed and the sample size for each level
 bucket_num <- total_bin
@@ -50,12 +48,15 @@ if (sample_size >= min_replacement_num) {
   print("Did not meet minimum number of replacements required for Elo calculation at each level. Please redefine your sequence of Feeder Occupancy.")
 }
 
+cache("res_occupancy_seq")
+cache("sample_size")
+
 # calculate elo under different Feeder Occupancy 
-elo_steepness_competition(master_feed_replacement_all, master_comb, res_occupancy_seq, sample_size, output_dir)
+elo_steepness_competition(master_feed_replacement_all_with_feeder_occupancy, master_comb, res_occupancy_seq, sample_size)
 
 # plot the steepness of elo under different Feeder Occupancy
 master_steepness2 <- master_steepness
-elo_steepness_plot(master_steepness, output_dir)
+elo_steepness_plot(master_steepness)
 
 # fit a linear model for Elo Steepness X Feeder Occupancy
 steepness_lm <- lm(master_steepness$steepness_mean ~ master_steepness$resource_occupancy)
