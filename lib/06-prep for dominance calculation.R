@@ -406,8 +406,19 @@ plot_replace_hist <- function(master_feed_replacement_all, total_bin_num, output
   return(replac_num_each_bucket)
 }
 
-
-# plot number of replacements under different bin Feeder Occupancy  (how many bins are occupied)
+#' Plot the Number of Replacements by Feeder Occupancy
+#'
+#' This function returns a ggplot object visualizing the number of replacements 
+#' under different feeder occupancy values.
+#'
+#' @param master_feed_replacement_all A dataframe containing the data.
+#' @param total_bin_num The number of bins to use for the histogram.
+#' 
+#' @return A ggplot object.
+#' 
+#' @importFrom ggplot2 ggplot aes geom_histogram geom_density theme_classic ylab xlab theme
+#' @importFrom viridis scale_fill_viridis
+#' @importFrom dplyr %>% group_by summarise
 replace_by_den <- function(master_feed_replacement_all, total_bin_num){
   
   temp_plot <- ggplot(master_feed_replacement_all, 
@@ -427,7 +438,19 @@ replace_by_den <- function(master_feed_replacement_all, total_bin_num){
   return(temp_plot)
 }
 
-# plot number of replacements (10 months) under each hour 
+#' Plot the Number of Replacements by Hour per Day
+#'
+#' This function returns a ggplot object visualizing the number of replacements 
+#' under each hour for a 10-month summary.
+#'
+#' @param master_feed_replacement_all A dataframe containing the data.
+#' @param total_bin_num The number of bins to use for the histogram.
+#' 
+#' @return A ggplot object.
+#' 
+#' @importFrom ggplot2 ggplot aes geom_histogram theme_classic ylab xlab theme
+#' @importFrom viridis scale_fill_viridis
+#' @importFrom dplyr %>% group_by summarise
 replace_by_h_per_day <- function(master_feed_replacement_all, total_bin_num){
   temp_replacement <- master_feed_replacement_all
   total_days <- length(unique(master_feed_replacement_all$date))
