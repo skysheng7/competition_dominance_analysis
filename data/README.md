@@ -609,7 +609,7 @@ The dataset is a list where each entry is associated with a specific date. Each 
 The dataset is a list where each entry corresponds to a specific date and captures the replacement behaviours (a cow physically pushing another cow away from the feed bin and starts feeding at the same bin) of cows at feed bins. A replacement is observed when the time difference between one cow leaving the bin and the next cow entering is below a specific threshold (default set at 26 seconds). 
 
 **Number of Variables:**  
-Each data frame in the list consists of 6 variables, capturing information about the cows involved in the replacement, the bin involved, the exact time of the replacement, and the interval between the first cow leaving and the next cow entering
+6
 
 **Number of Cases/Rows:**  
 The number of rows in each data frame varies depending on the observed replacements for a given day. For example, on "2020-07-15", there are 813 observed replacements, while on "2020-07-16", there are 774 observed replacements.
@@ -632,3 +632,69 @@ The dataset is structured as a list where each entry represents data for a speci
 6. **Bout_interval**: The duration between the `Reactor_cow` leaving the bin and the `Actor_cow` entering the bin. This variable captures how fast the replacement happened. Data Type: Duration (from the `lubridate` package).
 
 
+
+## Dataset Specific Information for: `results/master_feed_replacement_all.rda`
+
+**Description:**  
+The dataset `master_feed_replacement_all` captures the replacement behaviours of cows at feed bins over an extended period. A replacement is defined by the time difference between one cow leaving the feed bin and the next cow entering being below a specific threshold (26s). It merges all the dataframe from the list in `results/Replacement_behaviour_by_date.rda` as 1 master dataframe
+
+**Number of Variables:**  
+6
+
+**Number of Cases/Rows:**  
+194,631
+
+**Dataset Structure:**  
+The dataset is structured as a data frame, where each row signifies an observed replacement.
+
+**Variable List:**
+
+1. **Reactor_cow**: The cow that was replaced. This is the cow that initially occupied the feed bin. Data Type: Integer.
+
+2. **Bin**: Indicates the specific feed bin where the replacement occurred. Data Type: Numeric.
+
+3. **Time**: Captures the exact timestamp of when the replacement took place. Data Type: POSIXct.
+
+4. **date**: Represents the specific date of the observation. Data Type: Date.
+
+5. **Actor_cow**: Refers to the cow that initiated the replacement action, pushing the `Reactor_cow` out and starting to feed from the bin. Data Type: Integer.
+
+6. **Bout_interval**: Denotes the duration or time elapsed between the `Reactor_cow` leaving the bin and the `Actor_cow` entering the bin. It is essential to determine how promptly the replacement occurred. Data Type: Duration (from the `lubridate` package).
+
+
+
+## Dataset Specific Information for: `results/regrouping.rda`
+
+**Description:**  
+The `regrouping` dataset captures information related to the days when cows were regrouped. It details how many cows were present on those days, which cows were excluded or enrolled, as well as any warnings or issues that occurred on these dates.
+
+**Number of Variables:**  
+10 
+
+**Number of Cases/Rows:**  
+19
+
+**Dataset Structure:**  
+The dataset is structured as a data frame where each row signifies an individual regrouping event.
+
+**Variable List:**
+
+1. **date**: Represents the specific date of regrouping. Data Type: POSIXct.
+
+2. **cow_num**: The total number of cows registered by the feed bins on the date of regrouping. Data Type: Numeric.
+
+3. **cow_list**: A character string listing all the cows present on the regrouping date. Data Type: Character.
+
+4. **excluded_num**: Number of cows excluded during regrouping. Data Type: Numeric.
+
+5. **excluded_cow**: A character string listing all the cows that were excluded during regrouping. Data Type: Character.
+
+6. **enroll_num**: Number of cows enrolled during regrouping. Data Type: Numeric.
+
+7. **enroll_cow**: A character string listing all the cows that were enrolled during regrouping. Data Type: Character.
+
+8. **re_enrolled**: Cows that were re-enrolled (those cows were removed from the trial in one of the previous regrouping events, but got re-enrolled again during the current regrouping). Data Type: Character.
+
+9. **Red_warning**: Any critical warnings or issues that were recorded on the regrouping date. For instance, technical breakdowns. Data Type: Character.
+
+10. **orange_warning**: Any minor or less critical warnings recorded on the regrouping date. Data Type: Character.

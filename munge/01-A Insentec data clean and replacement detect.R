@@ -13,6 +13,7 @@ library(ggplot2)
 library(EloRating)
 library(EloSteepness)
 library(viridis)
+library(dplyr)
 
 ################################################################################
 ###################### data loading & processing ###############################
