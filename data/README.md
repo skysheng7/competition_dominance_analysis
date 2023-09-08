@@ -723,3 +723,148 @@ The dataset is structured as a data frame where each row represents an hour of t
 2. **replacement_num**: The number of feed replacements that occurred during the respective hour. This variable provides insights into the absolute count of replacements in each hour. Data Type: Numeric.
 
 3. **replacement_percent**: The proportion of replacements that took place during the respective hour, relative to the total number of replacements across all hours. This variable gives an understanding of how the replacements are distributed throughout the day in terms of percentage. Data Type: Numeric.
+
+
+
+## Dataset Specific Information for: `results/master_steepness.rda`
+**Description:**  
+The `master_steepness` dataset captures the Elo steepness under different feeder occupancies. It provides insights into the mean and standard deviation of the steepness for each resource occupancy level.
+
+**Number of Variables:**  
+3
+
+**Number of Cases/Rows:**  
+25
+
+**Dataset Structure:**  
+The dataset is structured as a data frame where each row represents a specific resource occupancy level, showing the mean and standard deviation of the Elo steepness for that level.
+
+**Variable List:**
+
+1. **resource_occupancy**: Represents the level of resource occupancy (feeder occupancy). It provides insights into the specific occupancy level for which the Elo steepness is calculated. Data Type: Numeric.
+
+2. **steepness_mean**: The mean value of the Elo steepness for the respective resource occupancy level. This variable provides insights into the average steepness value for each occupancy level. Data Type: Numeric.
+
+3. **steepness_SD**: The standard deviation of the Elo steepness for the respective resource occupancy level. This variable gives an understanding of the variability in the steepness values for each occupancy level. Data Type: Numeric.
+
+
+
+
+## Dataset Specific Information for: `results/replacement_sampled_master.rda`
+
+**Description:**  
+The `replacement_sampled_master` dataset recorded replacements that got randomly sampled from all replacement events for the calculation of eloSteepness and dyadic analysis. It captures data related to the reactor cow, the bin, the time and date of the replacement, the actor cow, bout intervals, and various metrics related to bins and resource occupancy.
+
+**Number of Variables:**  
+19
+
+**Number of Cases/Rows:**  
+127,850
+
+**Dataset Structure:**  
+The dataset is structured as a grouped data frame where each row represents a unique replacement event.
+
+**Variable List:**
+
+1. **hour**: The hour during which the replacement occurred. Data Type: Integer.
+2. **Reactor_cow**: Identifier for the reactor cow. Data Type: Numeric.
+3. **Bin**: Bin number associated with the replacement. Data Type: Numeric.
+4. **Time**: Exact time of the replacement. Data Type: POSIXct.
+5. **date**: Date of the replacement. Data Type: Date.
+6. **Actor_cow**: Identifier for the actor cow. Data Type: Numeric.
+7. **Bout_interval**: Interval between the reactor cow leaving and the actor entering. Data Type: Duration (from lubridate package).
+8. **total_bin**: Total number of bins. Data Type: Numeric.
+9. **unoccupied_bin_with_feed**: Number of unoccupied bins with feed. Data Type: Numeric.
+10. **unoccupied_empty_bin**: Number of unoccupied bins that are empty. Data Type: Numeric.
+11. **occupied_total_bin**: Total number of occupied bins. Data Type: Numeric.
+12. **resource_occupancy**: Proportion of resources occupied, also can be refered to as feeder occupancy. Data Type: Numeric.
+13. **total_bin_with_feed**: Total number of bins with feed. Data Type: Numeric.
+14. **occupied_bin_with_feed**: Number of occupied bins with feed. Data Type: Numeric.
+15. **average_CD_10mon**: Average resource occupancy for that hour over 10 months. Data Type: Numeric.
+16. **SD_of_CD_10mon**: Standard deviation of resource occupancy for that hour over 10 months. Data Type: Numeric.
+17. **start_density**: each replacements happened in a range of resource occupancy (feeder occupancy), this refers to the minimum feeder occupancy in that range. Data Type: Numeric.
+18. **end_density**: each replacements happened in a range of resource occupancy (feeder occupancy), this refers to the maximum feeder occupancy in that range. Data Type: Numeric.
+19. **sampled**: Sampling indicator, 1 means this is randomly sampled, 0 means it is not. Data Type: Numeric.
+
+
+
+
+## Dataset Specific Information for: `results/replace_num_by_hour_master.rda`
+**Description:**  
+The `replace_num_by_hour_master` dataset captures the number of feed replacements that occurred during each hour of the day. It also provides insights into the resource occupancy during those hours.
+
+**Number of Variables:**  
+3
+
+**Number of Cases/Rows:**  
+549
+
+**Dataset Structure:**  
+The dataset is structured as a tibble where each row represents an hour of the day and the associated metrics for that hour.
+
+**Variable List:**
+
+1. **hour**: Represents each hour of the day in a 24-hour format, ranging from 0 (midnight) to 23 (11 PM). Data Type: Integer.
+2. **replacement_num**: The number of feed replacements that occurred during the respective hour. This variable provides insights into the absolute count of replacements in each hour. Data Type: Integer.
+3. **resource_occupancy**: The proportion of resources occupied during the respective hour. This variable gives an understanding of how resources are utilized throughout the day. Data Type: Numeric.
+
+Note: Users should refer to the dataset documentation or explore the dataset directly for a comprehensive understanding of all variables.
+
+
+
+## Dataset Specific Information for: `results/count_presence.rda`
+**Description:**  
+The `count_presence` dataset captures detailed information about the presence of cows during various times. It provides insights into the frequency of each cow's activity as an actor and reactor, the resource occupancy during those times, and the total number of replacement events.
+
+**Number of Variables:**  
+7
+
+**Number of Cases/Rows:**  
+323,877
+
+**Dataset Structure:**  
+The dataset is structured as a data frame where each row represents a unique combination of date and cow, along with associated metrics for that combination.
+
+**Variable List:**
+
+1. **date**: Represents the specific date of the observation. Data Type: Date.
+2. **Cow**: Numeric identifier for each cow. Data Type: Numeric.
+3. **resource_occupancy**: The proportion of resources occupied during the respective observation. Data Type: Numeric.
+4. **actor_freq**: Frequency of the cow's activity as an actor during the observation. Data Type: Numeric.
+5. **reactor_freq**: Frequency of the cow's activity as a reactor during the observation. Data Type: Numeric.
+6. **total_replacement_events**: Total number of replacement events involving the cow during the observation. Data Type: Numeric.
+7. **feeding_visits_in_2h**: Number of feeding visits by the cow in a 2-hour window. Data Type: Numeric.
+
+
+
+
+## Dataset Specific Information for: `results/replacement_by_day_master.rda`
+**Description:**  
+The `replacement_by_day_master` dataset captures the number of replacements made on each day. It provides insights into the daily frequency of replacements and the resource occupancy on those days.
+
+**Number of Variables:**  
+3
+
+**Number of Cases/Rows:**  
+6,828
+
+**Dataset Structure:**  
+The dataset is structured as a tibble where each row represents a unique date, along with the number of replacements and resource occupancy for that date.
+
+**Variable List:**
+
+1. **date**: Represents the specific date of the observation. Data Type: Date.
+2. **replacement_num**: The number of replacements made on the respective date. Data Type: Integer.
+3. **resource_occupancy**: The proportion of resources occupied on the respective date. Data Type: Numeric.
+
+
+
+## Dataset Specific Information for: `results/elo_baysian_result_0.13.rda`, `results/elo_baysian_result_0.17.rda`.... `results/elo_baysian_result_1.rda`
+**Description:**  
+Each of these rda files are eloSteepness results for the corresponding feeder occupancy levels marked at the end of the file name. For example, `results/elo_baysian_result_0.13.rda` means the eloSteepness results calculated using replacements happened when feeder occupancy was 13%.
+
+**Number of Variables:**  
+There are 9 items in each list
+
+**Variable List:**
+For detailed explanation of the eloSteepness results, please refer to the `EloSteepness` package. Basically it returns the distribution of Elo rating, summed Elo winning probabilty for each cow. It also returns the distribution of steepness of the dominance hierarhcy.
