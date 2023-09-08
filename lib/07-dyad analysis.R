@@ -1,7 +1,15 @@
 ###################################################################################################
 ########################################## Dyadic analysis ########################################
 ###################################################################################################
-# calculate how many dyadic relationships are possible to happen in 10mon
+#' Calculate Total Unique Dyadic Relationships Over 10 Months
+#'
+#' This function calculates the total number of unique dyads 
+#' possible over a 10-month period from a list of data frames in a dynamic group.
+#'
+#' @param clean_comb_list2 A list of data frames where each data frame represents 
+#' data for a specific day and contains a column named 'Cow' with cow IDs.
+#' 
+#' @return A single integer value representing the total number of unique dyadic relationships.
 total_dyad_long_term <- function(clean_comb_list2) {
   for (i in 1:length(clean_comb_list2)) {
     cur_day <- clean_comb_list2[[i]]

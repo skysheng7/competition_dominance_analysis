@@ -1,5 +1,5 @@
 ################################################################################
-## Group Level Analysis: Steepness under different legels of feeder occupancy ##
+## Group Level Analysis: Steepness under different levels of feeder occupancy ##
 ################################################################################
 # mark down regrouping days
 regrouping <- identify_regoup(all.comb2, warning_days)

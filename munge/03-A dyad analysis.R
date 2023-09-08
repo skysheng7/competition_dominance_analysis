@@ -7,6 +7,8 @@ group_by <- 1
 master_dyad_analysis_10mon_control <- dyad_relationship_long_term(replacement_sampled_master, res_occupancy_seq, group_by, total_dyad_possible_num)
 master_unique_dyad_direction_10mon_control <- master_dyad_analysis_10mon_control[[1]]
 dyads_unknown <- master_dyad_analysis_10mon_control[[2]]
+
+cache("dyads_unknown")
 plot_unknown(dyads_unknown, output_dir) 
 
 unknown_lm <- lm(percent_unkown ~ end_density, data = dyads_unknown)
