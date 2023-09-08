@@ -791,7 +791,7 @@ The dataset is structured as a grouped data frame where each row represents a un
 
 ## Dataset Specific Information for: `results/replace_num_by_hour_master.rda`
 **Description:**  
-The `replace_num_by_hour_master` dataset captures the number of feed replacements that occurred during each hour of the day. It also provides insights into the resource occupancy during those hours.
+The `replace_num_by_hour_master` dataset captures the number of feed replacements that occurred during each hour of the day over 10 month. It also provides insights into the resource occupancy during those hours.
 
 **Number of Variables:**  
 3
@@ -807,8 +807,6 @@ The dataset is structured as a tibble where each row represents an hour of the d
 1. **hour**: Represents each hour of the day in a 24-hour format, ranging from 0 (midnight) to 23 (11 PM). Data Type: Integer.
 2. **replacement_num**: The number of feed replacements that occurred during the respective hour. This variable provides insights into the absolute count of replacements in each hour. Data Type: Integer.
 3. **resource_occupancy**: The proportion of resources occupied during the respective hour. This variable gives an understanding of how resources are utilized throughout the day. Data Type: Numeric.
-
-Note: Users should refer to the dataset documentation or explore the dataset directly for a comprehensive understanding of all variables.
 
 
 
