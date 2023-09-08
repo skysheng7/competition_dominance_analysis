@@ -2,14 +2,19 @@
 ################# Dyad Level Analysis: percentage of unkown dyads ##############
 ################### control for same number of replacements ####################
 ################################################################################
+total_dyad_possible_num <- total_dyad_long_term(all.comb2)
+group_by <- 1
+master_dyad_analysis_10mon_control <- dyad_relationship_long_term(replacement_sampled_master, res_occupancy_seq, group_by, total_dyad_possible_num)
+master_unique_dyad_direction_10mon_control <- master_dyad_analysis_10mon_control[[1]]
+dyads_unknown <- master_dyad_analysis_10mon_control[[2]]
 
-plot_unknown(dyads_unknown, output_dir) 
+plot_unknown(dyads_unknown, here("graphs/")) 
 
 unknown_lm <- lm(percent_unkown ~ end_density, data = dyads_unknown)
 unknown_lm_summary <- summary(unknown_lm)
 
 ################################################################################
-################# Dyad Level Analysis: percentage of two-way dyads #############
+################# Dyad Level Analysis: percentage of unique dyads ##############
 ################### control for same number of replacements ####################
 ################################################################################
 repl_master <- replacement_sampled_master[, c("Actor_cow", "Reactor_cow", "end_density")]
@@ -25,3 +30,14 @@ single_level_dyads_df <- results$single_level_dyads
 single_level_dyads_count_df <- results$single_level_dyads_count
 colnames(single_level_dyads_count_df) <- c("feeder_occupancy", "unique_dyad_num")
 
+######### linear model for unique dyad per feeder occupancy level
+total_dyad <- calculate_total_dyads(interactions_by_dyad)
+single_level_dyads_count_df2 <- merge(single_level_dyads_count_df, total_dyad)
+single_level_dyads_count_df2$unique_dyad_pct <- single_level_dyads_count_df2$unique_dyad_num/single_level_dyads_count_df2$total_dyad
+single_level_dyads_lm <- lm(unique_dyad_pct ~ feeder_occupancy, data = single_level_dyads_count_df2)
+single_level_dyads_lm_summary <- summary(single_level_dyads_lm)
+
+################################################################################
+################# Dyad Level Analysis: percentage of two way dyads ##############
+################### control for same number of replacements ####################
+################################################################################

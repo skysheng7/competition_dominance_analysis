@@ -869,24 +869,3 @@ For detailed explanation of the eloSteepness results, please refer to the `EloSt
 
 
 
-
-## Dataset Specific Information for: `results/dyads_unknown.rda`
-
-**Description:**  
-The `dyads_unknown` dataset captures the percentage of unknown dyads across different levels of feeder occupancy. It provides insights into the relationship between feeder occupancy and the proportion of dyads that are unknown (dyads where 2 cows could have interacted because they were present at the same time, but did not interact under the current feeder occupancy).
-
-**Number of Variables:**  
-3
-
-**Number of Cases/Rows:**  
-25
-
-**Dataset Structure:**  
-The dataset is structured as a data frame where each row represents a unique range of feeder occupancy levels, along with the percentage of unknown dyads for that range.
-
-**Variable List:**
-
-1. **start_density**: Represents the starting point of the feeder occupancy range for the observation. Data Type: Numeric.
-2. **end_density**: Represents the ending point of the feeder occupancy range for the observation. Data Type: Numeric.
-3. **percent_unkown**: The proportion of dyads that are unknown for the respective range of feeder occupancy. Data Type: Numeric.
-

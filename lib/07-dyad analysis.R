@@ -398,3 +398,21 @@ calculate_interactions_by_dyad <- function(repl_master) {
   
   return(interactions_by_dyad)
 }
+
+#' Calculate Total Dyads for Each Level of Feeder Occupancy
+#'
+#' This function computes the total number of dyads for each unique level of feeder occupancy.
+#'
+#' @param interactions_by_dyad A dataframe containing interaction data for different dyads across various levels of feeder occupancy.
+#' 
+#' @return A dataframe with two columns: 
+#'   - feeder_occupancy: The unique levels of feeder occupancy.
+#'   - total_dyad: The total number of dyads for each level of feeder occupancy.
+calculate_total_dyads <- function(interactions_by_dyad){
+  temp = interactions_by_dyad
+  temp$c = 1
+  total_dyad <- aggregate(temp$c, by = list(temp$feeder_occupancy), FUN = sum)
+  colnames(total_dyad) <- c("feeder_occupancy", "total_dyad")
+  
+  return(total_dyad)
+}
