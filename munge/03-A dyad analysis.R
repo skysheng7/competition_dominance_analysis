@@ -10,16 +10,4 @@ dyads_unknown <- master_dyad_analysis_10mon_control[[2]]
 
 cache("dyads_unknown")
 
-################################################################################
-############### Percentage of Aberrant Replacements ############################
-################################################################################
-rda_dir <- here("data/results/")
-
-master_aberrant_track <- aberrant_replacement(rda_dir)
-master_aberrant_track <- master_aberrant_track[order(master_aberrant_track$cur_cd),]
-# fit a linear model
-aberrant_lm <- lm(master_aberrant_track$aberrant_replacement_percent ~ master_aberrant_track$cur_cd)
-aberrant_lm_summary <- summary(aberrant_lm)
-plot_aberrant_by_CD(master_aberrant_track, output_dir)
-
 

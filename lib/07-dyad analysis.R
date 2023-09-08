@@ -1,6 +1,6 @@
-###################################################################################################
-########################################## Dyadic analysis ########################################
-###################################################################################################
+################################################################################
+########################### Dyadic analysis ####################################
+################################################################################
 #' Calculate Total Unique Dyadic Relationships Over 10 Months
 #'
 #' This function calculates the total number of unique dyads 
@@ -40,8 +40,24 @@ total_dyad_long_term <- function(clean_comb_list2) {
   return(total_unique_dyad)
 }
 
-
-# calculate the percentage of unkown dyads in 10 months
+#' Analyze Dyadic Relationships Over Long Term
+#'
+#' This function analyzes the directionality and frequency of interactions 
+#' between pairs of entities over a long term, the percentage of unknown dyads 
+#' (dyads where 2 cows could have interacted because they were in the pen at the 
+#' same time, but did not interact)
+#'on different resource occupancy levels.
+#'
+#' @param master_feed_replacement_all A dataframe containing replacement data.
+#' @param res_occupancy_seq A vector of resource occupancy levels.
+#' @param group_by An integer specifying how many resource occupancy levels should be grouped together.
+#' @param total_dyad_possible_num An integer specifying the total possible number of dyads.
+#' 
+#' @return A list containing two data frames: 
+#' \itemize{
+#'   \item The first data frame contains the directionality of interactions for each dyad.
+#'   \item The second data frame contains the percentage of unknown dyads for each resource occupancy level.
+#' }
 dyad_relationship_long_term <- function(master_feed_replacement_all, res_occupancy_seq, group_by, total_dyad_possible_num) {
   sub_feed_replacement <- master_feed_replacement_all[, c("date", "Time", "Actor_cow", "Reactor_cow", "resource_occupancy")]
   cur_period_replcement <- sub_feed_replacement
@@ -121,7 +137,15 @@ dyad_relationship_long_term <- function(master_feed_replacement_all, res_occupan
 }
 
 
-
+#' Plot Percentage of Unknown Dyads by Feeder Occupancy
+#'
+#' This function visualizes the percentage of unknown dyads as a function 
+#' of feeder occupancy using a scatter plot and a linear regression line.
+#'
+#' @param master_directionality A dataframe containing the percentage of unknown dyads and feeder occupancy data.
+#' @param output_dir A string specifying the directory where the plot should be saved.
+#' 
+#' @return Invisible NULL. The function saves a PNG plot in the specified directory.
 plot_unknown <- function(master_directionality, output_dir) {
    
   # this is calculating the percentage of two-way dyads among all observed dyads
@@ -141,74 +165,3 @@ plot_unknown <- function(master_directionality, output_dir) {
 }
 
 
-###################################################################################################
-############################### Percentage of Aberrant Replacements ###############################
-###################################################################################################
-aberrant_replacement <- function(rda_dir) {
-  # find rdafiles with similar names containing all elo results
-  setwd(rda_dir)
-  elo_rda_list <- list.files(path = ".", pattern="_10-mon.*\\.rda$", full.names = TRUE) 
-  
-  for (k in 1:length(elo_rda_list)) {
-    # identify elo rda under current CD, and load it
-    cur_file <- elo_rda_list[k]
-    cur_file_name_list <- strsplit(cur_file, "_")  # split the filename string by "_"
-    cur_cd_in_100 <- cur_file_name_list[[1]][3]
-    cur_cd <- as.numeric(cur_cd_in_100) * 0.01
-    load(cur_file)
-    elo_replacement_logtable <- elo_package_result[["logtable"]]
-    true_date <- data.frame(seq(1, length(elo_package_result$truedates), by = 1), elo_package_result$truedates)
-    colnames(true_date) <- c("Date", "Date2")
-    elo_replacement_logtable2 <- merge(elo_replacement_logtable, true_date)
-    elo_replacement_logtable2$Date <- NULL
-    names(elo_replacement_logtable2)[names(elo_replacement_logtable2) == 'Date2'] <- "Date"
-    elo_replacement_logtable2$Date <- ymd(elo_replacement_logtable2$Date, tz = "America/Los_Angeles")
-    
-    # identify burning end date under current cd, and delete all replacements before burning end date
-    elo_replacement_logtable3 <- elo_replacement_logtable2
-    total_replacement <- nrow(elo_replacement_logtable3)
-    
-    # calculate total number of aberrant replacements under current cd
-    aberrant_replacement <- elo_replacement_logtable3[which(elo_replacement_logtable3$Apre < elo_replacement_logtable3$Bpre),]
-    normal_replacement <- elo_replacement_logtable3[which(elo_replacement_logtable3$Apre >= elo_replacement_logtable3$Bpre),]
-    aberrant_replacement_num <- nrow(aberrant_replacement)
-    normal_replacement_num <- nrow(normal_replacement)
-    average_elo_difference_aberrant <- mean(aberrant_replacement$Apre - aberrant_replacement$Bpre)
-    average_elo_difference_normal <- mean(normal_replacement$Apre - normal_replacement$Bpre)
-    
-    temp <- data.frame(cur_cd, total_replacement, aberrant_replacement_num, normal_replacement_num, average_elo_difference_aberrant, average_elo_difference_normal)
-    temp$aberrant_replacement_percent <- temp$aberrant_replacement_num/total_replacement
-    temp$normal_replacement_percent <- temp$normal_replacement_num/total_replacement
-    
-    if (k == 1) {
-      master_aberrant_track <- temp
-    } else {
-      master_aberrant_track <- rbind(master_aberrant_track, temp)
-    }
-    
-    
-  }
-  
-  
-  return(master_aberrant_track)
-}
-
-
-plot_aberrant_by_CD <- function(master_aberrant_track, output_dir) {
-  aberrant_by_cd <- ggplot(master_aberrant_track, aes(x=cur_cd, 
-                                                      y = aberrant_replacement_percent)) + 
-    #geom_line(size = 1.5, color = "coral") +
-    geom_point(size = 10, color = "royal blue") +
-    geom_smooth(method = "lm", se = FALSE, size= 2, color = "midnight blue") +
-    labs(y= "Percentage of Aberrant \nReplacement", 
-         x = paste("Feeder Occupancy (Eqs. (", method_type, "))", sep = "")) +
-    theme_classic() +
-    #ggtitle("Percentage of Aberrant Replacement \nby Feeder Occupancy ") + 
-    theme(text = element_text(size = 55), axis.text.x = element_text(size = 50))+
-    #scale_x_continuous(expand=expansion(mult = c(0, .05))) +
-    scale_y_continuous(expand=expansion(mult = c(0, .1)), limits = c(0.2, 0.6))
-  
-  setwd(output_dir)
-  ggsave("aberrant_by_cd.png", plot = aberrant_by_cd, width = 15, height = 13, limitsize = FALSE)
-  
-}
