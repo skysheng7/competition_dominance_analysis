@@ -10,6 +10,7 @@ dyads_unknown <- master_dyad_analysis_10mon_control[[2]]
 
 plot_unknown(dyads_unknown, here("graphs/")) 
 
+# linear model fit
 unknown_lm <- lm(percent_unkown ~ end_density, data = dyads_unknown)
 unknown_lm_summary <- summary(unknown_lm)
 
@@ -30,14 +31,24 @@ single_level_dyads_df <- results$single_level_dyads
 single_level_dyads_count_df <- results$single_level_dyads_count
 colnames(single_level_dyads_count_df) <- c("feeder_occupancy", "unique_dyad_num")
 
-######### linear model for unique dyad per feeder occupancy level
 total_dyad <- calculate_total_dyads(interactions_by_dyad)
 single_level_dyads_count_df2 <- merge(single_level_dyads_count_df, total_dyad)
 single_level_dyads_count_df2$unique_dyad_pct <- single_level_dyads_count_df2$unique_dyad_num/single_level_dyads_count_df2$total_dyad
+
+# linear model fit for unique dyad per feeder occupancy level
 single_level_dyads_lm <- lm(unique_dyad_pct ~ feeder_occupancy, data = single_level_dyads_count_df2)
 single_level_dyads_lm_summary <- summary(single_level_dyads_lm)
 
 ################################################################################
-################# Dyad Level Analysis: percentage of two way dyads ##############
+########## Dyad Level Analysis: percentage of two way dyads among dyads ########
+######################## with >= 2 interactions ################################
 ################### control for same number of replacements ####################
 ################################################################################
+two_way_dyad_perct <- two_way_dyad_pct_calculation(interactions_by_dyad)
+
+# plot the changes of percentage of 2-way dyads (among dyads with >=2 interactions) 
+# as feeder occupancy increases
+two_way_pct_plot(two_way_dyad_perct)
+
+
+

@@ -416,3 +416,68 @@ calculate_total_dyads <- function(interactions_by_dyad){
   
   return(total_dyad)
 }
+
+
+#' Calculate Percentage of 2-Way Dyads for Dyads with 2 or More Interactions
+#'
+#' This function calculates the percentage of 2-way dyads for dyads with 2 or more interactions.
+#' It filters the dyads based on the total number of interactions and then calculates the percentage 
+#' of 2-way interactions for each level of feeder occupancy.
+#'
+#' @param interactions_by_dyad A dataframe containing interaction data for different dyads across various levels of feeder occupancy.
+#' 
+#' @return A dataframe with columns: 
+#'   - feeder_occupancy: The unique levels of feeder occupancy.
+#'   - dyads_mt2_interact: The total number of dyads with more than 2 interactions.
+#'   - 2way_dyad: The total number of 2-way dyads.
+#'   - 2way_pct: The percentage of 2-way dyads.
+two_way_dyad_pct_calculation <- function(interactions_by_dyad) {
+  mt_2_dyad <- interactions_by_dyad[which(interactions_by_dyad$total_interactions >=2),]
+  mt_2_dyad_temp <- mt_2_dyad
+  mt_2_dyad_temp$c = 1
+  mt_2_dyad_total <- aggregate(mt_2_dyad_temp$c, by = list(mt_2_dyad_temp$feeder_occupancy), FUN = sum)
+  colnames(mt_2_dyad_total) <- c("feeder_occupancy", "dyads_mt2_interact")
+  mt_2_2way_dyad <- mt_2_dyad[which((abs(mt_2_dyad$win_pct) != 1 ) & (abs(mt_2_dyad$win_pct) != 0)),]
+  mt_2_2way_dyad$c = 1
+  mt_2_2way_dyad_total <- aggregate(mt_2_2way_dyad$c, by = list(mt_2_2way_dyad$feeder_occupancy), FUN = sum)
+  colnames(mt_2_2way_dyad_total) <- c("feeder_occupancy", "2way_dyad")
+  two_way_dyad_perct <- merge(mt_2_dyad_total, mt_2_2way_dyad_total)
+  two_way_dyad_perct$`2way_pct` <- two_way_dyad_perct$`2way_dyad`/two_way_dyad_perct$dyads_mt2_interact
+  
+  return(two_way_dyad_perct)
+}
+
+#' Plot Percentage of Two-way Dyads by Feeder Occupancy
+#'
+#' This function creates a scatter plot to visualize the percentage of two-way dyads among dyads 
+#' with 2 or more interactions across different levels of feeder occupancy.
+#'
+#' @param dyad_summary2 A dataframe containing the summary of dyads with columns 'feeder_occupancy' and '2way_pct'.
+#' 
+#' @return A ggplot object visualizing the percentage of two-way dyads by feeder occupancy.
+#' 
+two_way_pct_by_feeder_occupancy_plot <- function(dyad_summary2) {
+  two_way_pct_plot <- ggplot(dyad_summary2, aes(x=feeder_occupancy, y = `2way_pct`)) + 
+    geom_point(aes(y = `2way_pct`), size = 10, color = "royal blue") +
+    geom_smooth(method = "lm", se = FALSE, size= 2, color = "midnight blue", fullrange = TRUE) +
+    labs(y= "Percentage of Two-way Dyads", x = "Feeder Occupancy") +
+    theme_classic() +
+    theme(text = element_text(size = 55), axis.text.x = element_text(size = 50)) +
+    scale_y_continuous(expand=expansion(mult = c(0, .1)), limits = c(0, 0.63))
+  
+  return(two_way_pct_plot)
+}
+
+#' Save Two-way Dyads Percentage Plot by Feeder Occupancy
+#'
+#' This function generates a scatter plot visualizing the percentage of two-way dyads among dyads 
+#' with 2 or more interactions across different levels of feeder occupancy and saves it to a specified directory.
+#'
+#' @param dyad_summary2 A dataframe containing the summary of dyads with columns 'feeder_occupancy' and '2way_pct'.
+#' @param output_dir A string specifying the directory where the plot should be saved.
+two_way_pct_plot <- function(dyad_summary2) {
+  two_way_pct_plot <- two_way_pct_by_feeder_occupancy_plot(dyad_summary2)
+  file_name = here("graphs/2way_pct_by_feeder_occupancy.png")
+  ggsave(file_name, plot = two_way_pct_plot, width = 15, height = 13, limitsize = FALSE)
+}
+
