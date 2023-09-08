@@ -121,7 +121,6 @@ replacement_list_by_date <- record_replacement_allDay(all.fed2, replacement_thre
 replacement_list_by_date <- check_alibi_all(replacement_list_by_date, all.comb2)
 master_feed_replacement_all <- merge_data(replacement_list_by_date)
 
-cache("replacement_list_by_date")
 cache("master_feed_replacement_all")
 save(replacement_list_by_date, file = (here::here(paste0("data/results/", "Replacement_behaviour_by_date.rda"))))
 save(master_feed_replacement_all, file = (here::here(paste0("data/results/", "master_feed_replacement_all.rda"))))

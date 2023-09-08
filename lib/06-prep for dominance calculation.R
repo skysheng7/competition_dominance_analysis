@@ -799,11 +799,11 @@ elo_steepness_competition <- function(master_feed_replacement_all, master_comb, 
     }
   }
   
-  save(replace_num_by_hour_master, file = paste(here("data/results/", "replace_num_by_hour_master.rda", sep = "")))
-  save(count_presence, file = paste(here("data/results/", "count_presence.rda", sep = "")))
-  save(replacement_by_day_master, file = paste(here("data/results/", "replacement_by_day_master.rda", sep = "")))
-  save(replacement_sampled_master, file = paste(here("data/results/", "replacement_sampled_master.rda", sep = "")))
-  save(master_steepness, file = paste(here("data/results/", "master_steepness.rda", sep = "")))
+  save(replace_num_by_hour_master, file = here("data/results/replace_num_by_hour_master.rda"))
+  save(count_presence, file =here("data/results/count_presence.rda"))
+  save(replacement_by_day_master, file = here("data/results/replacement_by_day_master.rda"))
+  save(replacement_sampled_master, file = here("data/results/replacement_sampled_master.rda"))
+  save(master_steepness, file = here("data/results/master_steepness.rda"))
   
   cache("master_steepness")
   cache("replacement_sampled_master")
