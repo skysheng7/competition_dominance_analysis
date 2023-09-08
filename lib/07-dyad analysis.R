@@ -1,6 +1,7 @@
 ################################################################################
-########################### Dyadic analysis ####################################
+############################# unknown dyads ####################################
 ################################################################################
+
 #' Calculate Total Unique Dyadic Relationships Over 10 Months
 #'
 #' This function calculates the total number of unique dyads 
@@ -164,4 +165,236 @@ plot_unknown <- function(master_directionality, output_dir) {
 
 }
 
+################################################################################
+############################## unique dydds ####################################
+################################################################################
 
+#' This function converts a given contingency table into a dataframe and 
+#' adds a new column representing the occupancy level.
+#'
+#' @param contingency_table A contingency table to be converted.
+#' @param occupancy_level A numeric value representing the occupancy level.
+#' 
+#' @return A dataframe with columns: winner, loser, interactions, and feeder_occupancy.
+contingency_to_dataframe <- function(contingency_table, occupancy_level) {
+  temp_df <- as.data.frame(as.table(contingency_table))
+  colnames(temp_df) <- c("winner", "loser", "interactions")
+  temp_df$feeder_occupancy <- occupancy_level
+  temp_df
+}
+
+#' Find Dyads Present in All Levels
+#'
+#' This function identifies dyads that appear in all unique levels of a given occupancy column.
+#'
+#' @param data A dataframe containing the dyad data.
+#' @param dyad_id_col A string representing the column name of the dyad ID.
+#' @param occupancy_col A string representing the column name of the feeder occupancy level.
+#' 
+#' @return A vector containing dyad IDs that appear in all unique levels of the occupancy column.
+find_dyads_in_all_levels <- function(data, dyad_id_col, occupancy_col) {
+  # Group the data by dyad_id and feeder_occupancy_grouped
+  grouped_data <- aggregate(data[[occupancy_col]], by = list(data[[dyad_id_col]], data[[occupancy_col]]), FUN = length)
+  
+  # Count the number of unique levels of feeder_occupancy_grouped for each dyad_id
+  dyad_counts <- aggregate(grouped_data$x, by = list(grouped_data$Group.1), FUN = length)
+  
+  # Find the total number of unique levels of feeder_occupancy_grouped
+  total_levels <- length(unique(data[[occupancy_col]]))
+  
+  # Filter the dyad_id that have counts equal to the total number of unique levels of feeder_occupancy_grouped
+  dyads_in_all_levels <- dyad_counts[dyad_counts$x == total_levels, "Group.1"]
+  
+  return(dyads_in_all_levels)
+}
+
+#' Calculate Total Interactions Per Dyad
+#'
+#' This function calculates the total number of interactions for each dyad.
+#' It first creates a unique dyad ID by combining the winner and loser columns.
+#' It then filters out rows where the winner and loser are the same and calculates
+#' the total number of interactions for each unique dyad.
+#'
+#' @param process_df A dataframe containing the dyad data with columns "winner", "loser", and "interactions".
+#' 
+#' @return A dataframe with the total number of interactions for each dyad and the winning percentage.
+total_interaction_per_dyad <- function(process_df){
+  # Create a combined dyad_id
+  process_df$dyad_id <- apply(process_df[, c("winner", "loser")], 1, function(x) paste(sort(as.integer(x)), collapse = "-"))
+  # remove when winner and loser are the same, also remove the dyads that have 0 interactions
+  process_df2 <- process_df[as.character(process_df$winner) != as.character(process_df$loser), ]
+  
+  
+  # calculate the total number of interaction per unique dyad A>B and A<B are the same dyad
+  interact_per_dyad <- aggregate(process_df2$interactions, by = list(process_df2$dyad_id), FUN = sum)
+  colnames(interact_per_dyad) <- c("dyad_id", "total_interactions")
+  process_df3 <-merge(process_df2, interact_per_dyad)
+  process_df3 <- process_df3[which(process_df3$total_interactions >0),]
+  process_df3$win_pct <- process_df3$interactions/process_df3$total_interactions
+  process_df3 <- process_df3[order(process_df3$dyad_id),]
+  
+  return(process_df3)
+}
+
+
+#' Process Dyads to Set Dominant Winner
+#'
+#' This function processes a dataframe to ensure that for each dyad, there's only one record 
+#' where the cow that wins more is set as the winner. If there's a tie in the number of wins, 
+#' the cow with the larger ID is set as the winner.
+#' 
+#' for each dyad, they have an unique dyad_id.
+#' as I need to record the winner and loser for each dyad, I set the winner cow to be
+#' the cow that wins more over the other, when this dyad appear for the first time in a feeder occupancy level
+#'
+#' @param process_df3 A dataframe containing the dyad data with columns "winner", "loser", "win_pct", and "dyad_id".
+#' 
+#' @return A dataframe with processed dyads where each dyad has only one record with the dominant winner set.
+
+low_fo_dyad_set <- function(process_df3) {
+  # now there are 2 record for each dyad, because A>B and A<B are in 2 seperate rows.
+  # For each dyad, only keep 1 record, the record where the cow that wins more is placed on the winner
+  process_df4 <- process_df3[which(process_df3$win_pct >=0.5),]
+  process_df4_no_tie <- process_df4[which(process_df4$win_pct > 0.5),]
+  
+  #for dyads where 2 individuals wins the same amount, assign the winner to be the cow with larger cow ID
+  process_df4_tie <- process_df4[which(process_df4$win_pct == 0.5),]
+  process_df4_tie$winner <- NULL
+  process_df4_tie$loser <- NULL
+  process_df4_tie <- unique(process_df4_tie)
+  split_ids <- strsplit(process_df4_tie$dyad_id, "-") # Split the dyad_id column on the hyphen
+  process_df4_tie$winner <- sapply(split_ids, function(x) x[1])  # Extract the winner (first cow ID before the hyphen)
+  process_df4_tie$loser <- sapply(split_ids, function(x) x[2])  # Extract the loser (second cow ID after the hyphen)
+  process_df4_tie <- process_df4_tie[, colnames(process_df4_no_tie)]
+  
+  process_df5 <- rbind(process_df4_no_tie, process_df4_tie)
+  
+  return(process_df5)
+}
+
+#' Process Dyads Based on Previous Appearances
+#'
+#' This function processes a dataframe to determine the sequence of winners and losers for dyads 
+#' based on their previous appearances in the lowest level of feeder occupancy. If a dyad hasn't 
+#' appeared in previous levels, it uses the method from the `low_fo_dyad_set` function to determine the sequence.
+#'
+#' @param prog_df A dataframe containing the dyad data with columns "dyad_id", "winner", and "loser".
+#' @param interactions_by_dyad A dataframe containing previous interactions by dyad.
+#' 
+#' @return A dataframe with processed dyads based on their previous appearances.
+other_fo_dyad_set <- function(prog_df, interactions_by_dyad) {
+  # for the dyads that have showed up in previous levels of feeder occupancy
+  # keep the sequence of who is the winner and who is the loser
+  dyad_seq <- unique(interactions_by_dyad[, c("dyad_id", "winner", "loser")])
+  dyad_showed <- prog_df[which(prog_df$dyad_id %in% dyad_seq$dyad_id),]
+  dyad_showed_processed <- merge(prog_df, dyad_seq)
+  
+  # for those did not show up in previous levels of feeder occupancy
+  # record the dyad using the same method as the loest feeder occupancy level
+  dyad_not_showed <- prog_df[which(!(prog_df$dyad_id %in% dyad_seq$dyad_id)),]
+  if (nrow(dyad_not_showed) > 0) { # if there are new dyad show up
+    dyad_not_showed_processed <- low_fo_dyad_set(dyad_not_showed)
+    
+    # order column names
+    dyad_showed_processed <- dyad_showed_processed[, colnames(dyad_not_showed_processed)]
+    
+    prog_df_processed <- rbind(dyad_showed_processed, dyad_not_showed_processed)
+  } else {
+    prog_df_processed <- dyad_showed_processed
+  }
+  
+  
+  return(prog_df_processed)
+}
+
+
+#' Find Dyads Present in Only One Level of Feeder Occupancy not the other levels
+#'
+#' This function identifies dyads that only appear in one specific level of feeder occupancy 
+#' and not in other levels. It returns these dyads along with the specific level they appear in, 
+#' as well as a count of how many such dyads are present in each level.
+#'
+#' @param data A dataframe containing the dyad data.
+#' @param dyad_id_col The column name in the dataframe that represents the dyad ID.
+#' @param occupancy_col The column name in the dataframe that represents the feeder occupancy level.
+#' 
+#' @return A list containing two dataframes: 
+#'   - single_level_dyads: A dataframe with dyads that only appear in one specific level of feeder occupancy.
+#'   - single_level_dyads_count: A dataframe with a count of how many such dyads are present in each level.
+find_dyads_in_single_level <- function(data, dyad_id_col, occupancy_col) {
+  # Group the data by dyad_id and feeder_occupancy_grouped
+  grouped_data <- aggregate(data[[occupancy_col]], by = list(data[[dyad_id_col]], data[[occupancy_col]]), FUN = length)
+  
+  # Count the number of unique levels of feeder_occupancy_grouped for each dyad_id
+  dyad_counts <- aggregate(grouped_data$x, by = list(grouped_data$Group.1), FUN = length)
+  
+  # Filter the dyad_id that have counts equal to 1
+  single_level_dyads <- dyad_counts[dyad_counts$x == 1, "Group.1"]
+  
+  # Create an empty dataframe to store results
+  result_df <- data.frame(dyad_id = character(), feeder_occupancy_grouped = numeric())
+  
+  # Create an empty dataframe to store the count of single_level_dyads for each level
+  count_df <- data.frame(feeder_occupancy_grouped = numeric(), count = integer())
+  
+  # Loop through each unique level of feeder_occupancy_grouped
+  for (level in unique(data[[occupancy_col]])) {
+    # Filter the dyad_id that only show up in the current level
+    dyads_in_current_level <- grouped_data[grouped_data$Group.1 %in% single_level_dyads & grouped_data$Group.2 == level, "Group.1"]
+    
+    # Create a dataframe with the filtered dyad_id and their corresponding feeder_occupancy_grouped level
+    current_level_df <- data.frame(dyad_id = dyads_in_current_level, feeder_occupancy_grouped = level)
+    
+    # Append the current level dataframe to the result dataframe
+    result_df <- rbind(result_df, current_level_df)
+    
+    # Record the count of single_level_dyads for the current level
+    count_df <- rbind(count_df, data.frame(feeder_occupancy_grouped = level, count = length(dyads_in_current_level)))
+  }
+  
+  return(list(single_level_dyads = result_df, single_level_dyads_count = count_df))
+}
+
+#' Calculate replacements by Dyad at Different Feeder Occupancy Levels
+#'
+#' This function calculates the number of replacements that occurred per dyad 
+#' at each of the 25 levels of feeder occupancy.
+#'
+#' @param repl_master A dataframe containing interaction data with columns 'feeder_occupancy', 'winner', and 'loser'.
+#'
+#' @return A dataframe containing interactions by dyad at different feeder occupancy levels.
+calculate_interactions_by_dyad <- function(repl_master) {
+  
+  fed_occupancy_list <- unique(repl_master$feeder_occupancy)
+  contingency_tables <- list()
+  interactions_by_dyad <- data.frame()
+  
+  for (i in 1:length(fed_occupancy_list)) {
+    # Subset data by feeder occupancy level
+    occupancy_data <- subset(repl_master, feeder_occupancy == fed_occupancy_list[i])
+    # Create contingency table for winner-loser pairs with the same unique values
+    occupancy_dyad_table <- table(factor(occupancy_data$winner, levels = sort(unique(c(occupancy_data$winner, occupancy_data$loser)))),
+                                  factor(occupancy_data$loser, levels = sort(unique(c(occupancy_data$winner, occupancy_data$loser)))))
+    
+    # Transform the contingency table into a dataframe
+    temp_df <- contingency_to_dataframe(occupancy_dyad_table, fed_occupancy_list[i])
+    
+    # create unique dyad_id, and calculate total number of interactions/dyad, and wining percentage
+    temp_df3 <- total_interaction_per_dyad(temp_df)
+    
+    # when it's the lowest level of feeder occupancy, for each dyad, only keep 1 record, 
+    # the record where the cow that wins more is placed on the winner
+    if (i == 1) {
+      temp_df5 <- low_fo_dyad_set(temp_df3)
+    } else {
+      temp_df5 <- other_fo_dyad_set(temp_df3, interactions_by_dyad)
+    }
+    
+    # Append merged dyads to the final dataframe
+    interactions_by_dyad <- rbind(interactions_by_dyad, temp_df5)
+  }
+  
+  interactions_by_dyad$feeder_occupancy <- round(interactions_by_dyad$feeder_occupancy, digits = 2)
+  
+  return(interactions_by_dyad)
+}

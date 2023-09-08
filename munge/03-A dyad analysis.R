@@ -9,5 +9,5 @@ master_unique_dyad_direction_10mon_control <- master_dyad_analysis_10mon_control
 dyads_unknown <- master_dyad_analysis_10mon_control[[2]]
 
 cache("dyads_unknown")
-
+save(dyads_unknown, file = here("data/results/dyads_unknown.rda"))
 
