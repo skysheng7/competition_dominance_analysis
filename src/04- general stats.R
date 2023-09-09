@@ -1,6 +1,3 @@
-library('ProjectTemplate')
-load.project()
-
 ###################################################################################################
 ###############################General stats about the data #######################################
 ###################################################################################################
@@ -29,11 +26,11 @@ intake_ourliter_percent <- nrow(master_feeding[which(master_feeding$Intake > upp
 
 # double detections
 load(here("data/results/double_detection_1cow_2bins.rda"))
-for (i in 1:length(double_detection_1cow_2bins)) {
+for (i in 1:length(double_bin_detection_list)) {
   if (i == 1) {
-    double_detection_master <- double_detection_1cow_2bins[[i]]
+    double_detection_master <- double_bin_detection_list[[i]]
   } else {
-    double_detection_master <- rbind(double_detection_master, double_detection_1cow_2bins[[i]])
+    double_detection_master <- rbind(double_detection_master, double_bin_detection_list[[i]])
   }
 }
 double_detection_percent <- nrow(double_detection_master)/nrow(master_feeding)
@@ -49,15 +46,15 @@ cow_day_sd <- sd(cow_day_sum$total_days)
 
 ### calculate the average time for morning feed delivery
 load(here("data/results/feed_delivery.rda"))
-feed_delivery$date <- ymd(feed_delivery$date, tz=time_zone)
+time_interval_after_feed_added$date <- ymd(time_interval_after_feed_added$date, tz=time_zone)
 master_feed_replacement_all$date <- ymd(master_feed_replacement_all$date, tz=time_zone)
-feed_delivery <- feed_delivery[which(feed_delivery$date %in% master_feed_replacement_all$date),]
+time_interval_after_feed_added <- time_interval_after_feed_added[which(time_interval_after_feed_added$date %in% master_feed_replacement_all$date),]
 # Filter rows with time between 4 am and 8 am
-feed_delivery_filtered <- feed_delivery %>% filter(hour(morning_feed_add_start) >= 4 & hour(morning_feed_add_start) < 8)
+time_interval_after_feed_added_filtered <- time_interval_after_feed_added %>% filter(hour(morning_feed_add_start) >= 4 & hour(morning_feed_add_start) < 8)
 # Extract the time part from morning_feed_add_start
-feed_delivery_filtered <- feed_delivery_filtered %>% mutate(morning_time_part = as.numeric(format(morning_feed_add_start, format = "%H")) * 60 + as.numeric(format(morning_feed_add_start, format = "%M")))
+time_interval_after_feed_added_filtered <- time_interval_after_feed_added_filtered %>% mutate(morning_time_part = as.numeric(format(morning_feed_add_start, format = "%H")) * 60 + as.numeric(format(morning_feed_add_start, format = "%M")))
 # Calculate the average time in minutes
-average_time <- mean(feed_delivery_filtered$morning_time_part)
+average_time <- mean(time_interval_after_feed_added_filtered$morning_time_part)
 # Convert the average time to hours and minutes format
 average_hh_mm_am <- sprintf("%02d:%02d", average_time %/% 60, round(average_time %% 60))
 # Print the average time expressed in hh:mm
@@ -68,11 +65,11 @@ average_hh_mm_am
 start_hour <- 13
 end_hour <- 17
 # Filter rows with time within the desired range
-feed_delivery_filtered <- feed_delivery %>% filter(hour(afternoon_feed_add_start) >= start_hour & hour(afternoon_feed_add_start) < end_hour)
+time_interval_after_feed_added_filtered <- time_interval_after_feed_added %>% filter(hour(afternoon_feed_add_start) >= start_hour & hour(afternoon_feed_add_start) < end_hour)
 # Extract the time part from afternoon_feed_add_start
-feed_delivery_filtered <- feed_delivery_filtered %>% mutate(afternoon_time_part = as.numeric(format(afternoon_feed_add_start, format = "%H")) * 60 + as.numeric(format(afternoon_feed_add_start, format = "%M")))
+time_interval_after_feed_added_filtered <- time_interval_after_feed_added_filtered %>% mutate(afternoon_time_part = as.numeric(format(afternoon_feed_add_start, format = "%H")) * 60 + as.numeric(format(afternoon_feed_add_start, format = "%M")))
 # Calculate the average time in minutes
-average_time <- mean(feed_delivery_filtered$afternoon_time_part)
+average_time <- mean(time_interval_after_feed_added_filtered$afternoon_time_part)
 # Convert the average time to hours and minutes format
 average_hh_mm_pm <- sprintf("%02d:%02d", average_time %/% 60, round(average_time %% 60))
 # Print the average time expressed in hh:mm
