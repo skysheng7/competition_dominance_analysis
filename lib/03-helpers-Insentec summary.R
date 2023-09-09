@@ -157,6 +157,7 @@ merge_feed_water_summary <- function(master_f = NULL, master_d = NULL, Insentec_
     
     save(Insentec_warning, file = (here::here(paste0("data/results/", "Insentec_warning.rda"))))
     save(Insentec_final_summary, file = (here::here(paste0("data/results/", "Feeding and drinking analysis.rda"))))
+    cache("Insentec_final_summary")
   }
   
   return(list(Insentec_final_summary = ifelse(exists("Insentec_final_summary"), Insentec_final_summary, NULL),

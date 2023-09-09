@@ -616,6 +616,7 @@ bin_visit_count <- function(df_list, min_feed_bin, max_feed_bin, min_wat_bin, ma
   }
   
   save(bins_visit_num, file = (here::here(paste0("data/results/", "Bins_with_number_of_visits_daily.rda"))))
+  cache("bins_visit_num")
   save(visit_per_bin_per_cow, file = (here::here(paste0("data/results/", "number_of_visits_for_each_bin_for_each_cow.rda"))))
   save(bin_num_visit_per_cow, file = (here::here(paste0("data/results/", "number_of_bins_visited_by_each_cow.rda"))))
   
