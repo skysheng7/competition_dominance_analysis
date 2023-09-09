@@ -303,7 +303,7 @@ Organized as a list of data frames, each item in the list corresponds to a uniqu
 
 
 
-## Dataset Specific Information for: `results/bin_num_visit_per_cow.rda`
+## Dataset Specific Information for: `results/bin_num_visit_per_cow.rdata`
 
 **Description:**  
 This dataset presents a breakdown of the number of bins (categorized into feed and water) visited by each cow on a specified date. By understanding the distribution of bin visits, we can glean insights into individual cow habits or possibly detect unusual patterns.
@@ -839,7 +839,7 @@ The dataset is structured as a data frame where each row represents a unique com
 
 
 
-## Dataset Specific Information for: `results/replacement_by_day_master.rda`
+## Dataset Specific Information for: `results/replacement_by_day_master.rdata`
 **Description:**  
 The `replacement_by_day_master` dataset captures the number of replacements made on each day. It provides insights into the daily frequency of replacements and the resource occupancy on those days.
 
