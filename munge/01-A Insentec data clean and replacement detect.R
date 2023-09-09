@@ -14,6 +14,8 @@ library(EloRating)
 library(EloSteepness)
 library(viridis)
 library(dplyr)
+library(lme4)
+library(lmerTest)
 
 ################################################################################
 ###################### data loading & processing ###############################
