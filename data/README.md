@@ -490,7 +490,7 @@ same as `results/Cleaned_feeding_original_data.rda`
 
 
 
-## Dataset Specific Information for: `results/Insentec_final_summary`
+## Dataset Specific Information for: `results/Insentec_final_summary.rdata`
 
 **Description:**  
 The `Insentec_final_summary` dataset provides a comprehensive overview of the feeding and drinking patterns of cows across different dates. Each row corresponds to individual observations detailing the feeding and drinking statistics (intake, duration, total number of visits, rate) of a particular cow on a given date.
