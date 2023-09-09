@@ -262,7 +262,7 @@ The dataset is framed as a list of data frames, with each one representing data 
 
 
 
-## Dataset Specific Information for: `results/bins_visit_num.rda`
+## Dataset Specific Information for: `results/Bins_with_number_of_visits_daily.rdata`
 
 **Description:**  
 This dataset catalogs the frequency of total visits to each bin on a given day. Each bin ID, coupled with its respective visit count, offers a quick overview of bin utilization. Patterns in bin usage can assist in identifying potential problems or notable events in Insentec system.
@@ -282,7 +282,7 @@ This dataset is structured as a list of data frames. Each list item represents d
 
 
 
-## Dataset Specific Information for: `results/visit_per_bin_per_cow.rda`
+## Dataset Specific Information for: `results/number_of_visits_for_each_bin_for_each_cow.rdata`
 
 **Description:**  
 This dataset depicts the total number of times each cow visited each bins on a particular day. By isolating cow-bin interactions, we can assess individual cow behaviors and potentially pinpoint anomalies or consistant behaviors.
@@ -303,7 +303,7 @@ Organized as a list of data frames, each item in the list corresponds to a uniqu
 
 
 
-## Dataset Specific Information for: `results/bin_num_visit_per_cow.rdata`
+## Dataset Specific Information for: `results/number_of_bins_visited_by_each_cow.rdata`
 
 **Description:**  
 This dataset presents a breakdown of the number of bins (categorized into feed and water) visited by each cow on a specified date. By understanding the distribution of bin visits, we can glean insights into individual cow habits or possibly detect unusual patterns.
