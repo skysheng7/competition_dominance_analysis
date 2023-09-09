@@ -21,7 +21,7 @@ unknown_lm_summary <- summary(unknown_lm)
 repl_master <- replacement_sampled_master[, c("Actor_cow", "Reactor_cow", "end_density")]
 colnames(repl_master) <- c("winner", "loser", "feeder_occupancy")
 
-interactions_by_dyad <- calculate_interactions_by_dyad(repl_master)
+interactions_by_dyad <- calculate_interactions_by_dyad(repl_master, "feeder_occupancy")
 # find dyads that show up in all levels of feeder occupancy
 dyads_in_all_levels <- find_dyads_in_all_levels(interactions_by_dyad, "dyad_id", "feeder_occupancy")
 

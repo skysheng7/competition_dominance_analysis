@@ -174,12 +174,13 @@ plot_unknown <- function(master_directionality, output_dir) {
 #'
 #' @param contingency_table A contingency table to be converted.
 #' @param occupancy_level A numeric value representing the occupancy level.
+#' @param occupancy_col A string specifying the column name for occupancy (either "feeder_occupancy" or "feeder_occupancy_grouped").
 #' 
 #' @return A dataframe with columns: winner, loser, interactions, and feeder_occupancy.
-contingency_to_dataframe <- function(contingency_table, occupancy_level) {
+contingency_to_dataframe <- function(contingency_table, occupancy_level, occupancy_col) {
   temp_df <- as.data.frame(as.table(contingency_table))
   colnames(temp_df) <- c("winner", "loser", "interactions")
-  temp_df$feeder_occupancy <- occupancy_level
+  temp_df[[occupancy_col]] <- occupancy_level
   temp_df
 }
 
@@ -193,16 +194,16 @@ contingency_to_dataframe <- function(contingency_table, occupancy_level) {
 #' 
 #' @return A vector containing dyad IDs that appear in all unique levels of the occupancy column.
 find_dyads_in_all_levels <- function(data, dyad_id_col, occupancy_col) {
-  # Group the data by dyad_id and feeder_occupancy_grouped
+  # Group the data by dyad_id and feeder_occupancy
   grouped_data <- aggregate(data[[occupancy_col]], by = list(data[[dyad_id_col]], data[[occupancy_col]]), FUN = length)
   
-  # Count the number of unique levels of feeder_occupancy_grouped for each dyad_id
+  # Count the number of unique levels of feeder_occupancy for each dyad_id
   dyad_counts <- aggregate(grouped_data$x, by = list(grouped_data$Group.1), FUN = length)
   
-  # Find the total number of unique levels of feeder_occupancy_grouped
+  # Find the total number of unique levels of feeder_occupancy
   total_levels <- length(unique(data[[occupancy_col]]))
   
-  # Filter the dyad_id that have counts equal to the total number of unique levels of feeder_occupancy_grouped
+  # Filter the dyad_id that have counts equal to the total number of unique levels of feeder_occupancy
   dyads_in_all_levels <- dyad_counts[dyad_counts$x == total_levels, "Group.1"]
   
   return(dyads_in_all_levels)
@@ -322,34 +323,34 @@ other_fo_dyad_set <- function(prog_df, interactions_by_dyad) {
 #'   - single_level_dyads: A dataframe with dyads that only appear in one specific level of feeder occupancy.
 #'   - single_level_dyads_count: A dataframe with a count of how many such dyads are present in each level.
 find_dyads_in_single_level <- function(data, dyad_id_col, occupancy_col) {
-  # Group the data by dyad_id and feeder_occupancy_grouped
+  # Group the data by dyad_id and feeder_occupancy
   grouped_data <- aggregate(data[[occupancy_col]], by = list(data[[dyad_id_col]], data[[occupancy_col]]), FUN = length)
   
-  # Count the number of unique levels of feeder_occupancy_grouped for each dyad_id
+  # Count the number of unique levels of feeder_occupancy for each dyad_id
   dyad_counts <- aggregate(grouped_data$x, by = list(grouped_data$Group.1), FUN = length)
   
   # Filter the dyad_id that have counts equal to 1
   single_level_dyads <- dyad_counts[dyad_counts$x == 1, "Group.1"]
   
   # Create an empty dataframe to store results
-  result_df <- data.frame(dyad_id = character(), feeder_occupancy_grouped = numeric())
+  result_df <- data.frame(dyad_id = character(), feeder_occupancy = numeric())
   
   # Create an empty dataframe to store the count of single_level_dyads for each level
-  count_df <- data.frame(feeder_occupancy_grouped = numeric(), count = integer())
+  count_df <- data.frame(feeder_occupancy = numeric(), count = integer())
   
-  # Loop through each unique level of feeder_occupancy_grouped
+  # Loop through each unique level of feeder_occupancy
   for (level in unique(data[[occupancy_col]])) {
     # Filter the dyad_id that only show up in the current level
     dyads_in_current_level <- grouped_data[grouped_data$Group.1 %in% single_level_dyads & grouped_data$Group.2 == level, "Group.1"]
     
-    # Create a dataframe with the filtered dyad_id and their corresponding feeder_occupancy_grouped level
-    current_level_df <- data.frame(dyad_id = dyads_in_current_level, feeder_occupancy_grouped = level)
+    # Create a dataframe with the filtered dyad_id and their corresponding feeder_occupancy level
+    current_level_df <- data.frame(dyad_id = dyads_in_current_level, feeder_occupancy = level)
     
     # Append the current level dataframe to the result dataframe
     result_df <- rbind(result_df, current_level_df)
     
     # Record the count of single_level_dyads for the current level
-    count_df <- rbind(count_df, data.frame(feeder_occupancy_grouped = level, count = length(dyads_in_current_level)))
+    count_df <- rbind(count_df, data.frame(feeder_occupancy = level, count = length(dyads_in_current_level)))
   }
   
   return(list(single_level_dyads = result_df, single_level_dyads_count = count_df))
@@ -361,23 +362,24 @@ find_dyads_in_single_level <- function(data, dyad_id_col, occupancy_col) {
 #' at each of the 25 levels of feeder occupancy.
 #'
 #' @param repl_master A dataframe containing interaction data with columns 'feeder_occupancy', 'winner', and 'loser'.
+#' @param occupancy_col A string specifying the column name for occupancy (either "feeder_occupancy" or "feeder_occupancy_grouped").
 #'
 #' @return A dataframe containing interactions by dyad at different feeder occupancy levels.
-calculate_interactions_by_dyad <- function(repl_master) {
+calculate_interactions_by_dyad <- function(repl_master, occupancy_col) {
   
-  fed_occupancy_list <- unique(repl_master$feeder_occupancy)
+  fed_occupancy_list <- unique(repl_master[[occupancy_col]])
   contingency_tables <- list()
   interactions_by_dyad <- data.frame()
   
   for (i in 1:length(fed_occupancy_list)) {
     # Subset data by feeder occupancy level
-    occupancy_data <- subset(repl_master, feeder_occupancy == fed_occupancy_list[i])
+    occupancy_data <- subset(repl_master, repl_master[[occupancy_col]] == fed_occupancy_list[i])
     # Create contingency table for winner-loser pairs with the same unique values
     occupancy_dyad_table <- table(factor(occupancy_data$winner, levels = sort(unique(c(occupancy_data$winner, occupancy_data$loser)))),
                                   factor(occupancy_data$loser, levels = sort(unique(c(occupancy_data$winner, occupancy_data$loser)))))
     
     # Transform the contingency table into a dataframe
-    temp_df <- contingency_to_dataframe(occupancy_dyad_table, fed_occupancy_list[i])
+    temp_df <- contingency_to_dataframe(occupancy_dyad_table, fed_occupancy_list[i], occupancy_col)
     
     # create unique dyad_id, and calculate total number of interactions/dyad, and wining percentage
     temp_df3 <- total_interaction_per_dyad(temp_df)
@@ -394,10 +396,11 @@ calculate_interactions_by_dyad <- function(repl_master) {
     interactions_by_dyad <- rbind(interactions_by_dyad, temp_df5)
   }
   
-  interactions_by_dyad$feeder_occupancy <- round(interactions_by_dyad$feeder_occupancy, digits = 2)
+  interactions_by_dyad[[occupancy_col]] <- round(interactions_by_dyad[[occupancy_col]], digits = 2)
   
   return(interactions_by_dyad)
 }
+
 
 #' Calculate Total Dyads for Each Level of Feeder Occupancy
 #'

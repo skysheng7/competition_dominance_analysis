@@ -2,7 +2,7 @@ repl_master <- replacement_sampled_master[, c("Actor_cow", "Reactor_cow", "end_d
 colnames(df = repl_master) <- c("winner", "loser", "feeder_occupancy")
 
 repl_master_grouped <- group_density_buckets(repl_master, "feeder_occupancy")
-interactions_by_dyad_grouped <- calculate_interactions_by_dyad(repl_master_grouped)
+interactions_by_dyad_grouped <- calculate_interactions_by_dyad(repl_master_grouped, "feeder_occupancy_grouped")
 
 # find dyads that show up in all 5 levels of feeder occupancy
 dyads_in_all_levels_grouped <- find_dyads_in_all_levels(interactions_by_dyad_grouped, "dyad_id", "feeder_occupancy_grouped")
