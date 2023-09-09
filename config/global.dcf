@@ -7,11 +7,11 @@ recursive_loading: FALSE
 munging: FALSE
 logging: FALSE
 logging_level: INFO
-load_libraries: FALSE
-libraries: plyr, tidyr, dplyr, lubridate, ggplot2, pdftools, EloRating, EloSteepness, lme4, lmerTest, viridis, car, corrplot 
+load_libraries: TRUE
+libraries: lubridate, plyr, here, zoo, ggplot2, EloRating, EloSteepness, viridis, dplyr, lme4, lmerTest
 as_factors: FALSE
 tables_type: tibble
-attach_internal_libraries: FALSE
+attach_internal_libraries: TRUE
 cache_loaded_data:  TRUE
 sticky_variables: NONE
 underscore_variables: TRUE

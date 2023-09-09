@@ -1,23 +1,4 @@
 ################################################################################
-################################ TO BE DELETED #################################
-################################################################################
-library('ProjectTemplate')
-load.project()
-
-# Load all packages from library
-library(lubridate)
-library(plyr)
-library(here)
-library(zoo)
-library(ggplot2)
-library(EloRating)
-library(EloSteepness)
-library(viridis)
-library(dplyr)
-library(lme4)
-library(lmerTest)
-
-################################################################################
 ###################### data loading & processing ###############################
 ################################################################################
 ###### Load feed and water file names
