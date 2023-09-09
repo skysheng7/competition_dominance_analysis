@@ -14,6 +14,20 @@ To load this project, please follow the instructions below:
 library('ProjectTemplate')
 load.project()
 ```
+3. Repository Structure
+Here's a brief overview of the repository's structure:
+
+- **cache**: Contains crucial intermediate data used in the final analysis.
+- **config**: Holds the configuration settings for this R project.
+- **data**: Contains both the raw data and the processed data resulting from our analysis.
+- **graphs**: Stores all the visual plots and graphs generated during the analysis.
+- **lib**: Houses helper functions crafted to assist in analysis and preprocessing.
+- **munge**: Contains scripts that utilize functions to preprocess the data.
+- **renv**: Provides details about the R environment set up during the project's inception.
+- **reports**: Contains the manuscript detailing our findings and observations.
+- **src**: Contains scripts used for the final statistical analysis.
+
+Thank you for your interest in our project. We hope you find the data and code insightful!
 
 ## Dataset Information
 

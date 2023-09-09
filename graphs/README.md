@@ -1,1 +1,1 @@
-Here you can store any graphs that you produce.
+Here stores all resulting graphs produced in the analysis process
