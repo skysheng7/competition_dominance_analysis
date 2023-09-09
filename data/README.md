@@ -752,6 +752,9 @@ The dataset is structured as a data frame where each row represents a specific r
 
 ## Dataset Specific Information for: `results/replacement_sampled_master.rda`
 
+**Note:** 
+Due to data storage limit on gitHub, this data might not be available in the `results/replacement_sampled_master.rda`, but it would be in the `cache` folder: `cache/replacement_sampled_master.hash`
+
 **Description:**  
 The `replacement_sampled_master` dataset recorded replacements that got randomly sampled from all replacement events for the calculation of eloSteepness and dyadic analysis. It captures data related to the reactor cow, the bin, the time and date of the replacement, the actor cow, bout intervals, and various metrics related to bins and resource occupancy.
 
