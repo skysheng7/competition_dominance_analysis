@@ -54,7 +54,8 @@ Thank you for your interest in our project. We hope you find the data and code i
 
 - **Contributor:** Borbala Foris  
   - ORCID: 0000-0002-0901-3057  
-  - Affiliation: University of British Columbia  
+  - Affiliation while working on this project: University of British Columbia
+  - Current affiliation: University of Veterinary Medicine, Vienna
   - Email: <forisbori@gmail.com>
 
 - **Contributor:** Joseph Krahn  
