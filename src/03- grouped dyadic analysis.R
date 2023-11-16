@@ -29,9 +29,10 @@ negative_win_pct_change_violin_boxplot(win_pct_changes2_neg)
 
 
 # Fit a mixed-effects model
-win_pct_changes_pos <- lmerTest::lmer(win_pct_change ~ feeder_occupancy_grouped + (1 | dyad_id), data = win_pct_changes2_pos)
+control <- lmerControl(optimizer = "bobyqa")
+win_pct_changes_pos <- lmerTest::lmer(win_pct_change ~ feeder_occupancy_grouped + (feeder_occupancy_grouped | dyad_id), data = win_pct_changes2_pos, control = control)
 summary(win_pct_changes_pos)
-win_pct_changes_neg <- lmerTest::lmer(win_pct_change ~ feeder_occupancy_grouped + (1 | dyad_id), data = win_pct_changes2_neg)
+win_pct_changes_neg <- lmerTest::lmer(win_pct_change ~ feeder_occupancy_grouped + (feeder_occupancy_grouped | dyad_id), data = win_pct_changes2_neg, control = control)
 summary(win_pct_changes_neg)
 
 # calculate the percentage of dyads with 0 change in win_pct across all levels
