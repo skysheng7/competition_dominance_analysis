@@ -1,4 +1,4 @@
-[Imgur](https://i.imgur.com/nPFTyNz.gifv)
+![Imgur](https://i.imgur.com/nPFTyNz.gifv)
 
 # Increased competition flattens the dominance hierarchy
 
