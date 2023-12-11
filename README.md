@@ -1,6 +1,8 @@
-# Competition Dominance Analysis
+![gif](graphs/hierarchy_compress.gif)
 
-This repository contains the data and code for our project: **Increased competition flattens the dominance hierarchy: evidence from a herd living ungulate**.
+# Increased competition flattens the dominance hierarchy
+
+This repository contains the data and code for our project: **Redefining dominance calculation: Increased competition flattens the dominance hierarchy in dairy cows**.
 
 ## Getting Started
 
@@ -8,7 +10,24 @@ To load this project, please follow the instructions below:
 
 1. Set your working directory to the folder where this `README.md` file is located using `setwd()`.
 
-2. Run the following R code:
+2. Run the following R code to install required R packages:
+
+```r
+# List of packages to be installed
+packages <- c("lubridate", "plyr", "here", "zoo", "ggplot2", "EloRating", "EloSteepness", "viridis", "dplyr", "lme4", "lmerTest")
+
+# Function to check and install missing packages
+install_if_missing <- function(pkg) {
+  if (!require(pkg, character.only = TRUE)) {
+    install.packages(pkg, dependencies = TRUE)
+  }
+}
+
+# Apply the function to each package
+sapply(packages, install_if_missing)
+```
+
+4. Run the following R code to load this R project:
 
 ```r
 library('ProjectTemplate')
