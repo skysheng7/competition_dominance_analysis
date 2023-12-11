@@ -1,3 +1,5 @@
+![Dominance Hierarchy of Dairy Cows](https://i.imgur.com/nPFTyNz.gif)
+
 # Increased competition flattens the dominance hierarchy
 
 This repository contains the data and code for our project: **Redefining dominance calculation: Increased competition flattens the dominance hierarchy in dairy cows**.
