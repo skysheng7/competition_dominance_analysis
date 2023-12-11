@@ -1,2 +1,16 @@
-Here stores data preprocessing or data munging code for this project. The preprocessing scripts stored in `munge` is currently not set to run automatically when you call `load.project()`, but you can change the config to do so. The numbers in each script indicates the sequence that should be followed when running the scripts
-** Warning: ** Due to the large quantity of data in 10-month, and the algorithm of calculating the feed amount in each of the 30 bins for every second in 10 month, the code is extremely time-consuming to run. It takes about 12 h to run.
+# Data Preprocessing and Munging for Project
+
+## Overview
+This directory contains scripts for data preprocessing or data munging specific to this project.
+
+## Scripts Execution Order
+The scripts within the `munge` folder are not configured to execute automatically upon invoking `load.project()`. However, this behavior can be modified in the project configuration. The filenames contain numbers indicating the recommended sequence for running these scripts.
+
+## Performance Warning
+**Important Notice:**
+- The scripts process a substantial volume of data spanning 10 months.
+- They include complex computations, notably calculating feed amounts across 30 bins every second.
+- Due to these factors, running the full suite of scripts is time-intensive.
+- **Expected Runtime:** Approximately 12 hours.
+
+Please plan your resource allocation and processing time accordingly.
