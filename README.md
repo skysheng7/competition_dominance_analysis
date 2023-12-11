@@ -1,6 +1,6 @@
-# Competition Dominance Analysis
+# Redefining dominance calculation
 
-This repository contains the data and code for our project: **Increased competition flattens the dominance hierarchy: evidence from a herd living ungulate**.
+This repository contains the data and code for our project: **Redefining dominance calculation: Increased competition flattens the dominance hierarchy in dairy cows**.
 
 ## Getting Started
 
