@@ -11,6 +11,6 @@ The scripts within the `munge` folder are not configured to execute automaticall
 - The scripts process a substantial volume of data spanning 10 months.
 - They include complex computations, notably calculating feed amounts across 30 bins every second.
 - Due to these factors, running the full suite of scripts is time-intensive.
-- **Expected Runtime:** Approximately 12 hours.
+- **Expected Runtime:** Approximately 12 hours for 01-A Insentec data clean and replacement detect.R on 1 CPU; Approximately 5 days for 02-A eloSteepness.R on 4 CPU.
 
 Please plan your resource allocation and processing time accordingly.
