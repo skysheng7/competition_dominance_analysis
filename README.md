@@ -1,4 +1,4 @@
-![Dominance Hierarchy of Dairy Cows](https://i.imgur.com/nPFTyNz.gif)
+[Imgur](https://i.imgur.com/nPFTyNz.gifv)
 
 # Increased competition flattens the dominance hierarchy
 
