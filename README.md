@@ -50,7 +50,7 @@ Thank you for your interest in our project. We hope you find the data and code i
 
 ## Dataset Information
 
-- **Title of Dataset:** Replication Data for: Increased competition flattens the dominance hierarchy: evidence from a herd living ungulate  
+- **Title of Dataset:** Replication Data for: Redefining dominance calculation: Increased competition flattens the dominance hierarchy in dairy cows  
 - **Dataset Created:** 2023-07-29  
 - **Created by:** Kehan (Sky) Sheng
 
