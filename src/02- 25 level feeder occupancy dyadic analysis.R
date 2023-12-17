@@ -50,5 +50,8 @@ two_way_dyad_perct <- two_way_dyad_pct_calculation(interactions_by_dyad)
 # as feeder occupancy increases
 two_way_pct_plot(two_way_dyad_perct)
 
+# linear model fit for two-way dyad per feeder occupancy level
+two_way_dyads_lm <- lm(`2way_pct` ~ feeder_occupancy, data = two_way_dyad_perct)
+two_way__dyads_lm_summary <- summary(two_way_dyads_lm)
 
 
