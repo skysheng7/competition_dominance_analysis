@@ -519,7 +519,7 @@ count_visits_per_bin <- function(data, bin_list) {
 #' 
 #' @return A dataframe with the number of visits for each cow on each bin.
 count_visits_per_cow_bin <- function(data) {
-  cow_bin_visit <- count(data, vars=c("Cow","Bin"))
+  cow_bin_visit <- plyr::count(data, vars=c("Cow","Bin"))
   colnames(cow_bin_visit) <- c("Cow" ,"Bin", "Visit_freq")
   
   return(cow_bin_visit)
