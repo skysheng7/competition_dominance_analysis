@@ -81,7 +81,7 @@ If the data files are encoded in a supported file format (e.g., csv, dat), they'
 
 
 
-## Dataset Specific Information for: `results/double_bin_detection_list.rda`
+## Dataset Specific Information for: `results/double_bin_detection_list.rdata`
 **Description:** This dataset encapsulates information regarding cases where a cow's presence is detected simultaneously in two bins. Such occurrences can be indicative of potential sensor or data logging errors, specifically malfunctioning of certain Insentec bins. The dataset provides detailed insights on each detection instance, including the cow's ID, bin details, and associated timestamps.
 
 **Number of Variables:** 10
@@ -105,7 +105,7 @@ If the data files are encoded in a supported file format (e.g., csv, dat), they'
 
 
 
-## Dataset Specific Information for: `results/double_cow_detection_list.rda`
+## Dataset Specific Information for: `results/double_cow_detection_list.rdata`
 **Description:** This dataset captures instances where a bin registers 2 different cows at the same time, potentially indicating anomalies in the data logging process, and malfunctioning of certain Insentec bins. The dataset provides a structure to identify these occurrences based on dates
 
 **Number of Variables:** 10
@@ -114,11 +114,11 @@ If the data files are encoded in a supported file format (e.g., csv, dat), they'
 
 **Dataset Structure:** A list of data frames, where each data frame corresponds to a specific date. Each date might have multiple or no occurrences of double cow detections. 
 
-**Variable List:** same as `results/double_bin_detection_list.rda`
+**Variable List:** same as `results/double_bin_detection_list.rdata`
 
 
 
-## Dataset Specific Information for: `results/negative_dur_list.rda`
+## Dataset Specific Information for: `results/negative_dur_list.rdata`
 
 **Description:** 
 This dataset encompasses instances where visit duration is negative in certain Insentec bins, indicating potential errors in the data collection or logging process, and malfunctioning of certain Insentec bins. These instances can be critical for assessing the quality and integrity of the data. Each entry provides comprehensive details about the cow, the bin, and related timestamps.
@@ -132,11 +132,11 @@ Varies based on the day and the detected negative durations.
 **Dataset Structure:** 
 A list of data frames, with each data frame corresponding to a specific date. Each date might have multiple or no occurrences of negative durations. 
 
-**Variable List:** same as `results/double_bin_detection_list.rda`
+**Variable List:** same as `results/double_bin_detection_list.rdata`
 
 
 
-## Dataset Specific Information for: `results/negative_intake_list.rda`
+## Dataset Specific Information for: `results/negative_intake_list.rdata`
 
 **Description:**  
 This dataset records instances where the feed or water bin visit has negative intake (only visits with more than 1 kg of negative intake. instances with < 1 kg of negative intake were omitted), suggesting potential discrepancies or errors in the data collection or logging mechanisms, and malfunctioning of certain Insentec bins. Comprehensive details about the cow, bin, and corresponding timestamps are provided for each instance.
@@ -150,11 +150,11 @@ Varies depending on the day and detected negative intakes.
 **Dataset Structure:**  
 The data is organized as a list of data frames. Each data frame corresponds to a specific date. Depending on the date, there may be multiple, or no recorded instances of negative intakes. 
 
-**Variable List:** same as `results/double_bin_detection_list.rda`
+**Variable List:** same as `results/double_bin_detection_list.rdata`
 
 
 
-## Dataset Specific Information for: `results/long_feed_dur_list.rda`
+## Dataset Specific Information for: `results/long_feed_dur_list.rdata`
 
 **Description:**  
 This dataset encompasses instances where cows had prolonged durations (set at > 2000 seconds) at the feed bins. Extended feeding durations might indicate Insentec bin malfunctioning as it might have not recorded the cow leaving. The dataset offers granular details about the cows, their associated bins, and the timestamps corresponding to the beginning and end of their activity.
@@ -168,11 +168,11 @@ Varies depending on the day and detected instances of prolonged feed durations.
 **Dataset Structure:**  
 The data is structured as a list of data frames. Each data frame represents data for a specific date. Depending on the day, there might be multiple, or no recorded instances of prolonged feed durations.
 
-**Variable List:**  Same as `results/double_bin_detection_list.rda`.
+**Variable List:**  Same as `results/double_bin_detection_list.rdata`.
 
 
 
-## Dataset Specific Information for: `results/large_feed_intake_in_one_bout.rda`
+## Dataset Specific Information for: `results/large_feed_intake_in_one_bout.rdata`
 
 **Description:**  
 This dataset captures instances when cows have an unusually large feed intake (> 8 kg) in a single feeding bout. Such occurrences can signal malfunctioning of Insentec bins, and data collection errors. Detailed attributes of the cows, the bins they feed from, and the corresponding timestamps are presented for each instance.
@@ -186,11 +186,11 @@ The count varies based on the day and instances of large feed intakes in a singl
 **Dataset Structure:**  
 The dataset is organized as a list of data frames. Each data frame represents information for a specific date. Depending on the particular day, there may be several or no recorded instances of large feed intakes in one bout.
 
-**Variable List:** Same as `results/double_bin_detection_list.rda`.
+**Variable List:** Same as `results/double_bin_detection_list.rdata`.
 
 
 
-## Dataset Specific Information for: `results/large_feed_intake_in_short_time.rda`
+## Dataset Specific Information for: `results/large_feed_intake_in_short_time.rdata`
 
 **Description:**  
 This dataset captures instances when cows have a high feed intake in an unusually short duration (intake per visit > 5kg, and rate > 0.008 kg/s). These events can indicate malfunctioning of Insentec bins or potential data collection errors. Detailed attributes of the cows, the bins they feed from, and the corresponding timestamps are documented for each occurrence.
@@ -204,11 +204,11 @@ The count varies based on the day.
 **Dataset Structure:**  
 The dataset is organized as a list of data frames. Each data frame provides data for a specific date. Depending on the particular day, there may be multiple or no recorded instances of large feed intakes in a short duration.
 
-**Variable List:** Same as `results/double_bin_detection_list.rda`.
+**Variable List:** Same as `results/double_bin_detection_list.rdata`.
 
 
 
-## Dataset Specific Information for: `results/long_wat_dur_list.rda`
+## Dataset Specific Information for: `results/long_wat_dur_list.rdata`
 
 **Description:**  
 This dataset highlights instances where cows have a prolonged water intake duration (> 1800 seconds). Extended durations could be an indication of Insentec bin malfunction and data collection errors. Each record provides detailed attributes about the cows, the water bins they drank from, and the associated timestamps.
@@ -222,11 +222,11 @@ The count changes based on the day and instances of prolonged water intake durat
 **Dataset Structure:**  
 The dataset is systematized as a list of data frames, with each data frame detailing information for a particular date. Depending on the specific day, there might be several or no documented instances of long water intake durations.
 
-**Variable List:** Same as `results/double_bin_detection_list.rda`.
+**Variable List:** Same as `results/double_bin_detection_list.rdata`.
 
 
 
-## Dataset Specific Information for: `results/large_water_intake_in_one_bout.rda`
+## Dataset Specific Information for: `results/large_water_intake_in_one_bout.rdata`
 
 **Description:**  
 This dataset records occurrences when cows have a high large water intake (> 30 kg) in a single bout. Such patterns could suggest potential issues with the Insentec bins or data collection anomalies. The dataset provides a comprehensive overview of the cows, the water bins they accessed, and the pertinent timestamps for each case.
@@ -240,11 +240,11 @@ The count fluctuates based on the day and recorded instances of substantial wate
 **Dataset Structure:**  
 Data is presented as a list of data frames, with each frame corresponding to a distinct date. Depending on the date in question, there may be multiple or no documented episodes of large water intakes in a single bout.
 
-**Variable List:** Same as `results/double_bin_detection_list.rda`.
+**Variable List:** Same as `results/double_bin_detection_list.rdata`.
 
 
 
-## Dataset Specific Information for: `results/large_water_intake_in_short_time.rda`
+## Dataset Specific Information for: `results/large_water_intake_in_short_time.rdata`
 
 **Description:**  
 This dataset identifies instances when cows exhibit a high water intake in an exceptionally short duration (intake per visit > 10 kg, and rate > 0.35 kg/s). Such events could hint at potential Insentec bin malfunctions or data collection errors. Detailed attributes of the cows, the water bins they used, and the related timestamps are enumerated for each incident.
@@ -258,11 +258,11 @@ The tally varies based on the day and occurrences of large water intakes in a sh
 **Dataset Structure:**  
 The dataset is framed as a list of data frames, with each one representing data for a specific date. Depending on the day in focus, there may be several or no recorded instances of rapid, large water intakes.
 
-**Variable List:** Same as `results/double_bin_detection_list.rda`.
+**Variable List:** Same as `results/double_bin_detection_list.rdata`.
 
 
 
-## Dataset Specific Information for: `results/Bins_with_number_of_visits_daily.rdata`
+## Dataset Specific Information for: `results/Bins_with_number_of_visits_daily.rdatata`
 
 **Description:**  
 This dataset catalogs the frequency of total visits to each bin on a given day. Each bin ID, coupled with its respective visit count, offers a quick overview of bin utilization. Patterns in bin usage can assist in identifying potential problems or notable events in Insentec system.
@@ -282,7 +282,7 @@ This dataset is structured as a list of data frames. Each list item represents d
 
 
 
-## Dataset Specific Information for: `results/number_of_visits_for_each_bin_for_each_cow.rdata`
+## Dataset Specific Information for: `results/number_of_visits_for_each_bin_for_each_cow.rdatata`
 
 **Description:**  
 This dataset depicts the total number of times each cow visited each bins on a particular day. By isolating cow-bin interactions, we can assess individual cow behaviors and potentially pinpoint anomalies or consistant behaviors.
@@ -303,7 +303,7 @@ Organized as a list of data frames, each item in the list corresponds to a uniqu
 
 
 
-## Dataset Specific Information for: `results/number_of_bins_visited_by_each_cow.rdata`
+## Dataset Specific Information for: `results/number_of_bins_visited_by_each_cow.rdatata`
 
 **Description:**  
 This dataset presents a breakdown of the number of bins (categorized into feed and water) visited by each cow on a specified date. By understanding the distribution of bin visits, we can glean insights into individual cow habits or possibly detect unusual patterns.
@@ -325,7 +325,7 @@ The dataset is a list of data frames. Each list item corresponds to a unique dat
 
 
 
-## Dataset Specific Information for: `results/feed_delivery.rda`
+## Dataset Specific Information for: `results/feed_delivery.rdata`
 
 **Description:**  
 The dataset provides a structured overview of specific feed delivery times and intervals after the feed delivery. It is essential for tracking the feed delivery at different times of the day: morning, afternoon, and noon.
@@ -380,7 +380,7 @@ The dataset is structured as a data frame. Each row corresponds to a unique date
 
 
 
-## Dataset Specific Information for: `results/Insentec_warning.rda`
+## Dataset Specific Information for: `results/Insentec_warning.rdata`
 
 **Description:**  
 This dataset contains warning logs and possible anomalies detected related to bin malfunctioning or cow abnormal feeding & drinking behaivours on specific dates.
@@ -424,7 +424,7 @@ The dataset is a data frame containing various observations and warnings related
 
 
 
-## Dataset Specific Information for: `results/Cleaned_feeding_original_data.rda`
+## Dataset Specific Information for: `results/Cleaned_feeding_original_data.rdata`
 
 **Description:**  
 This dataset contains cleaned individual feeding visit data of each cow to each bin on specific dates.
@@ -452,7 +452,7 @@ The dataset is a list of data frames. Each item in the list corresponds to a spe
 
 
 
-## Dataset Specific Information for: `results/Cleaned_drinking_original_data.rda`
+## Dataset Specific Information for: `results/Cleaned_drinking_original_data.rdata`
 
 **Description:**  
 This dataset contains cleaned original data related to the drinking visits of cows to different bins on specific dates.
@@ -467,11 +467,13 @@ Varies depending on the date
 The dataset is a list of data frames. Each item in the list corresponds to a specific date and contains data related to drinking for that date.
 
 **Variable List:**  
-same as `results/Cleaned_feeding_original_data.rda`
+same as `results/Cleaned_feeding_original_data.rdata`
 
 
 
-## Dataset Specific Information for: `results/Cleaned_combined_original_data.rda`
+## Dataset Specific Information for: `results/Cleaned_combined_original_data.rdata`
+
+**Special Note:** Due to the large size of these files, I do not have enough free quota to host them permanently on GitHub. However, they are published on Borealis database. Please find the data here: https://doi.org/10.5683/SP3/HT9EHX . Sorry for any inconvinience!
 
 **Description:**  
 This dataset contains cleaned original data related to the drinking and feeding visits of cows to different bins on specific dates.
@@ -486,11 +488,11 @@ Varies depending on the date
 The dataset is a list of data frames. Each item in the list corresponds to a specific date and contains data related to feeding and drinking combined for that date.
 
 **Variable List:**  
-same as `results/Cleaned_feeding_original_data.rda`
+same as `results/Cleaned_feeding_original_data.rdata`
 
 
 
-## Dataset Specific Information for: `results/Insentec_final_summary.rdata`
+## Dataset Specific Information for: `results/Insentec_final_summary.rdatata`
 
 **Description:**  
 The `Insentec_final_summary` dataset provides a comprehensive overview of the feeding and drinking patterns of cows across different dates. Each row corresponds to individual observations detailing the feeding and drinking statistics (intake, duration, total number of visits, rate) of a particular cow on a given date.
@@ -524,7 +526,7 @@ The dataset is stored as a data frame. Each observation represents a cow's feedi
 
 
 
-## Dataset Specific Information for: `results/which cows are present each second for feed.rda`
+## Dataset Specific Information for: `results/which cows are present each second for feed.rdata`
 
 **Special Note:** Due to the large size of these files, I do not have enough free quota to host them permanently on GitHub. However, they are published on Borealis database. Please find the data here: https://doi.org/10.5683/SP3/HT9EHX . Sorry for any inconvinience!
 
@@ -556,7 +558,7 @@ The dataset is composed of lists, each corresponding to a particular date. Each 
 
 
 
-## Dataset Specific Information for: `results/which bins are occupied each second for feed.rda`
+## Dataset Specific Information for: `results/which bins are occupied each second for feed.rdata`
 
 **Special Note:** Due to the large size of these files, I do not have enough free quota to host them permanently on GitHub. However, they are published on Borealis database. Please find the data here: https://doi.org/10.5683/SP3/HT9EHX . Sorry for any inconvinience!
 
@@ -582,7 +584,7 @@ The dataset is a list where each entry corresponds to a particular date. Each en
 
 
 
-## Dataset Specific Information for: `results/how much feed left each bin.rda`
+## Dataset Specific Information for: `results/how much feed left each bin.rdata`
 
 **Special Note:** Due to the large size of these files, I do not have enough free quota to host them permanently on GitHub. However, they are published on Borealis database. Please find the data here: https://doi.org/10.5683/SP3/HT9EHX . Sorry for any inconvinience!
 
@@ -609,7 +611,7 @@ The dataset is a list where each entry is associated with a specific date. Each 
 4. **totalFeed**: Represents the total feed amount at the specified timestamp. Data Type: Numeric.
 
 
-## Dataset Specific Information for: `results/Replacement_behaviour_by_date.rda`
+## Dataset Specific Information for: `results/Replacement_behaviour_by_date.rdata`
 
 **Description:**  
 The dataset is a list where each entry corresponds to a specific date and captures the replacement behaviours (a cow physically pushing another cow away from the feed bin and starts feeding at the same bin) of cows at feed bins. A replacement is observed when the time difference between one cow leaving the bin and the next cow entering is below a specific threshold (default set at 26 seconds). 
@@ -639,10 +641,10 @@ The dataset is structured as a list where each entry represents data for a speci
 
 
 
-## Dataset Specific Information for: `results/master_feed_replacement_all.rda`
+## Dataset Specific Information for: `results/master_feed_replacement_all.rdata`
 
 **Description:**  
-The dataset `master_feed_replacement_all` captures the replacement behaviours of cows at feed bins over an extended period. A replacement is defined by the time difference between one cow leaving the feed bin and the next cow entering being below a specific threshold (26s). It merges all the dataframe from the list in `results/Replacement_behaviour_by_date.rda` as 1 master dataframe
+The dataset `master_feed_replacement_all` captures the replacement behaviours of cows at feed bins over an extended period. A replacement is defined by the time difference between one cow leaving the feed bin and the next cow entering being below a specific threshold (26s). It merges all the dataframe from the list in `results/Replacement_behaviour_by_date.rdata` as 1 master dataframe
 
 **Number of Variables:**  
 6
@@ -669,7 +671,7 @@ The dataset is structured as a data frame, where each row signifies an observed 
 
 
 
-## Dataset Specific Information for: `results/regrouping.rda`
+## Dataset Specific Information for: `results/regrouping.rdata`
 
 **Description:**  
 The `regrouping` dataset captures information related to the days when cows were regrouped. It details how many cows were present on those days, which cows were excluded or enrolled, as well as any warnings or issues that occurred on these dates.
@@ -709,7 +711,7 @@ The dataset is structured as a data frame where each row signifies an individual
 Absolutely! Using the provided template, here's the README script for the `replacement_per_hour2` data frame:
 
 
-## Dataset Specific Information for: `results/replacement_per_hour.rda`
+## Dataset Specific Information for: `results/replacement_per_hour.rdata`
 **Description:**  
 The `replacement_per_hour` dataset captures information related to feed replacements, categorized by hour of the day. It provides insights into the number and percentage of replacements made during each hour.
 
@@ -732,7 +734,7 @@ The dataset is structured as a data frame where each row represents an hour of t
 
 
 
-## Dataset Specific Information for: `results/master_steepness.rda`
+## Dataset Specific Information for: `results/master_steepness.rdata`
 **Description:**  
 The `master_steepness` dataset captures the Elo steepness under different feeder occupancies. It provides insights into the mean and standard deviation of the steepness for each resource occupancy level.
 
@@ -756,10 +758,10 @@ The dataset is structured as a data frame where each row represents a specific r
 
 
 
-## Dataset Specific Information for: `results/replacement_sampled_master.rda`
+## Dataset Specific Information for: `results/replacement_sampled_master.rdata`
 
 **Note:** 
-Due to data storage limit on gitHub, this data might not be available in the `results/replacement_sampled_master.rda`, but it would be in the `cache` folder: `cache/replacement_sampled_master.RData`
+Due to data storage limit on gitHub, this data might not be available in the `results/replacement_sampled_master.rdata`, but it would be in the `cache` folder: `cache/replacement_sampled_master.rdatata`
 
 **Description:**  
 The `replacement_sampled_master` dataset recorded replacements that got randomly sampled from all replacement events for the calculation of eloSteepness and dyadic analysis. It captures data related to the reactor cow, the bin, the time and date of the replacement, the actor cow, bout intervals, and various metrics related to bins and resource occupancy.
@@ -798,7 +800,7 @@ The dataset is structured as a grouped data frame where each row represents a un
 
 
 
-## Dataset Specific Information for: `results/replace_num_by_hour_master.rda`
+## Dataset Specific Information for: `results/replace_num_by_hour_master.rdata`
 **Description:**  
 The `replace_num_by_hour_master` dataset captures the number of feed replacements that occurred during each hour of the day over 10 month. It also provides insights into the resource occupancy during those hours.
 
@@ -819,7 +821,7 @@ The dataset is structured as a tibble where each row represents an hour of the d
 
 
 
-## Dataset Specific Information for: `results/count_presence.rda`
+## Dataset Specific Information for: `results/count_presence.rdata`
 **Description:**  
 The `count_presence` dataset captures detailed information about the presence of cows during various times. It provides insights into the frequency of each cow's activity as an actor and reactor, the resource occupancy during those times, and the total number of replacement events.
 
@@ -845,7 +847,7 @@ The dataset is structured as a data frame where each row represents a unique com
 
 
 
-## Dataset Specific Information for: `results/replacement_by_day_master.rdata`
+## Dataset Specific Information for: `results/replacement_by_day_master.rdatata`
 **Description:**  
 The `replacement_by_day_master` dataset captures the number of replacements made on each day. It provides insights into the daily frequency of replacements and the resource occupancy on those days.
 
@@ -866,11 +868,12 @@ The dataset is structured as a tibble where each row represents a unique date, a
 
 
 
-## Dataset Specific Information for: `results/elo_baysian_result_0.13.rda`, `results/elo_baysian_result_0.17.rda`.... `results/elo_baysian_result_1.rda`
+## Dataset Specific Information for: `results/elo_baysian_result_0.13.rdata`, `results/elo_baysian_result_0.17.rdata`.... `results/elo_baysian_result_1.rdata`
+
 **Special Note:** Due to the large size of these files, I do not have enough free quota to host them permanently on GitHub. However, they are published on Borealis database. Please find the data here: https://doi.org/10.5683/SP3/HT9EHX . Sorry for any inconvinience!
 
 **Description:**  
-Each of these rda files are eloSteepness results for the corresponding feeder occupancy levels marked at the end of the file name. For example, `results/elo_baysian_result_0.13.rda` means the eloSteepness results calculated using replacements happened when feeder occupancy was 13%.
+Each of these rda files are eloSteepness results for the corresponding feeder occupancy levels marked at the end of the file name. For example, `results/elo_baysian_result_0.13.rdata` means the eloSteepness results calculated using replacements happened when feeder occupancy was 13%.
 
 **Number of Variables:**  
 There are 9 items in each list
