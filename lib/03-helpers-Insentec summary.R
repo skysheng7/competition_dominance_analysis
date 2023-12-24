@@ -23,7 +23,7 @@ summarize_feed_water_data <- function(data_frame, type = "Feeding") {
   colnames(duration) <- c("date", "Cow", paste0(type, "_Duration(s)"))
   
   # Visits
-  visits <- count(data_frame, vars = c("date", "Cow"))
+  visits <-  plyr::count(data_frame, vars = c("date", "Cow"))
   colnames(visits) <- c("date", "Cow", paste0(type, "_Visits"))
   
   # Return a list of the three summary data.frames
