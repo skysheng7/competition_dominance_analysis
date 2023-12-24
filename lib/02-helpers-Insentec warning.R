@@ -505,7 +505,7 @@ cows_no_show <- function(df_list, Insentec_warning, time_zone) {
 #' 
 #' @return A dataframe with the number of visits to each bin on that day.
 count_visits_per_bin <- function(data, bin_list) {
-  visit_each_bin <- count(data, vars=c("Bin"))
+  visit_each_bin <- plyr::count(data, vars=c("Bin"))
   colnames(visit_each_bin) <- c("Bin", "Visit_freq")
   visit_each_bin2 <- merge(bin_list, visit_each_bin, all = TRUE)
   visit_each_bin2[is.na(visit_each_bin2)] <- 0
@@ -533,9 +533,9 @@ count_visits_per_cow_bin <- function(data) {
 number_of_bins_per_cow <- function(data, bin_id_add) {
   cow_bin_visit_fed <- data[which(data$Bin < bin_id_add),]
   cow_bin_visit_wat <- data[which(data$Bin > bin_id_add),]
-  num_bin_per_cow_fed <- count(cow_bin_visit_fed, vars=c("Cow"))
+  num_bin_per_cow_fed <-  plyr::count(cow_bin_visit_fed, vars=c("Cow"))
   colnames(num_bin_per_cow_fed) <- c("Cow", "num_of_feed_bins_visited")
-  num_bin_per_cow_wat <- count(cow_bin_visit_wat, vars=c("Cow"))
+  num_bin_per_cow_wat <-  plyr::count(cow_bin_visit_wat, vars=c("Cow"))
   colnames(num_bin_per_cow_wat) <- c("Cow", "num_of_water_bins_visited")
   num_bin_per_cow_comb <- merge(num_bin_per_cow_fed, num_bin_per_cow_wat, all = TRUE)
   num_bin_per_cow_comb[is.na(num_bin_per_cow_comb)] <- 0
