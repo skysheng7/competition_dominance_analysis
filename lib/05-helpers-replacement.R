@@ -102,7 +102,13 @@ check_alibi_all <- function(replacement_list_by_date, all_comb2) {
   for (i in 1:length(all_comb2)) {
     cur_replacement <- replacement_list_by_date[[i]]
     cur_feed_wat <- all_comb2[[i]]
-    modified_cur_replacement <- check_alibi_daily(cur_replacement, cur_feed_wat)
+    
+    if(nrow(cur_replacement) > 0) {
+      modified_cur_replacement <- check_alibi_daily(cur_replacement, cur_feed_wat)
+    } else {
+      modified_cur_replacement <- cur_replacement
+    }
+    
     replacement_list_by_date[[i]] <- modified_cur_replacement
   }
   
