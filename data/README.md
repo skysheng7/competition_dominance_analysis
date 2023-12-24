@@ -526,6 +526,8 @@ The dataset is stored as a data frame. Each observation represents a cow's feedi
 
 ## Dataset Specific Information for: `results/which cows are present each second for feed.rda`
 
+**Special Note:** Due to the large size of these files, I do not have enough free quota to host them permanently on GitHub. However, they are published on Borealis database. Please find the data here: https://doi.org/10.5683/SP3/HT9EHX . Sorry for any inconvinience!
+
 **Description:**  
 This is a list of matrix grouped by date. Each matrix documents Time X CowID for which cow is eating/drinking at each second. 0 means this cow is not present, 1 means this cow is present at the feeder at this second.
 
@@ -556,6 +558,8 @@ The dataset is composed of lists, each corresponding to a particular date. Each 
 
 ## Dataset Specific Information for: `results/which bins are occupied each second for feed.rda`
 
+**Special Note:** Due to the large size of these files, I do not have enough free quota to host them permanently on GitHub. However, they are published on Borealis database. Please find the data here: https://doi.org/10.5683/SP3/HT9EHX . Sorry for any inconvinience!
+
 **Description:**  
 This is a list of matrix, each matrix records Time X CowID for which bin the cow is at at each second
 
@@ -579,6 +583,8 @@ The dataset is a list where each entry corresponds to a particular date. Each en
 
 
 ## Dataset Specific Information for: `results/how much feed left each bin.rda`
+
+**Special Note:** Due to the large size of these files, I do not have enough free quota to host them permanently on GitHub. However, they are published on Borealis database. Please find the data here: https://doi.org/10.5683/SP3/HT9EHX . Sorry for any inconvinience!
 
 **Description:**  
 This is a list of matrix grouped by date. Each matrix records Time X Bin for how much feed is at each bin at each second
@@ -861,6 +867,8 @@ The dataset is structured as a tibble where each row represents a unique date, a
 
 
 ## Dataset Specific Information for: `results/elo_baysian_result_0.13.rda`, `results/elo_baysian_result_0.17.rda`.... `results/elo_baysian_result_1.rda`
+**Special Note:** Due to the large size of these files, I do not have enough free quota to host them permanently on GitHub. However, they are published on Borealis database. Please find the data here: https://doi.org/10.5683/SP3/HT9EHX . Sorry for any inconvinience!
+
 **Description:**  
 Each of these rda files are eloSteepness results for the corresponding feeder occupancy levels marked at the end of the file name. For example, `results/elo_baysian_result_0.13.rda` means the eloSteepness results calculated using replacements happened when feeder occupancy was 13%.
 
