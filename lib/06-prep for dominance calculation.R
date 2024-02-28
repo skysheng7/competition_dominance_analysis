@@ -856,7 +856,7 @@ elo_steepness_by_competition_plot <- function(master_steepness) {
   steepness_plot <- ggplot(master_steepness, aes(x=resource_occupancy, y = steepness_mean)) + 
     geom_point(aes(y = steepness_mean), size = 10, color = "royal blue") +
     geom_smooth(method = "lm", se = FALSE, size= 2, color = "midnight blue", fullrange = TRUE) +
-    labs(y= "Elo Steepness", x = "Feeder Occupancy") +
+    labs(y= "Elo Steepness", x = "Feeder Occupancy (%)") +
     theme_classic() +
     #ggtitle(paste("Elo Standard Deviation by \n Feeder Occupancy :", cur_date, sep = " ")) + 
     theme(text = element_text(size = 55), axis.text.x = element_text(size = 50)) +
