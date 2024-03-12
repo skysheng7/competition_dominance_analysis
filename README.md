@@ -14,7 +14,7 @@ To load this project, please follow the instructions below:
 
 ```r
 # List of packages to be installed
-packages <- c("ProjectTemplate", "lubridate", "plyr", "here", "zoo", "ggplot2", "EloRating", "EloSteepness", "viridis", "dplyr", "lme4", "lmerTest")
+packages <- c("ProjectTemplate", "lubridate", "plyr", "here", "zoo", "ggplot2", "EloRating", "EloSteepness", "viridis", "dplyr", "lme4", "lmerTest", "rstudioapi")
 
 # Function to check and install missing packages
 install_if_missing <- function(pkg) {
