@@ -50,9 +50,9 @@ Thank you for your interest in our project. We hope you find the data and code i
 
 ## Dataset Information
 
-- **Title of Dataset:** Replication Data for: Redefining dominance calculation: Increased competition flattens the dominance hierarchy in dairy cows  
+- **Title of Dataset:** Replication Data for: Redefining dominance calculation: Increased competition flattens the dominance hierarchy in dairy cows
+- **Dataset DOI:** <https://doi.org/10.5683/SP3/HT9EHX>
 - **Dataset Created:** 2023-07-29
-- **DOI:** https://doi.org/10.5683/SP3/HT9EHX
 - **Created by:** Kehan (Sky) Sheng
 - **Contact Email:** <skysheng7@gmail.com>
 
